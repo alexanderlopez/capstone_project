@@ -15,8 +15,55 @@
 let map;
 
 function initMap() {
+  loadMap();
+  setMapEvents();
+}
+
+/**
+ * Initalized Map object and centers to default coordinates
+ */
+function loadMap() {
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -34.397, lng: 150.644 },
-    zoom: 8
+      center: { lat: -34.397, lng: 150.644 },
+      zoom: 8
+    });
+}
+
+/**
+ * Create a temporary and moveable marker whenever the client clicks on the map
+ */
+function setMapEvents() {
+  map.addListener('click', function(e) {
+    var coords = e.latLng;
+    makeTempMarker(coords);
+  })
+}
+
+/**
+ * Stores the most recently added marker to the map which has not
+ * been uploaded to the server yet.
+ */
+var tempMarker = null;
+
+/**
+ * Adds a marker to the map where clicked and removes the previous tempMarker
+ * when applicable
+ */
+function makeTempMarker(latLng) {
+  if (tempMarker) {
+    tempMarker.setMap(null);
+  }
+
+  tempMarker = new google.maps.Marker({position: latLng, map:map});
+  tempMarker.setDraggable(true);
+
+  // clicking on a temp marker deletes it from the map
+  tempMarker.addListener("click", () => {
+    tempMarker.setMap(null);
   });
+
+  tempMarker.addListener('dragend', () => {
+    map.panTo(tempMarker.getPosition());
+  });
+  map.panTo(latLng);
 }
