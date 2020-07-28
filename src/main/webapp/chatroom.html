@@ -11,6 +11,23 @@
   </head>
   <body>
     <div id="map"></div>
-    <div id="chat"></div>
+    
+
+<button class="open-button" onclick="openForm()">Chat</button>
+
+<div class="chat-popup" id="myForm">
+  <div class="form-container">
+  
+    <h1>[Map Name] Chat <button type="button" class="cancel" onclick="closeForm()">X</button></h1>
+
+    <label for="msg"><b>Enter Message Here: </b></label>
+    <textarea placeholder="Type message.." name="msg" required></textarea>
+
+    <button type="submit" class="btn">Send</button>
+  </div>
+</div>
+
+
+
   </body>
 </html>
