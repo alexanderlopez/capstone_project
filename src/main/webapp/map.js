@@ -56,12 +56,12 @@ var tempMarker = null;
 
 /**
  * Creates a new temp marker at the given coordinates with click and drag events
- * @param {google.maps.LatLng} latLng coordinates where to make the marker
+ * @param {google.maps.LatLng} coords coordinates where to make the marker
  */
-function makeTempMarker(latLng) {
+function makeTempMarker(coords) {
   tempMarker = new google.maps.Marker(
     {
-      position: latLng,
+      position: coords,
       map: map,
       label: "+"
     });
@@ -69,28 +69,51 @@ function makeTempMarker(latLng) {
 
   // clicking on a temp marker deletes it from the map
   tempMarker.addListener("click", () => {
-    setPermMarker(tempMarker);
-    tempMarker = null;
+    makePermMarker(tempMarker.getPosition());
+    deleteTempMarker();
   });
   tempMarker.addListener('dragend', () => {
     map.panTo(tempMarker.getPosition());
   });
 }
 
-/** Stores all the permanent markers on the map */
-var permMarkers = [];
+/** all permanent markers on the page */
+var permMarkers = new Set();
 
 /**
- * Sets the given marker as a permanent marker
+ * Creates a permanent marker at the given coordinates
  * @param {google.maps.Marker} marker marker to be made permanent
  */
-function setPermMarker(marker) {
-  marker.setDraggable(false);
-  marker.setLabel(null);
-  marker.setDraggable(false);
-  marker.setClickable(false);
+function makePermMarker(coords) {
+  let marker = new google.maps.Marker(
+    {
+      position: coords,
+      map: map
+    });
 
-  google.maps.event.clearListeners(marker, "click");
+  marker.addListener('click', () => {
+    deletePermMarker(marker);
+    deleteTempMarker();
+  });
 
-  permMarkers.push(marker);
+  permMarkers.add(marker);
+}
+
+/**
+ * Removes the temp marker from the map.
+ */
+function deleteTempMarker() {
+  if (tempMarker) {
+    tempMarker.setMap(null);
+    tempMarker = null;
+  }
+}
+
+/**
+ * Deletes a given permanent marker
+ * @param {google.maps.Marker} marker to be deleted
+ */
+function deletePermMarker(marker) {
+  permMarkers.delete(marker);
+  marker.setMap(null);
 }
