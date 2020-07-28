@@ -59,16 +59,38 @@ var tempMarker = null;
  * @param {google.maps.LatLng} latLng coordinates where to make the marker
  */
 function makeTempMarker(latLng) {
-  tempMarker = new google.maps.Marker({position: latLng, map:map});
+  tempMarker = new google.maps.Marker(
+    {
+      position: latLng,
+      map: map,
+      label: "+"
+    });
   tempMarker.setDraggable(true);
 
   // clicking on a temp marker deletes it from the map
   tempMarker.addListener("click", () => {
-    tempMarker.setMap(null);
+    setPermMarker(tempMarker);
     tempMarker = null;
   });
-
   tempMarker.addListener('dragend', () => {
     map.panTo(tempMarker.getPosition());
   });
+}
+
+/** Stores all the permanent markers on the map */
+var permMarkers = [];
+
+/**
+ * Sets the given marker as a permanent marker
+ * @param {google.maps.Marker} marker marker to be made permanent
+ */
+function setPermMarker(marker) {
+  marker.setDraggable(false);
+  marker.setLabel(null);
+  marker.setDraggable(false);
+  marker.setClickable(false);
+
+  google.maps.event.clearListeners(marker, "click");
+
+  permMarkers.push(marker);
 }
