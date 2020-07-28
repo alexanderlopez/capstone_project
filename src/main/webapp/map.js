@@ -56,19 +56,64 @@ var tempMarker = null;
 
 /**
  * Creates a new temp marker at the given coordinates with click and drag events
- * @param {google.maps.LatLng} latLng coordinates where to make the marker
+ * @param {google.maps.LatLng} coords coordinates where to make the marker
  */
-function makeTempMarker(latLng) {
-  tempMarker = new google.maps.Marker({position: latLng, map:map});
+function makeTempMarker(coords) {
+  tempMarker = new google.maps.Marker(
+    {
+      position: coords,
+      map: map,
+      label: "+"
+    });
   tempMarker.setDraggable(true);
 
   // clicking on a temp marker deletes it from the map
   tempMarker.addListener("click", () => {
-    tempMarker.setMap(null);
-    tempMarker = null;
+    makePermMarker(tempMarker.getPosition());
+    deleteTempMarker();
   });
-
   tempMarker.addListener('dragend', () => {
     map.panTo(tempMarker.getPosition());
   });
+}
+
+/** all permanent markers on the page */
+var permMarkers = new Set();
+
+/**
+ * Creates a permanent marker at the given coordinates
+ * @param {google.maps.Marker} marker marker to be made permanent
+ */
+function makePermMarker(coords) {
+  let marker = new google.maps.Marker(
+    {
+      position: coords,
+      map: map
+    });
+
+  marker.addListener('click', () => {
+    deletePermMarker(marker);
+    deleteTempMarker();
+  });
+
+  permMarkers.add(marker);
+}
+
+/**
+ * Removes the temp marker from the map.
+ */
+function deleteTempMarker() {
+  if (tempMarker) {
+    tempMarker.setMap(null);
+    tempMarker = null;
+  }
+}
+
+/**
+ * Deletes a given permanent marker
+ * @param {google.maps.Marker} marker to be deleted
+ */
+function deletePermMarker(marker) {
+  permMarkers.delete(marker);
+  marker.setMap(null);
 }
