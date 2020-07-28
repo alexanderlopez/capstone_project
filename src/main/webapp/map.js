@@ -12,11 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** The google.maps.Map that will be displayed on the page. */
 let map;
 
+/**
+ * Creates a new map.
+ */
 function initMap() {
+  loadMap();
+  setMapEvents();
+}
+
+/**
+ * Initalized Map object and centers to default coordinates
+ */
+function loadMap() {
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -34.397, lng: 150.644 },
-    zoom: 8
+      center: { lat: -34.397, lng: 150.644 },
+      zoom: 8
+    });
+}
+
+/**
+ * Adds a temporary marker to the map whenever it is clicked on
+ */
+function setMapEvents() {
+  map.addListener('click', function(e) {
+    var coords = e.latLng;
+    if (tempMarker) {
+      tempMarker.setPosition(coords);
+    } else {
+      makeTempMarker(coords);
+    }
+    this.panTo(coords);
+  });
+}
+
+/**
+ * Stores the most recently added marker to the map which has not
+ * been uploaded to the server yet.
+ */
+var tempMarker = null;
+
+/**
+ * Creates a new temp marker at the given coordinates with click and drag events
+ * @param {google.maps.LatLng} latLng coordinates where to make the marker
+ */
+function makeTempMarker(latLng) {
+  tempMarker = new google.maps.Marker({position: latLng, map:map});
+  tempMarker.setDraggable(true);
+
+  // clicking on a temp marker deletes it from the map
+  tempMarker.addListener("click", () => {
+    tempMarker.setMap(null);
+    tempMarker = null;
+  });
+
+  tempMarker.addListener('dragend', () => {
+    map.panTo(tempMarker.getPosition());
   });
 }
