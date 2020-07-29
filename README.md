@@ -1,39 +1,39 @@
-appengine-skeleton
-==================
+appengine-flexible-archetype
+============================
 
-This is a generated application from the appengine-skeleton archetype.
+This is a generated App Engine Flexible Java application from the appengine-flexible-archetype archetype.
 
-See the [Google App Engine standard environment documentation][ae-docs] for more
-detailed instructions.
-
-[ae-docs]: https://cloud.google.com/appengine/docs/java/
-
+## Requirements
 
 * [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-* [Maven](https://maven.apache.org/download.cgi) (at least 3.5)
+* [Maven](https://maven.apache.org/download.cgi) (at least 3.3.9)
+* [Gradle](https://gradle.org/gradle-download/) (optional)
 * [Google Cloud SDK](https://cloud.google.com/sdk/) (aka gcloud)
 
-## Setup
+Initialize the Google Cloud SDK using:
 
     gcloud init
-    gcloud auth application-default login
+
+This skeleton is ready to run.
 
 ## Maven
-### Running locally
 
-    mvn appengine:run
+### Run Locally
 
-### Deploying
+    mvn jetty:run
+
+### Deploy
 
     mvn appengine:deploy
 
-## Testing
+### Test Only
 
     mvn verify
 
-As you add / modify the source code (`src/main/java/...`) it's very useful to add
-[unit testing](https://cloud.google.com/appengine/docs/java/tools/localunittesting)
-to (`src/main/test/...`).  The following resources are quite useful:
+## Modify the Skeleton
+
+As you add / modify the source code [(`src/main/java/...`)](src/main/java/) it's very useful to add unit testing
+to [(`src/main/test/...`)](src/main/test/).  The following resources are quite useful:
 
 * [Junit4](http://junit.org/junit4/)
 * [Mockito](http://mockito.org/)
@@ -46,9 +46,6 @@ An easy way to keep your projects up to date is to use the maven [Versions plugi
     mvn versions:display-plugin-updates
     mvn versions:display-dependency-updates
     mvn versions:use-latest-versions
-
-Note - Be careful when changing `javax.servlet` as App Engine Standard uses 3.1 for Java 8, and 2.5
-for Java 7.
 
 Our usual process is to test, update the versions, then test again before committing back.
 

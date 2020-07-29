@@ -5,12 +5,22 @@
     <title>CHAP</title>
     <link rel="stylesheet" href="mapStyle.css">
     <link rel="stylesheet" href="chatStyle.css">
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II&callback=initMap" type="text/javascript"></script>
     <script src="map.js"></script>
     <script src="chat.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=GCP_MAPS_API_KEY></script>
   </head>
   <body>
     <div id="map"></div>
-    <div id="chat"></div>
+    <button class="open-button" onclick="openForm()">Chat</button>
+    <div class="chat-popup" id="myForm">
+    <div class="form-container">
+        <h1>[Map Name] Chat <button type="button" class="cancel" onclick="closeForm()">X</button></h1>
+
+        <label for="msg"><b>Enter Message Here: </b></label>
+        <textarea placeholder="Type message.." name="msg" required></textarea>
+
+        <button type="submit" class="btn">Send</button>
+    </div>
+    </div>
   </body>
 </html>

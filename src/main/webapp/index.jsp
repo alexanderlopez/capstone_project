@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.google.sps.HelloAppEngine" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.google.appengine.api.users.UserService" %>
-
-<%! UserService userService = UserServiceFactory.getUserService(); %>
-
+<!-- [START_EXCLUDE] -->
+<!-- [END_EXCLUDE] -->
 <html>
-    <head>
-        <title>CHAP</title>
-    </head>
-    <body>
-        <h1>CHAP</h1>
-        <h3>Hello <% if (userService.isUserLoggedIn()) {
-            out.println(userService.getCurrentUser().getEmail() + ".");
-        }
-        else {
-            out.println("stranger.");
-        } %></h3>
+<head>
+  <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
+  <title>Hello App Engine Flexible</title>
+</head>
+<body>
+    <h1>Hello App Engine -- Flexible!</h1>
 
-        <a href="<%= userService.isUserLoggedIn() ? userService.createLogoutURL("/") : userService.createLoginURL("/") %>"><%= userService.isUserLoggedIn() ? "Log out" : "Log in"%></a>
-    </body>
+  <p>This is <%= HelloAppEngine.getInfo() %>.</p>
+  <table>
+    <tr>
+      <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
+    </tr>
+    <tr>
+      <td><a href='/hello'>The servlet</a></td>
+    </tr>
+  </table>
+
+</body>
 </html>
