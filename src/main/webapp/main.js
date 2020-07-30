@@ -15,6 +15,18 @@
 /** map visible on the website */
 let myMap;
 
+let domPromise = new Promise(function(resolve) {
+      document.addEventListener("DOMContentLoaded", resolve);
+    });
+
+let mapPromise = new Promise(function(resolve) {
+      document.getElementById("mapAPI").addEventListener("load", resolve);
+    });
+
+Promise.all([mapPromise, domPromise]).then(() => {
+      initMap();
+    });
+
 function initMap() {
   myMap = new MyMap();
 }
