@@ -4,22 +4,36 @@
 <!-- [START_EXCLUDE] -->
 <!-- [END_EXCLUDE] -->
 <html>
-<head>
-  <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
-  <title>Hello App Engine Flexible</title>
-</head>
-<body>
-    <h1>Hello App Engine -- Flexible!</h1>
+    <head>
+        <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
-  <p>This is <%= HelloAppEngine.getInfo() %>.</p>
-  <table>
-    <tr>
-      <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
-    </tr>
-    <tr>
-      <td><a href='/hello'>The servlet</a></td>
-    </tr>
-  </table>
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
-</body>
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#available-libraries -->
+        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
+
+        <script src="authentication.js"></script>
+
+        <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
+        <title>Hello App Engine Flexible</title>
+    </head>
+    <body>
+        <h1>Hello App Engine -- Flexible!</h1>
+
+        <p>This is <%= HelloAppEngine.getInfo() %>.</p>
+        <table>
+            <tr>
+                <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
+            </tr>
+            <tr>
+                <td><a href='/hello'>The servlet</a></td>
+            </tr>
+        </table>
+
+        <div id="firebaseui-auth-container"></div>
+        <div id="loader">Loading...</div>
+    </body>
 </html>
