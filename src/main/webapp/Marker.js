@@ -31,7 +31,7 @@ class Marker {
    */
   setMarkerListeners() {
     let _self = this;
-    _self.marker.addListener('click', () => {
+    _self.marker.addListener('dblclick', () => {
       _self.remove();
       myMap.removeTempMarker();
     });
