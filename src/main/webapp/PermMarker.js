@@ -38,13 +38,12 @@ class PermMarker {
    * Sets marker-triggered events
    */
   setMarkerListeners() {
-    let _self = this;
     this.googleMarker.addListener('dblclick', () => {
-      _self.remove();
+      this.remove();
       myMap.removeTempMarker();
     });
     this.googleMarker.addListener('click', () => {
-      _self.myInfoWindow.open();
+      this.myInfoWindow.open();
     });;
   }
 

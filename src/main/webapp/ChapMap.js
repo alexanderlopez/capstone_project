@@ -26,11 +26,10 @@ class ChapMap {
    * Adds a temporary marker to the map whenever it is clicked on
    */
   setMapEvents() {
-    let _self = this;
-    this.googleMap.addListener('click', function(e) {
+    this.googleMap.addListener('click', (e) => {
       var coords = e.latLng;
-      _self.tempMarker.setTempMarker(coords);
-      this.panTo(coords);
+      this.tempMarker.setTempMarker(coords);
+      this.googleMap.panTo(coords);
     });
   }
 
