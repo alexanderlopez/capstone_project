@@ -28,5 +28,5 @@ Promise.all([mapPromise, domPromise]).then(() => {
     });
 
 function initMap() {
-  myMap = new MyMap();
+  myMap = new ChapMap();
 }

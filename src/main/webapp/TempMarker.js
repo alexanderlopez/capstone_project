@@ -45,14 +45,14 @@ class TempMarker {
   setListeners() {
     let _self = this;
     // clicking on a temp marker deletes it from the map
-    _self.googleTempMarker.addListener("click", () => {
+    this.googleTempMarker.addListener("click", () => {
       let coords = _self.googleTempMarker.getPosition()
-      let marker = new MyMarker(coords);
+      let marker = new PermMarker(coords);
       myMap.addPermMarker(marker);
       _self.remove();
     });
 
-    _self.googleTempMarker.addListener('dragend', () => {
+    this.googleTempMarker.addListener('dragend', () => {
       myMap.googleMap.panTo(_self.googleTempMarker.getPosition());
     });
   }

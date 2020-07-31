@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class MyMarker {
+class PermMarker {
 
   /** The google.maps.Marker object visible on the map*/
   googleMarker;
@@ -29,7 +29,7 @@ class MyMarker {
         position: coords,
         map: myMap.googleMap
       });
-    this.myInfoWindow = new MyInfoWindow(this);
+    this.myInfoWindow = new MarkerInfoWindow(this);
     this.setMarkerListeners();
     this.myInfoWindow.open();
   }
@@ -39,11 +39,11 @@ class MyMarker {
    */
   setMarkerListeners() {
     let _self = this;
-    _self.googleMarker.addListener('dblclick', () => {
+    this.googleMarker.addListener('dblclick', () => {
       _self.remove();
       myMap.removeTempMarker();
     });
-    _self.googleMarker.addListener('click', () => {
+    this.googleMarker.addListener('click', () => {
       _self.myInfoWindow.open();
     });;
   }

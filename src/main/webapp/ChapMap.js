@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class MyMap {
+class ChapMap {
   /** The google.maps.Map that will be displayed on the page. */
   googleMap;
 
@@ -44,14 +44,14 @@ class MyMap {
   }
 
   /**
-   * @param {MyMarker} marker permanent marker to be deleted
+   * @param {PermMarker} marker permanent marker to be deleted
    */
   deletePermMarker(marker) {
     this.permMarkers.delete(marker);
   }
 
   /**
-   * @param {MyMarker} marker permanent marker to be deleted
+   * @param {PermMarker} marker permanent marker to be deleted
    */
   addPermMarker(marker) {
     this.permMarkers.add(marker);

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class MyInfoWindow {
+class MarkerInfoWindow {
 
     // classes and  default values for infoWindow components
     static DEFAULT_TITLE = "Title";
@@ -23,22 +23,22 @@ class MyInfoWindow {
     /** google.maps.InfoWindow displayed on the page */
     googleInfoWindow;
 
-    /** MyMarker object associated with this info window */
+    /** PermMarker object associated with this info window */
     myMarker;
 
     /** Returns the html of the DOM element for the title of the info window */
     makeTitle() {
       let title = document.createElement("h1");
-      title.classList.add(MyInfoWindow.TITLE_CLASS);
-      title.innerHTML = MyInfoWindow.DEFAULT_TITLE;
+      title.classList.add(MarkerInfoWindow.TITLE_CLASS);
+      title.innerHTML = MarkerInfoWindow.DEFAULT_TITLE;
       return title.outerHTML;
     }
 
     /** Returns the html of the DOM element for the body of the info window */
     makeBody() {
       let body  = document.createElement("p");
-      body.classList.add(MyInfoWindow.BODY_CLASS);
-      body.innerHTML = MyInfoWindow.DEFAULT_BODY;
+      body.classList.add(MarkerInfoWindow.BODY_CLASS);
+      body.innerHTML = MarkerInfoWindow.DEFAULT_BODY;
       return body.outerHTML;
     }
 
@@ -58,7 +58,7 @@ class MyInfoWindow {
     }
 
     /**
-     * @param {MyMarker} marker marker associated with this info window
+     * @param {PermMarker} marker marker associated with this info window
      */
     constructor(myMarker) {
       this.myMarker = myMarker;
