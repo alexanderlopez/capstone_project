@@ -12,29 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class Marker {
+class PermMarker {
 
   /** The google.maps.Marker object visible on the map*/
-  marker;
+  googleMarker;
 
+  /** Information window associated with this marker */
+  myInfoWindow;
+
+  /**
+   * @param {google.maps.LatLng} coords the coordinates for the marker
+   */
   constructor(coords) {
-    this.marker = new google.maps.Marker(
+    this.googleMarker = new google.maps.Marker(
       {
         position: coords,
-        map: myMap.map
+        map: myMap.googleMap
       });
+    this.myInfoWindow = new MarkerInfoWindow(this);
     this.setMarkerListeners();
+    this.myInfoWindow.open();
   }
 
   /**
    * Sets marker-triggered events
    */
   setMarkerListeners() {
-    let _self = this;
-    _self.marker.addListener('click', () => {
-      _self.remove();
+    this.googleMarker.addListener('dblclick', () => {
+      this.remove();
       myMap.removeTempMarker();
     });
+    this.googleMarker.addListener('click', () => {
+      this.myInfoWindow.open();
+    });;
   }
 
   /**
@@ -42,6 +52,7 @@ class Marker {
    */
   remove() {
     myMap.deletePermMarker(this);
-    this.marker.setMap(null);
+    this.myInfoWindow.close();
+    this.googleMarker.setMap(null);
   }
 }

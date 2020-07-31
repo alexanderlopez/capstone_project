@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class MyMap {
+class ChapMap {
   /** The google.maps.Map that will be displayed on the page. */
-  map;
+  googleMap;
 
   /** The temporary marker visible on this map */
   tempMarker;
@@ -26,16 +26,15 @@ class MyMap {
    * Adds a temporary marker to the map whenever it is clicked on
    */
   setMapEvents() {
-    let _self = this;
-    this.map.addListener('click', function(e) {
+    this.googleMap.addListener('click', (e) => {
       var coords = e.latLng;
-      _self.tempMarker.setTempMarker(coords);
-      this.panTo(coords);
+      this.tempMarker.setTempMarker(coords);
+      this.googleMap.panTo(coords);
     });
   }
 
   constructor() {
-    this.map = new google.maps.Map(document.getElementById("map"), {
+    this.googleMap = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -34.397, lng: 150.644 },
         zoom: 8
       });
@@ -44,14 +43,14 @@ class MyMap {
   }
 
   /**
-   * @param {Marker} marker permanent marker to be deleted
+   * @param {PermMarker} marker permanent marker to be deleted
    */
   deletePermMarker(marker) {
     this.permMarkers.delete(marker);
   }
 
   /**
-   * @param {Marker} marker permanent marker to be deleted
+   * @param {PermMarker} marker permanent marker to be deleted
    */
   addPermMarker(marker) {
     this.permMarkers.add(marker);
