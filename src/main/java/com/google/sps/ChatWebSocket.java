@@ -12,16 +12,21 @@ import javax.websocket.CloseReason;
 
 import javax.websocket.server.ServerEndpoint;
 
+import com.google.sps.WebSocketHandler;
 import com.google.sps.CapstoneAuth;
 
 @ServerEndpoint(value = "/chat/{chatroom}")
 public class ChatWebSocket {
+
+    private String chatRoom;
+    private boolean isAuthenticated = false;
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
         // Get session and check if the user is authenticated with Firebase
         String chatRoom = session.getPathParameters()
                                  .get("chatroom");
+        this.chatRoom = chatRoom;
 
         String idToken = session.getRequestParameterMap()
                                 .get("idToken")
@@ -31,7 +36,19 @@ public class ChatWebSocket {
             session.close(new CloseReason(
                 CloseReason.CloseCodes.PROTOCOL_ERROR,
                  "User not authenticated."));
+            isAuthenticated = false;
+
+            return;
         }
+
+        if (!CapstoneAuth.isUserChatroomAuthenticated(chatRoom, idToken)) {
+
+        }
+
+        isAuthenticated = true;
+
+        // If the user is authenticated then add the session to the chatroom.
+        WebSocketHandler.getInstance().addSession(chatRoom, session);
     }
 
     @OnMessage
@@ -42,6 +59,11 @@ public class ChatWebSocket {
     @OnClose
     public void onClose(Session session) throws IOException {
         // WebSocket connection closes
+        if (!isAuthenticated) {
+            return;
+        }
+
+        WebSocketHandler.getInstance().removeSession(chatRoom, session);
     }
 
     @OnError

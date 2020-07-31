@@ -8,12 +8,15 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.appeengine.api.datastore.DatastoreServiceFactory;
+import com.google.appenngine.api.datastore.DatastoreService;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
 public final class CapstoneAuth {
 
     private static CapstoneAuth currentInstance;
+    private DatastoreService datastoreService;
 
     private CapstoneAuth() {
         try {
@@ -26,6 +29,8 @@ public final class CapstoneAuth {
                 .build();
 
             FirebaseApp.initializeApp(options);
+
+            datastoreService = DatastoreServiceFactory.getDatastoreService();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,5 +50,21 @@ public final class CapstoneAuth {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean isUserChatroomAuthenticated(String chatRoom,
+            String idToken) {
+        if (currentInstance == null) {
+            currentInstance = new CapstoneAuth();
+        }
+
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            String uid = decodedToken.getUid();
+
+            
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
     }
 }
