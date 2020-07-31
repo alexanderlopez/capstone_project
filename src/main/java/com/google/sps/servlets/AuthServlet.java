@@ -20,7 +20,8 @@ public class AuthServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String tokenId = request.getReader().readLine();
 
-        String responseText = CapstoneAuth.isUserAuthenticated(tokenId).toString();
+        String responseText = Boolean.toString(
+            CapstoneAuth.isUserAuthenticated(tokenId));
 
         response.setContentType("text/html");
         response.getWriter().println(responseText);

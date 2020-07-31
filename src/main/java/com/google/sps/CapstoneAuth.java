@@ -1,6 +1,7 @@
 package com.google.sps;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -16,18 +17,21 @@ public final class CapstoneAuth {
 
     private CapstoneAuth() {
         try {
+            InputStream credentialInputStream = getClass().getResourceAsStream(
+                "/chap-2020-capstone-firebase-adminsdk-93l38-698b686069.json");
+
             FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.getApplicationDefault())
+                .setCredentials(GoogleCredentials.fromStream(credentialInputStream))
                 .setDatabaseUrl("https://chap-2020-capstone.firebaseio.com/")
                 .build();
 
             FirebaseApp.initializeApp(options);
         } catch (IOException e) {
-            System.out.println("EPIC FAIL MAN");
+            e.printStackTrace();
         }
     }
 
-    public static String isUserAuthenticated(String idToken) {
+    public static boolean isUserAuthenticated(String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
         }
@@ -35,10 +39,11 @@ public final class CapstoneAuth {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
-            return uid;
+
+            return (uid != null);
         } catch (FirebaseAuthException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
-        return null;
+        return false;
     }
 }
