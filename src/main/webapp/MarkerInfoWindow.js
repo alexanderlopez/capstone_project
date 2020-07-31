@@ -19,6 +19,10 @@ class MarkerInfoWindow {
     static DEFAULT_BODY = "Body";
     static TITLE_CLASS = "markerTitle";
     static BODY_CLASS = "markerBody";
+    static DELETE_CLASS = "markerDelete";
+    static CONTENT_WRAPPER = "contentWrapper";
+    static LEFT_COLUMN = "leftColumn";
+    static RIGHT_COLUMN = "rightColumn";
 
     /** google.maps.InfoWindow displayed on the page */
     googleInfoWindow;
@@ -31,7 +35,7 @@ class MarkerInfoWindow {
       let title = document.createElement("h1");
       title.classList.add(MarkerInfoWindow.TITLE_CLASS);
       title.innerHTML = MarkerInfoWindow.DEFAULT_TITLE;
-      return title.outerHTML;
+      return title;
     }
 
     /** Returns the html of the DOM element for the body of the info window */
@@ -39,12 +43,41 @@ class MarkerInfoWindow {
       let body  = document.createElement("p");
       body.classList.add(MarkerInfoWindow.BODY_CLASS);
       body.innerHTML = MarkerInfoWindow.DEFAULT_BODY;
-      return body.outerHTML;
+      return body;
+    }
+
+    /** Returns the delete button for this marker */
+    makeDeleteButton() {//TODO: Finish delete button.
+      let btn = document.createElement("div");
+      btn.setAttribute("role", "button");
+      btn.classList.add(MarkerInfoWindow.DELETE_CLASS);
+      return btn;
+    }
+
+    /** Puts together info window buttons */
+    makeLeftColumn() {
+      let leftCol = document.createElement("div");
+      leftCol.classList.add(MarkerInfoWindow.LEFT_COLUMN);
+      leftCol.appendChild(this.makeDeleteButton());
+      return leftCol;
+    }
+
+    /** Puts together the title and body of the info window */
+    makeRightColumn() {
+      let rightCol = document.createElement("div");
+      rightCol.classList.add(MarkerInfoWindow.RIGHT_COLUMN);
+      rightCol.appendChild(this.makeTitle());
+      rightCol.appendChild(this.makeBody());
+      return rightCol;
     }
 
     /** Returns the html string to be displayed in this info window */
     makeContent() {
-      return this.makeTitle()+this.makeBody();
+      let contentWrapper = document.createElement("div");
+      contentWrapper.classList.add(MarkerInfoWindow.CONTENT_WRAPPER);
+      contentWrapper.appendChild(this.makeLeftColumn());
+      contentWrapper.appendChild(this.makeRightColumn());
+      return contentWrapper.outerHTML;
     }
 
     /** Displays the info window on the map */
@@ -62,6 +95,7 @@ class MarkerInfoWindow {
      */
     constructor(myMarker) {
       this.myMarker = myMarker;
+      // myMarker must be initialized before makeContent() is called
       let myContent = this.makeContent();
       this.googleInfoWindow = new google.maps.InfoWindow({
         content: myContent

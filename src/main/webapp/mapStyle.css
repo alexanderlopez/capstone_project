@@ -2,3 +2,33 @@
   height: 1000px;
   width: 1000px;
 }
+
+.contentWrapper {
+  width: 20em;
+}
+
+.leftColumn {
+  float: left;
+  margin-right: 1em;
+}
+
+.markerDelete {
+  height: 1.5em;
+  width: 2em;
+  margin: 2em 0 2em 0;
+  background-image: url("icons/delete.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.rightColumn {
+  float: left;
+  width: calc(100% - 3em);
+}
+
+.markerTitle {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 0;
+}
