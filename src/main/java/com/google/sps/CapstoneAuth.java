@@ -2,14 +2,18 @@ package com.google.sps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Arrays;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.appeengine.api.datastore.DatastoreServiceFactory;
-import com.google.appenngine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
@@ -31,7 +35,38 @@ public final class CapstoneAuth {
             FirebaseApp.initializeApp(options);
 
             datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+            addTestChatroom();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // To remove method on deploy
+    private void addTestChatroom() {
+        Entity chatRoom = new Entity("CHAT_ROOM","1234goroom");
+        datastoreService.put(chatRoom);
+    }
+
+    // To remove method on deploy
+    private void addUserToTestChatroom(String uid) {
+        try {
+            Entity testRoom = datastoreService.get(
+                KeyFactory.createKey("CHAT_ROOM", "1234goroom"));
+
+            if (!testRoom.hasProperty("allowed_users")) {
+                testRoom.setProperty("allowed_users", Arrays.asList(uid));
+                datastoreService.put(testRoom);
+
+                return;
+            }
+
+            List<String> allowedUsers =
+                (List<String>) testRoom.getProperty("allowed_users");
+            allowedUsers.add(uid);
+            testRoom.setProperty("allowed_users", allowedUsers);
+            datastoreService.put(testRoom);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -44,6 +79,8 @@ public final class CapstoneAuth {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
+
+            currentInstance.addUserToTestChatroom(uid);
 
             return (uid != null);
         } catch (FirebaseAuthException e) {
@@ -62,9 +99,19 @@ public final class CapstoneAuth {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
 
-            
-        } catch (FirebaseAuthException e) {
+
+
+            Entity roomEntity = currentInstance.datastoreService.get(
+                KeyFactory.createKey("CHAT_ROOM",chatRoom));
+
+            List<String> allowedRoomUID =
+                (List<String>) roomEntity.getProperty("allowed_users");
+
+            return allowedRoomUID.contains(uid);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 }

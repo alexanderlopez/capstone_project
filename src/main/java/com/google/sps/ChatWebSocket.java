@@ -42,7 +42,12 @@ public class ChatWebSocket {
         }
 
         if (!CapstoneAuth.isUserChatroomAuthenticated(chatRoom, idToken)) {
+            session.close(new CloseReason(
+                CloseReason.CloseCodes.PROTOCOL_ERROR,
+                 "User not allowed to use this chat room."));
+            isAuthenticated = false;
 
+            return;
         }
 
         isAuthenticated = true;
