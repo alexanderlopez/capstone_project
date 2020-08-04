@@ -19,8 +19,11 @@ class ChapMap {
   /** The temporary marker visible on this map */
   tempMarker;
 
+  /** The info window used for all markers*/
+  myInfoWindow;
+
   /** all permanent markers on the page */
-  permMarkers = new Set();
+  permMarkers;
 
   /**
    * Adds a temporary marker to the map whenever it is clicked on
@@ -28,6 +31,7 @@ class ChapMap {
   setMapEvents() {
     this.googleMap.addListener('click', (e) => {
       var coords = e.latLng;
+      this.myInfoWindow.close();
       this.tempMarker.setTempMarker(coords);
       this.googleMap.panTo(coords);
     });
@@ -38,22 +42,26 @@ class ChapMap {
         center: { lat: -34.397, lng: 150.644 },
         zoom: 8
       });
+    this.permMarkers = new Set();
     this.tempMarker = new TempMarker();
+    this.myInfoWindow = new MarkerInfoWindow();
     this.setMapEvents();
   }
 
   /**
    * @param {PermMarker} marker permanent marker to be deleted
    */
-  deletePermMarker(marker) {
-    this.permMarkers.delete(marker);
+  deletePermMarker(myMarker) {
+    this.myInfoWindow.close();
+    myMarker.remove();
+    this.permMarkers.delete(myMarker);
   }
 
   /**
    * @param {PermMarker} marker permanent marker to be deleted
    */
-  addPermMarker(marker) {
-    this.permMarkers.add(marker);
+  addPermMarker(myMarker) {
+    this.permMarkers.add(myMarker);
   }
 
   /**
@@ -61,5 +69,9 @@ class ChapMap {
    */
   removeTempMarker() {
     this.tempMarker.remove();
+  }
+
+  openInfoWindow(myMarker) {
+    this.myInfoWindow.open(myMarker);
   }
 }

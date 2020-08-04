@@ -17,9 +17,6 @@ class PermMarker {
   /** The google.maps.Marker object visible on the map*/
   googleMarker;
 
-  /** Information window associated with this marker */
-  myInfoWindow;
-
   /**
    * @param {google.maps.LatLng} coords the coordinates for the marker
    */
@@ -29,30 +26,23 @@ class PermMarker {
         position: coords,
         map: myMap.googleMap
       });
-    this.myInfoWindow = new MarkerInfoWindow(this);
     this.setMarkerListeners();
-    this.myInfoWindow.open();
+    myMap.openInfoWindow(this);
   }
 
   /**
    * Sets marker-triggered events
    */
   setMarkerListeners() {
-    this.googleMarker.addListener('dblclick', () => {
-      this.remove();
-      myMap.removeTempMarker();
-    });
     this.googleMarker.addListener('click', () => {
-      this.myInfoWindow.open();
-    });;
+      myMap.openInfoWindow(this);
+    });
   }
 
   /**
    * Removes the marker from the map
    */
   remove() {
-    myMap.deletePermMarker(this);
-    this.myInfoWindow.close();
     this.googleMarker.setMap(null);
   }
 }

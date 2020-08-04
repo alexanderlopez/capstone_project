@@ -12,19 +12,30 @@
   margin-right: 1em;
 }
 
-.markerDelete {
+.rightColumn {
+  float: left;
+  width: calc(100% - 4em);
+}
+
+#markerDelete {
   height: 1.5em;
   width: 2em;
-  margin: 2em 0 2em 0;
+  margin: 2em 0 2em 0 !important;
   background-image: url("icons/delete.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+  border: 0;
+  padding: 0;
+  background-color: white;
 }
 
-.rightColumn {
-  float: left;
-  width: calc(100% - 3em);
+#markerDelete:hover {
+  cursor: pointer;
+}
+
+#markerDelete:focus {
+  outline: 0;
 }
 
 .markerTitle {

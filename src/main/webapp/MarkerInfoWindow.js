@@ -19,7 +19,7 @@ class MarkerInfoWindow {
     static DEFAULT_BODY = "Body";
     static TITLE_CLASS = "markerTitle";
     static BODY_CLASS = "markerBody";
-    static DELETE_CLASS = "markerDelete";
+    static DELETE_ID = "markerDelete";
     static CONTENT_WRAPPER = "contentWrapper";
     static LEFT_COLUMN = "leftColumn";
     static RIGHT_COLUMN = "rightColumn";
@@ -48,9 +48,8 @@ class MarkerInfoWindow {
 
     /** Returns the delete button for this marker */
     makeDeleteButton() {//TODO: Finish delete button.
-      let btn = document.createElement("div");
-      btn.setAttribute("role", "button");
-      btn.classList.add(MarkerInfoWindow.DELETE_CLASS);
+      let btn = document.createElement("button");
+      btn.id = "markerDelete";
       return btn;
     }
 
@@ -80,25 +79,32 @@ class MarkerInfoWindow {
       return contentWrapper.outerHTML;
     }
 
-    /** Displays the info window on the map */
-    open() {
-      this.googleInfoWindow.open(myMap.googleMap, this.myMarker.googleMarker);
-    }
-
     /** Closes the displayed info window */
     close() {
       this.googleInfoWindow.close();
+      this.googleInfoWindow.setContent(null);
+    }
+
+    /** Sets the click event on the delete button*/
+    setEvents(myMarker) {
+      let btn = document.getElementById("markerDelete");
+      btn.onclick = () => myMap.deletePermMarker(myMarker);
+    }
+
+    /** Displays the info window on the map */
+    open(myMarker) {
+      this.close();
+      this.googleInfoWindow.setContent(this.makeContent());
+      this.googleInfoWindow.addListener('domready', () => {
+        this.setEvents(myMarker);
+      });
+      this.googleInfoWindow.open(myMap.googleMap, myMarker.googleMarker);
     }
 
     /**
      * @param {PermMarker} marker marker associated with this info window
      */
-    constructor(myMarker) {
-      this.myMarker = myMarker;
-      // myMarker must be initialized before makeContent() is called
-      let myContent = this.makeContent();
-      this.googleInfoWindow = new google.maps.InfoWindow({
-        content: myContent
-      });
+    constructor() {
+      this.googleInfoWindow = new google.maps.InfoWindow();
     }
 }
