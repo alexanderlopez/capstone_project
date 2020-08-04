@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Room</title>
+        <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
+
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
+
+        <script>
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
+                authDomain: "chap-2020-capstone.firebaseapp.com",
+                databaseURL: "https://chap-2020-capstone.firebaseio.com",
+                projectId: "chap-2020-capstone",
+                storageBucket: "chap-2020-capstone.appspot.com",
+                messagingSenderId: "155287718044",
+                appId: "1:155287718044:web:e7daa339ab8dffe2c98559"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log("Still here");
+                }
+                else {
+                    console.log("logged out");
+                }
+            });
+
+            var webSocket;
+
+            function verifyAuth() {
+                firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                    // Send token to your backend via HTTPS
+                    // ...
+                    console.log(idToken);
+                }).catch(function(error) {
+                    // Handle error
+                });
+            }
+
+            function connectSocket() {
+                firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                    // Send token to your backend via HTTPS
+                    // ...
+
+                    var socketProtocol;
+
+                    if (location.protocol == 'https:') {
+                        socketProtocol = 'wss:';
+                    }
+                    else {
+                        socketProtocol = 'ws:';
+                    }
+
+                    webSocket = new WebSocket(
+                        socketProtocol + "//" + location.host
+                         + "/chat/1234goroom?idToken=" + idToken);
+
+                    webSocket.onopen = function (event) {
+                        console.log(webSocket.readyState);
+                    };
+                }).catch(function(error) {
+                    // Handle error
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="verifyAuth()">Test Auth</button>
+        <button onclick="connectSocket()">Connect WebSocket</button>
+    </body>
+</html>
