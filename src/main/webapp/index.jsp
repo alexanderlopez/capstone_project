@@ -43,9 +43,12 @@
             </tr>
         </table>
         <div id="firebaseui-auth-container"></div>
-        <div id="loader">Loading...</div> 
-        <div id="demo"  onload="loadDoc()">X</div>
-         <div id="firebaseui-auth-container"></div> 
+        
+        <div id="loader">Loading...</div>
+
+        <button id="send-auth" onclick="sendAuth()">SendAuth</button>
+        <button id="sign-out" onclick="logOut()">Sign Out</button>
+
     </body>
 </html>
 
