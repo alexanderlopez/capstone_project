@@ -13,10 +13,6 @@ import java.io.IOException;
 public class AuthServlet extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    }
-
-    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String tokenId = request.getReader().readLine();
 
