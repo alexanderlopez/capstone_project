@@ -23,18 +23,20 @@ class MarkerInfoWindow {
     static CONTENT_WRAPPER = "contentWrapper";
     static LEFT_COLUMN = "leftColumn";
     static RIGHT_COLUMN = "rightColumn";
+    static TITLE_INPUT = "titleInput";
+    static BODY_INPUT = "bodyInput";
+    static SUBMIT_BTN = "mySubmitBtn";
 
     /** google.maps.InfoWindow displayed on the page */
     googleInfoWindow;
 
-    /** PermMarker object associated with this info window */
     myMarker;
 
     /** Returns the html of the DOM element for the title of the info window */
     makeTitle() {
       let title = document.createElement("h1");
       title.classList.add(MarkerInfoWindow.TITLE_CLASS);
-      title.innerHTML = MarkerInfoWindow.DEFAULT_TITLE;
+      title.innerHTML = this.myMarker.title;
       return title;
     }
 
@@ -42,14 +44,14 @@ class MarkerInfoWindow {
     makeBody() {
       let body  = document.createElement("p");
       body.classList.add(MarkerInfoWindow.BODY_CLASS);
-      body.innerHTML = MarkerInfoWindow.DEFAULT_BODY;
+      body.innerHTML = this.myMarker.body;
       return body;
     }
 
     /** Returns the delete button for this marker */
     makeDeleteButton() {//TODO: Finish delete button.
       let btn = document.createElement("button");
-      btn.id = "markerDelete";
+      btn.id = MarkerInfoWindow.DELETE_ID;
       return btn;
     }
 
@@ -61,22 +63,69 @@ class MarkerInfoWindow {
       return leftCol;
     }
 
-    /** Puts together the title and body of the info window */
+    /** Passes the form input to the marker and refreshes the info window*/
+    updateContent() {
+      let inputTitle = document.getElementById(MarkerInfoWindow.TITLE_INPUT);
+      let inputBody = document.getElementById(MarkerInfoWindow.BODY_INPUT);
+
+      if (inputTitle  && inputBody) {
+          this.myMarker.setContent(inputTitle.value, inputBody.value);
+
+          inputTitle.value = "";
+          inputBody.value = "";
+      }
+      this.open(this.myMarker);
+    }
+
+    /** Builds the HTML for the input form for the marker description*/
+    makeContentForm() {
+      let form = document.createElement("div");
+
+      let titleInput = document.createElement("input");
+      titleInput.type = "text";
+      titleInput.id = MarkerInfoWindow.TITLE_INPUT;
+      titleInput.placeholder = MarkerInfoWindow.DEFAULT_TITLE;
+
+      let bodyInput = document.createElement("textarea");
+      bodyInput.id = MarkerInfoWindow.BODY_INPUT;
+      bodyInput.placeholder = MarkerInfoWindow.DEFAULT_BODY;
+
+      let submitBtn = document.createElement("button");
+      submitBtn.id = MarkerInfoWindow.SUBMIT_BTN;
+      submitBtn.innerHTML = "Enter";
+
+      form.appendChild(titleInput);
+      form.appendChild(bodyInput);
+      form.appendChild(submitBtn);
+      return form;
+    }
+
+    /**
+     * Puts together the title and body of the info window
+     */
     makeRightColumn() {
       let rightCol = document.createElement("div");
       rightCol.classList.add(MarkerInfoWindow.RIGHT_COLUMN);
-      rightCol.appendChild(this.makeTitle());
-      rightCol.appendChild(this.makeBody());
+      if (this.myMarker.isNew()) {
+        rightCol.appendChild(this.makeContentForm());
+      } else {
+        rightCol.appendChild(this.makeTitle());
+        rightCol.appendChild(this.makeBody());
+      }
       return rightCol;
     }
 
-    /** Returns the html string to be displayed in this info window */
+    /**
+     * Returns the html string to be displayed in this info window
+     */
     makeContent() {
       let contentWrapper = document.createElement("div");
       contentWrapper.classList.add(MarkerInfoWindow.CONTENT_WRAPPER);
       contentWrapper.appendChild(this.makeLeftColumn());
       contentWrapper.appendChild(this.makeRightColumn());
-      return contentWrapper.outerHTML;
+      let result = contentWrapper.outerHTML;
+      contentWrapper.remove();
+      return result;
     }
 
     /** Closes the displayed info window */
@@ -86,19 +135,25 @@ class MarkerInfoWindow {
     }
 
     /** Sets the click event on the delete button*/
-    setEvents(myMarker) {
-      let btn = document.getElementById("markerDelete");
-      btn.onclick = () => myMap.deletePermMarker(myMarker);
+    setEvents() {
+      let btn = document.getElementById(MarkerInfoWindow.DELETE_ID);
+      btn.onclick = () => myMap.deletePermMarker();
+
+      let submitBtn = document.getElementById(MarkerInfoWindow.SUBMIT_BTN);
+      if (submitBtn) {
+        submitBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          this.updateContent();
+        });
+      }
     }
 
     /** Displays the info window on the map */
     open(myMarker) {
       this.close();
+      this.myMarker = myMarker;
       this.googleInfoWindow.setContent(this.makeContent());
-      this.googleInfoWindow.addListener('domready', () => {
-        this.setEvents(myMarker);
-      });
-      this.googleInfoWindow.open(myMap.googleMap, myMarker.googleMarker);
+      this.googleInfoWindow.open(myMap.googleMap, this.myMarker.googleMarker);
     }
 
     /**
@@ -106,5 +161,8 @@ class MarkerInfoWindow {
      */
     constructor() {
       this.googleInfoWindow = new google.maps.InfoWindow();
+      this.googleInfoWindow.addListener('domready', () => {
+        this.setEvents();
+      });
     }
 }

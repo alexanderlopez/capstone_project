@@ -71,6 +71,7 @@ class ChapMap {
     this.tempMarker.remove();
   }
 
+  /** Opens the map's information window at the given marker*/
   openInfoWindow(myMarker) {
     this.myInfoWindow.open(myMarker);
   }
