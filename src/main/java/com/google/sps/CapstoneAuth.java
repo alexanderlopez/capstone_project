@@ -99,8 +99,6 @@ public final class CapstoneAuth {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
 
-
-
             Entity roomEntity = currentInstance.datastoreService.get(
                 KeyFactory.createKey("CHAT_ROOM",chatRoom));
 

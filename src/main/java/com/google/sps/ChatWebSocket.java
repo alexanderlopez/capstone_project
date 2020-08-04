@@ -2,6 +2,7 @@ package com.google.sps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.nio.ByteBuffer;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -9,6 +10,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.CloseReason;
+import javax.websocket.PongMessage;
 
 import javax.websocket.server.ServerEndpoint;
 
@@ -57,13 +59,26 @@ public class ChatWebSocket {
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) throws IOException {
-        // Handle new messages
+    public void textMessage(Session session, String msg) {
+        System.out.println("Text message: " + msg);
+    }
+    @OnMessage
+    public void binaryMessage(Session session, ByteBuffer msg) {
+        System.out.println("Binary message: " + msg.toString());
+    }
+    @OnMessage
+    public void pongMessage(Session session, PongMessage msg) {
+        System.out.println("Pong message: " +
+            msg.getApplicationData().toString());
     }
 
     @OnClose
     public void onClose(Session session) throws IOException {
         // WebSocket connection closes
+
+        System.out.println("Socket " + session.getId() + " closed. " +
+            "Was authenticated: " + isAuthenticated);
+
         if (!isAuthenticated) {
             return;
         }
