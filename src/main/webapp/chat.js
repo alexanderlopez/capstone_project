@@ -74,6 +74,7 @@ function closeForm() {
 
 
 function getServerUrl() {
+    
     var defaultChatRoomID = "1234goroom";
 
     if (location.protocol !== 'https:' && location.hostname != 'localhost:8080') {
