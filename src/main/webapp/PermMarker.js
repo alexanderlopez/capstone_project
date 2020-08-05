@@ -15,59 +15,87 @@
 class PermMarker {
 
   /** The google.maps.Marker object visible on the map*/
-  googleMarker;
+  googleMarker_;
 
   /** Displayed title of this marker */
-  title;
+  title_;
 
   /** Displayed description of this marker */
-  body;
+  body_;
 
   /** This marker is being edited*/
-  editing;
+  editing_;
 
   /**
    * @param {google.maps.LatLng} coords the coordinates for the marker
    */
   constructor(coords) {
-    this.googleMarker = new google.maps.Marker(
+    this.googleMarker_ = new google.maps.Marker(
       {
         position: coords,
-        map: myMap.googleMap
+        map: myMap.getGoogleMap()
       });
-    this.editing = true;
-    this.setMarkerListeners();
+    this.editing_ = true;
+    this.setMarkerListeners_();
     myMap.openInfoWindow(this);
   }
 
   /**
+   * @Private
    * Sets marker-triggered events
    */
-  setMarkerListeners() {
-    this.googleMarker.addListener('click', () => {
+  setMarkerListeners_() {
+    this.googleMarker_.addListener('click', () => {
       myMap.openInfoWindow(this);
     });
   }
 
-  /**
-   * Removes the marker from the map
-   */
+  /** Removes the marker from the map */
   remove() {
-    this.googleMarker.setMap(null);
+    this.googleMarker_.setMap(null);
   }
 
-  /** Returns whether this marker already has infowindow content*/
+  /** Returns whether this marker already has infowindow content */
   isEditing() {
-    return (!this.title && !this.body) || this.editing;
+    return this.editing_;
+  }
+
+  /** Sets the editing property to the given value */
+  setEditing(editing) {
+    if (!editing && !this.title_ && !this.body_) {
+      throw "this marker has to be edited";
+    }
+    this.editing_ = editing;
   }
 
   /**
-   * Sets the title and body of this marker to the given values
+   * Sets the title this marker to the given value
    * @param {String} title the title of this marker
+   */
+  setTitle(title) {
+    this.title_ = title;
+  }
+
+  /** Returns the title describing this marker */
+  getTitle() {
+    return this.title_;
+  }
+
+  /**
+   * Sets the body property of this marker to the given value
    * @param {String} body the body of this marker
    */
-  setContent(title, body) {
-    this.title = title;
-    this.body = body;
+  setBody(body) {
+    this.body_ = body;
+  }
+
+  /** Returns the body describing this marker */
+  getBody() {
+    return this.body_;
+  }
+
+  /** Returns the google.maps.Marker from this marker */
+  getGoogleMarker() {
+    return this.googleMarker_;
   }
 }

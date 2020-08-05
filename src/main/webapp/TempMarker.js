@@ -16,15 +16,15 @@
 class TempMarker {
 
   /** google.maps.Marker object acting as the temporary marker */
-  googleTempMarker;
+  googleTempMarker_;
 
   constructor() {
-    this.googleTempMarker = new google.maps.Marker(
+    this.googleTempMarker_ = new google.maps.Marker(
       {
         label: "+"
       });
-    this.googleTempMarker.setDraggable(true);
-    this.setListeners();
+    this.googleTempMarker_.setDraggable(true);
+    this.setListeners_();
   }
 
   /**
@@ -32,36 +32,38 @@ class TempMarker {
    * @param {google.maps.LatLng} coords coordinates where to make the marker
    */
   setTempMarker(coords) {
-    let marker = this.googleTempMarker;
+    let marker = this.googleTempMarker_;
     marker.setPosition(coords);
     if (!marker.getMap()) {
-      marker.setMap(myMap.googleMap);
+      marker.setMap(myMap.getGoogleMap());
     }
   }
 
   /**
+   * @Private
    * Sets click and drag events to the marker
    */
-  setListeners() {
+  setListeners_() {
     // clicking on a temp marker deletes it from the map
-    this.googleTempMarker.addListener("click", () => {
-      let coords = this.googleTempMarker.getPosition()
+    this.googleTempMarker_.addListener("click", () => {
+      let coords = this.googleTempMarker_.getPosition()
       let marker = new PermMarker(coords);
       myMap.addPermMarker(marker);
-      this.remove();
+      this.remove_();
     });
 
-    this.googleTempMarker.addListener('dragend', () => {
-      myMap.googleMap.panTo(this.googleTempMarker.getPosition());
+    this.googleTempMarker_.addListener('dragend', () => {
+      myMap.panTo(this.googleTempMarker_.getPosition());
     });
   }
 
   /**
+   * @Private
    * Removes the temp marker from the map.
    */
-  remove() {
-    if (this.googleTempMarker.getMap()) {
-      this.googleTempMarker.setMap(null)
+  remove_() {
+    if (this.googleTempMarker_.getMap()) {
+      this.googleTempMarker_.setMap(null)
     }
   }
 }
