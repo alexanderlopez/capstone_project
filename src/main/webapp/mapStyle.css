@@ -65,3 +65,59 @@
   height: 6em;
   width: 100%;
 }
+
+.btnWrapper {
+  position: absolute;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+#viewBtnWrapper {
+  bottom: 270px;
+}
+
+#addMarkerBtnWrapper {
+  bottom: 210px;
+}
+
+.btnIcon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 30px;
+  width: 30px;
+  border: none;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.btnIcon:focus, .btnIcon:hover {
+  outline: 0;
+}
+
+.selected .btnIcon {
+  top: 2px;
+  left: 2px;
+  height: 36px;
+  width: 36px;
+}
+
+.selected {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 7px 7px -1px;
+}
+
+#addMarkerBtn {
+  background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png);
+}
+
+#viewBtn {
+  background-image: url(icons/pointer.png);
+}
