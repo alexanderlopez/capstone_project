@@ -152,7 +152,7 @@ class MarkerInfoWindow {
       this.googleInfoWindow.setContent(null);
     }
 
-    /** Sets the click event on the delete button*/
+    /** Sets the click event for the information window buttons*/
     setEvents() {
       let deleteBtn = document.getElementById(MarkerInfoWindow.DELETE_ID);
       deleteBtn.onclick = () => myMap.deletePermMarker(this.myMarker);
