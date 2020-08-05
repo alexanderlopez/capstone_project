@@ -32,6 +32,14 @@ public class WebSocketHandler {
         chatRoomMap.get(roomId).add(session);
     }
 
+    public List<Session> getRoomList(String roomId) {
+        if (chatRoomMap.containsKey(roomId)) {
+            return List.copyOf(chatRoomMap.get(roomId));
+        }
+
+        return null;
+    }
+
     public synchronized void removeSession(String roomId, Session session) {
         List<Session> roomList = chatRoomMap.get(roomId);
 

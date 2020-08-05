@@ -28,7 +28,8 @@ public final class CapstoneAuth {
                 "/chap-2020-capstone-firebase-adminsdk-93l38-698b686069.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(credentialInputStream))
+                .setCredentials(
+                    GoogleCredentials.fromStream(credentialInputStream))
                 .setDatabaseUrl("https://chap-2020-capstone.firebaseio.com/")
                 .build();
 
@@ -71,13 +72,31 @@ public final class CapstoneAuth {
         }
     }
 
+    public static String getUserId(String idToken) {
+        if (currentInstance == null) {
+            currentInstance = new CapstoneAuth();
+        }
+
+        try {
+            FirebaseToken decodedToken =
+                FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            return decodedToken.getUid();
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static boolean isUserAuthenticated(String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
         }
 
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken decodedToken =
+                FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
 
             currentInstance.addUserToTestChatroom(uid);
@@ -96,7 +115,8 @@ public final class CapstoneAuth {
         }
 
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            FirebaseToken decodedToken =
+                FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
 
             Entity roomEntity = currentInstance.datastoreService.get(

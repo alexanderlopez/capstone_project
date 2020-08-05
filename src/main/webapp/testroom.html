@@ -67,14 +67,39 @@
                     webSocket.onopen = function (event) {
                         console.log(webSocket.readyState);
                     };
+
+                    webSocket.onmessage = function (msgEvent) {
+                        var messageJson = JSON.parse(msgEvent.data);
+                        document.getElementById("message_area").value
+                            += messageJson.uid + ": "
+                                + messageJson.message + '\n';
+                    };
                 }).catch(function(error) {
                     // Handle error
                 });
+            }
+
+            function sendMessage() {
+                var textArea = document.getElementById("type_area");
+                var message = textArea.value;
+                textArea.value = "";
+
+                var messageData = {
+                    "type" : "MSG_SEND",
+                    "message" : message
+                };
+
+                if (webSocket) {
+                    webSocket.send(JSON.stringify(messageData));
+                }
             }
         </script>
     </head>
     <body>
         <button onclick="verifyAuth()">Test Auth</button>
         <button onclick="connectSocket()">Connect WebSocket</button>
+        <textarea id="type_area" placeholder="Message"></textarea>
+        <textarea disabled id="message_area" placeholder="Messages"></textarea>
+        <button onclick="sendMessage()">Send Message</button>
     </body>
 </html>
