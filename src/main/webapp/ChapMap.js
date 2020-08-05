@@ -14,52 +14,84 @@
 
 class ChapMap {
   /** The google.maps.Map that will be displayed on the page. */
-  googleMap;
+  googleMap_;
 
   /** The temporary marker visible on this map */
-  tempMarker;
+  tempMarker_;
+
+  /** The info window used for all markers*/
+  myInfoWindow_;
 
   /** all permanent markers on the page */
-  permMarkers = new Set();
+  permMarkers_;
 
   /**
+   * @Private
    * Adds a temporary marker to the map whenever it is clicked on
    */
-  setMapEvents() {
-    this.googleMap.addListener('click', (e) => {
+  setMapEvents_() {
+    this.googleMap_.addListener('click', (e) => {
       var coords = e.latLng;
-      this.tempMarker.setTempMarker(coords);
-      this.googleMap.panTo(coords);
+      this.myInfoWindow_.close();
+      this.tempMarker_.setTempMarker(coords);
+      this.googleMap_.panTo(coords);
     });
   }
 
   constructor() {
-    this.googleMap = new google.maps.Map(document.getElementById("map"), {
+    this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -34.397, lng: 150.644 },
         zoom: 8
       });
-    this.tempMarker = new TempMarker();
-    this.setMapEvents();
+
+    this.myInfoWindow_ = new MarkerInfoWindow();
+    this.permMarkers_ = new Set();
+    this.tempMarker_ = new TempMarker();
+
+    this.setMapEvents_();
   }
 
   /**
-   * @param {PermMarker} marker permanent marker to be deleted
+   * Pans the map to the given coordinates
+   * @param {google.map.LatLng} coords where to pan the map to
    */
-  deletePermMarker(marker) {
-    this.permMarkers.delete(marker);
+  panTo(coords) {
+    this.googleMap_.panTo(coords);
   }
 
   /**
-   * @param {PermMarker} marker permanent marker to be deleted
+   * @param {PermMarker} myMarker permanent marker to be deleted
    */
-  addPermMarker(marker) {
-    this.permMarkers.add(marker);
+  deletePermMarker(myMarker) {
+    this.myInfoWindow_.close();
+    myMarker.remove();
+    this.permMarkers_.delete(myMarker);
   }
 
   /**
-   *  Removes the  temporary marker from the map
+   * Adds the given marker to the list of permanent markers on the map
+   * @param {PermMarker} myMarker permanent marker to be deleted
    */
+  addPermMarker(myMarker) {
+    this.permMarkers_.add(myMarker);
+  }
+
+  /** Removes the  temporary marker from the map */
   removeTempMarker() {
-    this.tempMarker.remove();
+    this.tempMarker_.remove();
+  }
+
+  /**
+   * Opens the map's information window at the given marker
+   * @param {PermMarker} myMarker permanent marker whose content should be
+   * visible
+   */
+  openInfoWindow(myMarker) {
+    this.myInfoWindow_.open(myMarker);
+  }
+
+  /** Returns the google.maps.Map visible on the page */
+  getGoogleMap() {
+    return this.googleMap_;
   }
 }

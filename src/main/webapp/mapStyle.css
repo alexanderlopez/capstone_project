@@ -2,3 +2,66 @@
   height: 1000px;
   width: 1000px;
 }
+
+.contentWrapper {
+  width: 20em;
+}
+
+.leftColumn {
+  float: left;
+  width: 2em;
+  margin-right: 1em;
+}
+
+.rightColumn {
+  float: left;
+  width: calc(100% - 4em);
+}
+
+#markerDelete, #markerEdit {
+  height: 1.5em;
+  width: 2em;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  padding: 0;
+  background-color: white;
+}
+
+#markerDelete {
+  background-image: url("icons/delete.png");
+  margin: 1.5em 0 .5em 0 !important;
+}
+
+#markerEdit {
+  background-image: url("icons/edit.png");
+  margin: .5em 0 1.5em 0 !important;
+}
+
+#markerDelete:hover, #markerEdit:hover {
+  cursor: pointer;
+}
+
+#markerDelete:focus, #markerEdit:focus {
+  outline: 0;
+}
+
+.markerTitle {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 0;
+}
+
+#titleInput {
+  width: 60%;
+  margin-bottom: 5px;
+  height: 1.25em;
+  resize: none;
+}
+
+#bodyInput {
+  resize: none;
+  height: 6em;
+  width: 100%;
+}
