@@ -17,6 +17,15 @@ class PermMarker {
   /** The google.maps.Marker object visible on the map*/
   googleMarker;
 
+  /** Displayed title of this marker */
+  title;
+
+  /** Displayed description of this marker */
+  body;
+
+  /** This marker is being edited*/
+  editing;
+
   /**
    * @param {google.maps.LatLng} coords the coordinates for the marker
    */
@@ -26,6 +35,7 @@ class PermMarker {
         position: coords,
         map: myMap.googleMap
       });
+    this.editing = true;
     this.setMarkerListeners();
     myMap.openInfoWindow(this);
   }
@@ -44,5 +54,20 @@ class PermMarker {
    */
   remove() {
     this.googleMarker.setMap(null);
+  }
+
+  /** Returns whether this marker already has infowindow content*/
+  isEditing() {
+    return (!this.title && !this.body) || this.editing;
+  }
+
+  /**
+   * Sets the title and body of this marker to the given values
+   * @param {String} title the title of this marker
+   * @param {String} body the body of this marker
+   */
+  setContent(title, body) {
+    this.title = title;
+    this.body = body;
   }
 }

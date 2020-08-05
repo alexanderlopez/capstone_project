@@ -9,7 +9,9 @@
 
 .leftColumn {
   float: left;
+  width: 2em;
   margin-right: 1em;
+  height: 11em;
 }
 
 .rightColumn {
@@ -17,11 +19,9 @@
   width: calc(100% - 4em);
 }
 
-#markerDelete {
+#markerDelete, #markerEdit {
   height: 1.5em;
   width: 2em;
-  margin: 2em 0 2em 0 !important;
-  background-image: url("icons/delete.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -30,11 +30,21 @@
   background-color: white;
 }
 
-#markerDelete:hover {
+#markerDelete {
+  background-image: url("icons/delete.png");
+  margin: 1.5em 0 .5em 0 !important;
+}
+
+#markerEdit {
+  background-image: url("icons/edit.png");
+  margin: .5em 0 1.5em 0 !important;
+}
+
+#markerDelete:hover, #markerEdit:hover {
   cursor: pointer;
 }
 
-#markerDelete:focus {
+#markerDelete:focus, #markerEdit:focus {
   outline: 0;
 }
 
@@ -42,4 +52,17 @@
   font-size: 3em;
   font-weight: bold;
   margin: 0;
+}
+
+#titleInput {
+  width: 60%;
+  margin-bottom: 5px;
+  height: 1.25em;
+  resize: none;
+}
+
+#bodyInput {
+  resize: none;
+  height: 6em;
+  width: 100%;
 }
