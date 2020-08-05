@@ -25,8 +25,10 @@ class ChapMap {
   /** all permanent markers on the page */
   permMarkers_;
 
+  /** state determining whether the client can add markers or not */
   addingMarkers_;
 
+  /** the map's click listener for adding markers */
   mapClickListener_;
 
   /**
@@ -101,6 +103,7 @@ class ChapMap {
         viewBtn.classList.remove(SELECTED_CLASS);
         addMarkerBtn.classList.add(SELECTED_CLASS);
         this.addMapClickListener_();
+        this.removeTempMarker();
       }
     });
 
@@ -110,6 +113,7 @@ class ChapMap {
         viewBtn.classList.add(SELECTED_CLASS);
         addMarkerBtn.classList.remove(SELECTED_CLASS);
         this.removeMapClickListener_();
+        this.removeTempMarker();
       }
     });
   }

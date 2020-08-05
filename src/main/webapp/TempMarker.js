@@ -49,7 +49,7 @@ class TempMarker {
       let coords = this.googleTempMarker_.getPosition()
       let marker = new PermMarker(coords);
       myMap.addPermMarker(marker);
-      this.remove_();
+      this.remove();
     });
 
     this.googleTempMarker_.addListener('dragend', () => {
@@ -61,7 +61,7 @@ class TempMarker {
    * @Private
    * Removes the temp marker from the map.
    */
-  remove_() {
+  remove() {
     if (this.googleTempMarker_.getMap()) {
       this.googleTempMarker_.setMap(null)
     }
