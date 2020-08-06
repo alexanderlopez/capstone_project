@@ -28,28 +28,19 @@ class ChapMap {
   /** state determining whether the client can add markers or not */
   addingMarkers_;
 
-  /** the map's click listener for adding markers */
-  mapClickListener_;
-
   /**
    * @Private
    * Adds a click listener allowing clients to add markers to the map
    */
   addMapClickListener_() {
-    this.mapClickListener_ = this.googleMap_.addListener('click', (e) => {
-      var coords = e.latLng;
-      this.myInfoWindow_.close();
-      this.tempMarker_.setTempMarker(coords);
-      this.googleMap_.panTo(coords);
+    this.googleMap_.addListener('click', (e) => {
+      if (this.addingMarkers_) {
+        var coords = e.latLng;
+        this.myInfoWindow_.close();
+        this.tempMarker_.setTempMarker(coords);
+        this.googleMap_.panTo(coords);
+      }
     });
-  }
-
-  /**
-   * @Private
-   * Removes the click listener allowing clients to add markers from the map
-   */
-  removeMapClickListener_() {
-    google.maps.event.removeListener(this.mapClickListener_);
   }
 
   /**
@@ -102,7 +93,6 @@ class ChapMap {
         this.addingMarkers_ = true;
         viewBtn.classList.remove(SELECTED_CLASS);
         addMarkerBtn.classList.add(SELECTED_CLASS);
-        this.addMapClickListener_();
         this.removeTempMarker();
       }
     });
@@ -112,7 +102,6 @@ class ChapMap {
         this.addingMarkers_ = false;
         viewBtn.classList.add(SELECTED_CLASS);
         addMarkerBtn.classList.remove(SELECTED_CLASS);
-        this.removeMapClickListener_();
         this.removeTempMarker();
       }
     });
@@ -142,6 +131,7 @@ class ChapMap {
       });
 
     this.makeMapEditButtons_();
+    this.addMapClickListener_();
 
     this.myInfoWindow_ = new MarkerInfoWindow();
     this.permMarkers_ = new Set();

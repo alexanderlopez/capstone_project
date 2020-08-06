@@ -58,7 +58,6 @@ class TempMarker {
   }
 
   /**
-   * @Private
    * Removes the temp marker from the map.
    */
   remove() {
