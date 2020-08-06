@@ -28,8 +28,18 @@
         <title>Hello App Engine Flexible</title>
 
     </head>
-    <body onload="loadDoc()">
+    <body onload="loadChatHistory(); getServerUrl()">
         
+
+        <ul id="past-comments"></ul>
+
+        <ul id="chat"></ul>
+
+        <form>
+            <textarea rows="8" cols="80" id="message"></textarea>
+            <br>
+            <button type="submit">Send</button>
+        </form>
 
         <h1>Hello App Engine -- Flexible!!!</h1>
 
