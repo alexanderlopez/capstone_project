@@ -25,17 +25,103 @@ class ChapMap {
   /** all permanent markers on the page */
   permMarkers_;
 
+  /** state determining whether the client can add markers or not */
+  addingMarkers_;
+
   /**
    * @Private
-   * Adds a temporary marker to the map whenever it is clicked on
+   * Adds a click listener allowing clients to add markers to the map
    */
-  setMapEvents_() {
+  addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
-      var coords = e.latLng;
-      this.myInfoWindow_.close();
-      this.tempMarker_.setTempMarker(coords);
-      this.googleMap_.panTo(coords);
+      if (this.addingMarkers_) {
+        var coords = e.latLng;
+        this.myInfoWindow_.close();
+        this.tempMarker_.setTempMarker(coords);
+        this.googleMap_.panTo(coords);
+      }
     });
+  }
+
+  /**
+   * @Private
+   * Returns a button that will prevent clients from adding markers
+   */
+  makeViewBtn_() {
+    let viewBtnWrapper = document.createElement("div");
+    viewBtnWrapper.id = "viewBtnWrapper";
+    viewBtnWrapper.classList.add("btnWrapper");
+    viewBtnWrapper.classList.add("selected");
+
+    let viewBtn = document.createElement("button");
+    viewBtn.id = "viewBtn";
+    viewBtn.classList.add("btnIcon");
+
+    viewBtnWrapper.appendChild(viewBtn);
+
+    return viewBtnWrapper;
+  }
+
+  /**
+   * @Private
+   * Returns a button that will be used to allow clients to add markers
+   */
+  makeAddMarkerBtn_() {
+    let addMarkerBtnWrapper = document.createElement("div");
+    addMarkerBtnWrapper.id = "addMarkerBtnWrapper";
+    addMarkerBtnWrapper.classList.add("btnWrapper");
+
+    let addMarkerBtn = document.createElement("button");
+    addMarkerBtn.id = "addMarkerBtn";
+    addMarkerBtn.classList.add("btnIcon");
+
+    addMarkerBtnWrapper.appendChild(addMarkerBtn);
+
+    return addMarkerBtnWrapper;
+  }
+
+  /**
+   * @Private
+   * Adds click listeners to the map customization buttons.
+   * A client can only add markers when the "adding markers" mode is on
+   */
+  addBtnListeners_(viewBtn, addMarkerBtn) {
+    let SELECTED_CLASS = "selected";
+
+    addMarkerBtn.addEventListener('click', () => {
+      if (!this.addingMarkers_) {
+        this.addingMarkers_ = true;
+        viewBtn.classList.remove(SELECTED_CLASS);
+        addMarkerBtn.classList.add(SELECTED_CLASS);
+        this.removeTempMarker();
+      }
+    });
+
+    viewBtn.addEventListener('click', () => {
+      if (this.addingMarkers_) {
+        this.addingMarkers_ = false;
+        viewBtn.classList.add(SELECTED_CLASS);
+        addMarkerBtn.classList.remove(SELECTED_CLASS);
+        this.removeTempMarker();
+      }
+    });
+  }
+
+  /**
+   * @Private
+   * Creates map customization buttons and adds them to the map
+   */
+  makeMapEditButtons_() {
+    let map = document.getElementById("map");
+    let viewBtn = this.makeViewBtn_();
+    let addMarkerBtn = this.makeAddMarkerBtn_();
+
+    this.addBtnListeners_(viewBtn, addMarkerBtn);
+
+    map.appendChild(viewBtn);
+    map.appendChild(addMarkerBtn);
+
+    this.addingMarkers_ = false;
   }
 
   constructor() {
@@ -44,11 +130,12 @@ class ChapMap {
         zoom: 8
       });
 
+    this.makeMapEditButtons_();
+    this.addMapClickListener_();
+
     this.myInfoWindow_ = new MarkerInfoWindow();
     this.permMarkers_ = new Set();
-    this.tempMarker_ = new TempMarker();
-
-    this.setMapEvents_();
+    this.tempMarker_ = new TempMarker()
   }
 
   /**
