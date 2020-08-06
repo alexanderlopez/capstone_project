@@ -13,7 +13,9 @@
 // limitations under the License.
 
 /** map visible on the website */
+
 let myMap;
+var connection = new WebSocket(getServerlUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -29,4 +31,52 @@ Promise.all([mapPromise, domPromise]).then(() => {
 
 function initMap() {
   myMap = new ChapMap();
+}
+
+
+connection.onopen = () => {
+  console.log('connected');
+};
+
+connection.onclose = () => {
+  console.error('disconnected');
+};
+
+connection.onerror = (error) => {
+  console.error('failed to connect', error);
+};
+
+connection.onmessage = (event) => {
+  console.log('received', event.data);
+  let li = document.createElement('li');
+  
+  var obj = JSON.parse(event.data); 
+
+  if(obj.type !== 'MSG_RECV'){
+      // let Alice deal with it;
+      // obj is a JSON object
+  } else {
+      li.innerText = obj.uid + ": " + obj.message;
+      document.querySelector('#chat').append(li);
+  }  
+};
+
+function getServerUrl() {
+    
+    var defaultChatRoomID = "1234goroom";
+    var protoSpec;
+    var defaultIDToken = 12;
+
+    if (location.protocol !== 'https:' && location.hostname != 'localhost:8080') {
+        location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    } 
+
+    if(location.protocol === 'https:'){
+        protoSpec = 'wss:';
+    } else {
+        protoSpec = 'ws:';
+    }
+    console.log("this is auth: " + sendAuth());
+
+    return location.protocol + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }
