@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class PermMarker {
+/** Creates a permanent marker which clients can only view */
+class PermMarker extends MarkerTemplate{
 
-  /** The google.maps.Marker object visible on the map*/
-  googleMarker_;
+  /** Information window used for all permanent markers */
+  static permInfoWindow;
 
   /** Displayed title of this marker */
   title_;
@@ -23,49 +24,22 @@ class PermMarker {
   /** Displayed description of this marker */
   body_;
 
-  /** This marker is being edited*/
-  editing_;
-
   /**
    * @param {google.maps.LatLng} coords the coordinates for the marker
    */
   constructor(coords) {
-    this.googleMarker_ = new google.maps.Marker(
-      {
-        position: coords,
-        map: myMap.getGoogleMap()
-      });
-    this.editing_ = true;
-    this.setMarkerListeners_();
-    myMap.openInfoWindow(this);
+    super();
+    this.setPosition(coords);
   }
 
-  /**
-   * @Private
-   * Sets marker-triggered events
-   */
-  setMarkerListeners_() {
-    this.googleMarker_.addListener('click', () => {
-      myMap.openInfoWindow(this);
-    });
+  /** Opens the information window for this marker */
+  openInfoWindow() {
+    myMap.closeTempInfoWindow();
+    PermMarker.permInfoWindow.open(this);
   }
 
-  /** Removes the marker from the map */
-  remove() {
-    this.googleMarker_.setMap(null);
-  }
-
-  /** Returns whether this marker already has infowindow content */
-  isEditing() {
-    return this.editing_;
-  }
-
-  /** Sets the editing property to the given value */
-  setEditing(editing) {
-    if (!editing && !this.title_ && !this.body_) {
-      throw "this marker has to be edited";
-    }
-    this.editing_ = editing;
+  closeInfoWindow() {
+    PermMarker.permInfoWindow.close();
   }
 
   /**
@@ -94,8 +68,4 @@ class PermMarker {
     return this.body_;
   }
 
-  /** Returns the google.maps.Marker from this marker */
-  getGoogleMarker() {
-    return this.googleMarker_;
-  }
 }
