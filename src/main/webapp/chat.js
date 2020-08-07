@@ -15,17 +15,31 @@
 /**
  * Loads chat history and adds it to the index page
   */
-function loadChatHistory() { 
+function loadChatHistory() {
   // TODO(astepin): Fetch from history URL when it is created
-  
+
   let quote = "Test quote"
   document.getElementById('past-comments').innerText = quote;
 }
 
-function openForm() {
-  document.getElementById("myForm").style.display = "block";
+let chatOpen = false;
+
+function toggleChat() {
+  if (chatOpen) {
+    closeChat();
+  } else {
+    openChat();
+  }
 }
 
-function closeForm() {
-  document.getElementById("myForm").style.display = "none";
+function openChat() {
+  document.getElementById("myForm").classList.add("chatOpen");
+  document.getElementById("map").classList.remove("expanded");
+  chatOpen =  true;
+}
+
+function closeChat() {
+  document.getElementById("myForm").classList.remove("chatOpen");
+  document.getElementById("map").classList.add("expanded");
+  chatOpen = false;
 }
