@@ -15,7 +15,7 @@
 /** map visible on the website */
 
 let myMap;
-let connection = new WebSocket(getServerlUrl());
+let connection = new WebSocket(getServerUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -35,7 +35,7 @@ function initMap() {
 }
 
 function initChat() {
-  document.querySelector('form').addEventListener('submit', (event) => {
+  document.getElementById('submitBtn').addEventListener('click', (event) => {
       event.preventDefault();
       let message = document.querySelector('#message').value;
       connection.send(message);
@@ -95,5 +95,5 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + defaultIDToken;
 }

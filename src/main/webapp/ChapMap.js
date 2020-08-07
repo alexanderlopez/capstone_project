@@ -71,9 +71,10 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_(viewBtn, addMarkerBtn) {
+  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn) {
     addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
     viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
+    chatBtn.addEventListener('click', () => toggleChat());
   }
 
   /**
@@ -142,11 +143,13 @@ class ChapMap {
     let map = document.getElementById("map");
     let viewBtn = this.makeViewBtn_();
     let addMarkerBtn = this.makeAddMarkerBtn_();
+    let chatBtn = this.makeChatBtn_();
 
-    this.addBtnListeners_(viewBtn, addMarkerBtn);
+    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn);
 
     map.appendChild(viewBtn);
     map.appendChild(addMarkerBtn);
+    map.appendChild(chatBtn);
   }
 
   /**
@@ -184,6 +187,25 @@ class ChapMap {
     addMarkerBtnWrapper.appendChild(addMarkerBtn);
 
     return addMarkerBtnWrapper;
+  }
+
+
+  /**
+   * @Private
+   * Returns a button that will be used to toggle the chat
+   */
+  makeChatBtn_() {
+    let chatBtnWrapper = document.createElement("div");
+    chatBtnWrapper.id = "chatBtnWrapper";
+    chatBtnWrapper.classList.add("btnWrapper");
+
+    let btn = document.createElement("button");
+    btn.id = "chatButton";
+    btn.innerHTML = "Chat";
+
+    chatBtnWrapper.appendChild(btn);
+
+    return chatBtnWrapper;
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PERM MARKER HANDLERS
