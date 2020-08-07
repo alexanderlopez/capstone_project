@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Converts text to some completely different text.
+ * @param {string} arg1 An argument that makes this more interesting.
+ * @modifies {string} Some return value.
+  */
 function loadChatHistory() { 
   // TODO(astepin): Fetch from history URL when it is created
   
   let quote = "Test quote"
   document.getElementById('past-comments').innerText = quote;
 }
-
-document.querySelector('form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  let message = document.querySelector('#message').value;
-  connection.send(message);
-  document.querySelector('#message').value = '';
-});
-
 
 function openForm() {
   document.getElementById("myForm").style.display = "block";
