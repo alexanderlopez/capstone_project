@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Creates an information window for clients to create/customize markers */
 class TempInfoWindow extends InfoWindowTemplate {
 
   static TITLE_INPUT = "titleInput";
@@ -20,25 +21,27 @@ class TempInfoWindow extends InfoWindowTemplate {
   static DEFAULT_TITLE = "Title";
   static DEFAULT_BODY = "Body";
 
+  /**
+   * @param {TempMarker} tempmarker temp marker linked to this TempInfoWindow
+   */
   constructor(tempMarker) {
     super();
     this.myMarker_ = tempMarker;
     this.googleInfoWindow_.addListener('domready', () => {
-      this.setSubmitEvent_();
-    });
+        this.setSubmitEvent_();
+      });
   }
 
   /**
    * @Private
-   * Sets the click event for the info window and submit button*/
+   * Sets the click event for the info window and submit button
+   */
   setSubmitEvent_() {
     let submitBtn = document.getElementById(TempInfoWindow.SUBMIT_BTN);
-    if (submitBtn) {
-      submitBtn.addEventListener('click', (ev) => {
+    submitBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
         this.sendFormInfo();
       });
-    }
   }
 
   /** Sends form input to the temporary marker */
@@ -82,6 +85,7 @@ class TempInfoWindow extends InfoWindowTemplate {
   /**
    * @Private
    * Builds the HTML for the textarea to input the title for the marker
+   * @param {PermMarker} editedMarker perm marker that is being edited
    */
   makeTitleInput_(editedMarker) {
     let titleInput = document.createElement("textarea");
@@ -99,6 +103,7 @@ class TempInfoWindow extends InfoWindowTemplate {
   /**
    * @Private
    * Returns the HTML for the body input textarea for the marker
+   * @param {PermMarker} editedMarker perm marker that is being edited
    */
   makeBodyInput_(editedMarker) {
     let bodyInput = document.createElement("textarea");

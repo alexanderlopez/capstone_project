@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Creates a Google Map where clients can add/edit/removes custom markers */
 class ChapMap {
 
   static SELECTED_CLASS = "selected";
@@ -21,9 +22,6 @@ class ChapMap {
 
   /** The temporary marker visible on this map */
   tempMarker_;
-
-  /** The info window used for all markers */
-  myInfoWindow_;
 
   /** PermMarker currently being edited */
   editedPermMarker_;
@@ -40,7 +38,7 @@ class ChapMap {
     this.makeMapButtons_();
     this.addMapClickListener_();
 
-    this.myInfoWindow_ = new PermInfoWindow();
+    PermMarker.permInfoWindow = new PermInfoWindow();
     this.tempMarker_ = new TempMarker();
     this.addingMarkers_ = false;
     this.editedPermMarker_ = null;
@@ -57,7 +55,7 @@ class ChapMap {
       if (this.addingMarkers_) {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
-        this.closeInfoWindow();
+        this.closePermInfoWindow();
       }
     });
   }
@@ -185,28 +183,19 @@ class ChapMap {
 // PERM MARKER HANDLERS
 
   /**
-   * Removes a permanent marker from the map
-   * @param {PermMarker} myMarker permanent marker to be deleted
-   */
-  deletePermMarker(myMarker) {
-    this.myInfoWindow_.close();
-    myMarker.hide();
-  }
-
-  /**
    * Turns the permanent marker to a temporary marker with the same
    * details and prevents the client from creating a new temporary marker
    * @param {PermMarker} permMarker permanent marker to be edited
    */
   editPermMarker(permMarker) {
-    this.closeInfoWindow();
+    this.closePermInfoWindow();
     permMarker.hide();
 
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
 
     this.setTempMarker(permMarker.getPosition());
-    this.tempMarker_.openTempInfoWindow();
+    this.tempMarker_.openInfoWindow();
   }
 
   /**
@@ -232,7 +221,7 @@ class ChapMap {
       permMarker.setBody(body);
     }
 
-    this.openInfoWindow(permMarker);
+    permMarker.openInfoWindow();
     this.editedPermMarker_ = null;
   }
 
@@ -249,7 +238,7 @@ class ChapMap {
    * @param {google.maps.LatLng} coords coordinates where to show the marker
    */
   setTempMarker(coords) {
-    this.myInfoWindow_.close();
+    this.closePermInfoWindow();
     this.tempMarker_.setPosition(coords);
     this.googleMap_.panTo(coords);
   }
@@ -262,21 +251,16 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // INFO WINDOW HANDLERS
 
-  /**
-   * Opens the map's information window at the given marker
-   * @param {PermMarker} myMarker permanent marker whose content should be
-   * visible
-   */
-  openInfoWindow(myMarker) {
-    this.myInfoWindow_.open(myMarker);
+  /** Closes the map's information window */
+  closePermInfoWindow() {
+    PermMarker.permInfoWindow.close();
   }
 
-  /**
-   * Closes the map's information openWindow
-   */
-  closeInfoWindow() {
-    this.myInfoWindow_.close();
+  /** Closes the map's temporary window */
+  closeTempInfoWindow() {
+    this.tempMarker_.closeInfoWindow();
   }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // OTHER
 

@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Defines the basic functions that all infoWindows must have
+ * All classes that extend InfoWindowTemplate must implement:
+ *  - makeRightColumn_()
+ */
 class InfoWindowTemplate {
 
-  // classes and  default values for infoWindow components
   static DELETE_ID = "markerDelete";
   static EDIT_ID = "markerEdit";
   static CONTENT_WRAPPER = "contentWrapper";
@@ -25,14 +29,14 @@ class InfoWindowTemplate {
   myMarker_;
 
 
-  /** The google.maps.InfoWindow object visible on the map*/
+  /** The google.maps.InfoWindow object visible on the map */
   googleInfoWindow_;
 
   constructor() {
     this.googleInfoWindow_ = new google.maps.InfoWindow();
     this.googleInfoWindow_.addListener('domready', () => {
-      this.setDeleteEvent_();
-    });
+        this.setDeleteEvent_();
+      });
   }
 
   /** Closes the displayed info window */
@@ -55,7 +59,7 @@ class InfoWindowTemplate {
    */
   setDeleteEvent_() {
     let deleteBtn = document.getElementById(InfoWindowTemplate.DELETE_ID);
-    deleteBtn.onclick = () => myMap.deletePermMarker(this.myMarker_);
+    deleteBtn.onclick = () => this.myMarker_.hide();
   }
 
   /**
@@ -67,8 +71,10 @@ class InfoWindowTemplate {
     contentWrapper.classList.add(InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
+
     let result = contentWrapper.outerHTML;
     contentWrapper.remove();
+
     return result;
   }
 

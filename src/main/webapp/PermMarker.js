@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Creates a permanent marker which clients can only view */
 class PermMarker extends MarkerTemplate{
+
+  static permInfoWindow;
 
   /** Displayed title of this marker */
   title_;
@@ -25,17 +28,17 @@ class PermMarker extends MarkerTemplate{
    */
   constructor(coords) {
     super();
-    this.googleMarker_ = new google.maps.Marker(
-      {
-        position: coords,
-        map: myMap.getGoogleMap()
-      });
-    this.setMarkerListeners_();
+    this.setPosition(coords);
   }
 
   /** Opens the information window for this marker */
   openInfoWindow() {
-    myMap.openInfoWindow(this);
+    myMap.closeTempInfoWindow();
+    PermMarker.permInfoWindow.open(this);
+  }
+
+  closeInfoWindow() {
+    PermMarker.permInfoWindow.close();
   }
 
   /**
@@ -63,4 +66,5 @@ class PermMarker extends MarkerTemplate{
   getBody() {
     return this.body_;
   }
+
 }

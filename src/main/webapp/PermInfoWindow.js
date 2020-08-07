@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/** Creates an info window for clients to see a marker's description */
 class PermInfoWindow extends InfoWindowTemplate {
 
     static TITLE_CLASS = "markerTitle";
@@ -20,8 +21,8 @@ class PermInfoWindow extends InfoWindowTemplate {
     constructor() {
       super();
       this.googleInfoWindow_.addListener('domready', () => {
-        this.setEditEvent_();
-      });
+          this.setEditEvent_();
+        });
     }
 
     /** Sets edit button click event to edit this permanent marker */

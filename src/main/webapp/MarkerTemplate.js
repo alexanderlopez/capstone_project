@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Defines the basic functions that all markers must have
+ * All classes that extend MarkerTemplate must implement:
+ *  - openMyInfoWindow()
+ *  - closeMyInfoWindow()
+ */
 class MarkerTemplate {
 
   /** The google.maps.Marker object visible on the map */
   googleMarker_;
 
-  /** Returns the google.maps.Marker from this marker */
-  getGoogleMarker() {
-    return this.googleMarker_;
-  }
-
-  /** Removes the marker from the map */
-  hide() {
-    this.googleMarker_.setMap(null);
+  constructor() {
+    this.googleMarker_ = new google.maps.Marker();
+    this.setMarkerListeners_();
   }
 
   /**
@@ -35,6 +36,17 @@ class MarkerTemplate {
     this.googleMarker_.addListener('click', () => {
       this.openInfoWindow();
     });
+  }
+
+  /** Returns the google.maps.Marker from this marker */
+  getGoogleMarker() {
+    return this.googleMarker_;
+  }
+
+  /** Removes the marker from the map */
+  hide() {
+    this.closeInfoWindow();
+    this.googleMarker_.setMap(null);
   }
 
   /** Returns the coordinates of this marker */

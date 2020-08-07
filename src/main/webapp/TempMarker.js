@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Creates, displays, and modifies a map's temporary marker*/
+/** Creates moveable temporary marker */
 class TempMarker extends MarkerTemplate{
 
   /** TempInfoWindow linked to this marker */
@@ -20,28 +20,32 @@ class TempMarker extends MarkerTemplate{
 
   constructor() {
     super();
-    this.googleMarker_ = new google.maps.Marker(
-      {
-        label: "+"
-      });
+
+    this.googleMarker_.setLabel("+");
     this.googleMarker_.setDraggable(true);
+
     this.tempInfoWindow_ = new TempInfoWindow(this);
-    this.setListeners_();
+    this.setTempListeners_();
+  }
+
+  /** Opens the temporary information window for this temporary marker */
+  openInfoWindow() {
+    myMap.closePermInfoWindow()
+    this.tempInfoWindow_.open();
+  }
+
+  /** Closes the temporary information window for this temporary marker */
+  closeInfoWindow() {
+    this.tempInfoWindow_.close();
   }
 
   /**
    * @Private
    * Sets click and drag events to the marker
    */
-  setListeners_() {
-    // clicking on a temp marker opens its information window
-    this.googleMarker_.addListener("click", () => {
-      myMap.closeInfoWindow();
-      this.tempInfoWindow_.open();
-    });
-
+  setTempListeners_() {
     this.googleMarker_.addListener('dragend', () => {
-      myMap.panTo(this.googleMarker_.getPosition());
+      myMap.panTo(this.getPosition());
     });
   }
 
@@ -52,28 +56,5 @@ class TempMarker extends MarkerTemplate{
    */
   sendPermMarkerInfo(title, body) {
     myMap.setPermMarkerInfo(this.getPosition(), title, body);
-  }
-
-  /** Hides this temporary marker and info window from the map */
-  hide() {
-    super.hide();
-    this.googleMarker_.setPosition(null);
-    this.tempInfoWindow_.close();
-  }
-
-  /** Opens the temporary information window for this temporary marker */
-  openTempInfoWindow() {
-    this.tempInfoWindow_.open();
-  }
-
-  /** Closes the temporary information window for this temporary marker */
-  closeTempInfoWindow() {
-    this.tempInfoWindow_.close();
-  }
-
-  /** Changes this marker's coords and prevents the info window from opening */
-  setPosition(coords) {
-    super.setPosition(coords);
-    this.closeTempInfoWindow();
   }
 }
