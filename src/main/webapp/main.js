@@ -30,3 +30,6 @@ Promise.all([mapPromise, domPromise]).then(() => {
 function initMap() {
   myMap = new ChapMap();
 }
+
+//MAP_RECV -> given from websocket
+//MAP_DEL -> delete the marker

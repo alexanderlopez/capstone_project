@@ -35,6 +35,11 @@ class MarkerTemplate {
    */
   closeInfoWindow() {}
 
+  /**
+   * Deletes the marker from the map
+   * @abstract
+   */
+  remove() {}
 
   /**
    * @Private

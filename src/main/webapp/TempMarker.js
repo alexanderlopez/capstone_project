@@ -23,7 +23,6 @@ class TempMarker extends MarkerTemplate{
 
     this.googleMarker_.setLabel("+");
     this.googleMarker_.setDraggable(true);
-
     this.tempInfoWindow_ = new TempInfoWindow(this);
     this.setTempListeners_();
   }
@@ -37,6 +36,11 @@ class TempMarker extends MarkerTemplate{
   /** Closes the temporary information window for this temporary marker */
   closeInfoWindow() {
     this.tempInfoWindow_.close();
+  }
+
+  /** Hide but do not delete the marker */
+  remove() {
+    super.hide();
   }
 
   /**
@@ -54,7 +58,8 @@ class TempMarker extends MarkerTemplate{
   * @param {String} title new title of the marker
   * @param {String} body new body of the marker
    */
-  sendPermMarkerInfo(title, body) {
-    myMap.setPermMarkerInfo(this.getPosition(), title, body);
+  setPermMarkerInfo(title, body) {
+    myMap.sendPermMarkerInfo(this.getPosition(), title, body);
+    this.hide();
   }
 }
