@@ -16,6 +16,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.google.sps.WebSocketHandler;
 import com.google.sps.CapstoneAuth;
+import com.google.sps.DatastoreManager;
 
 import org.json.JSONObject;
 
@@ -72,7 +73,7 @@ public class ChatWebSocket {
                 chatMessage(session, messageJson);
                 break;
             case "MAP_SEND":
-
+                mapMessage(session, messageJson);
                 break;
             default:
                 System.out.println("Invalid message");
@@ -91,17 +92,32 @@ public class ChatWebSocket {
         echoData.put("type", "MSG_RECV");
         echoData.put("message", messageData.getString("message"));
         echoData.put("uid", uid);
-        String echoJson = echoData.toString();
+
+        DatastoreManager.getInstance().addMessage(chatRoom, echoData);
 
         for (Session participant : participants) {
-            participant.getBasicRemote().sendText(echoJson);
+            participant.getBasicRemote().sendText(echoData.toString());
         }
     }
 
-    private void mapMessage(Session session, JSONObject messageData) {
+    private void mapMessage(Session session, JSONObject messageData)
+            throws IOException {
         System.out.println("Map data: "
             + messageData.getString("lat")
             + messageData.getString("lng"));
+
+        DatastoreManager.getInstance().addMarker(chatRoom, new JSONObject(
+            messageData, new String[]{"title", "body", "lat", "lng"}));
+
+        JSONObject echoData = new JSONObject(messageData);
+        echoData.put("type", "MAP_RECV");
+
+        List<Session> participants =
+            WebSocketHandler.getInstance().getRoomList(chatRoom);
+
+        for (Session participant : participants) {
+            participant.getBasicRemote().sendText(echoData.toString());
+        }
     }
 
     @OnMessage
