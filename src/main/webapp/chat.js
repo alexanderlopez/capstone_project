@@ -13,9 +13,7 @@
 // limitations under the License.
 
 /**
- * Converts text to some completely different text.
- * @param {string} arg1 An argument that makes this more interesting.
- * @modifies {string} Some return value.
+ * Loads chat history and adds it to the index page
   */
 function loadChatHistory() { 
   // TODO(astepin): Fetch from history URL when it is created

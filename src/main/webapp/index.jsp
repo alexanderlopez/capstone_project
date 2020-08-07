@@ -48,7 +48,7 @@
                 <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
             </tr>
             <tr>
-                <td><a href='mapSelection.html'>The servlet</a></td>
+                <td><a href='chatroom.html'>The servlet</a></td>
             </tr>
         </table>
         <div id="firebaseui-auth-container"></div>
