@@ -50,7 +50,9 @@ class TempMarker extends MarkerTemplate{
   }
 
   /**
-   * Removes the temp marker from the map.
+  * Sends the marker given marker details to the map to update a PermMarker
+  * @param {String} title new title of the marker
+  * @param {String} body new body of the marker
    */
   sendPermMarkerInfo(title, body) {
     myMap.setPermMarkerInfo(this.getPosition(), title, body);
