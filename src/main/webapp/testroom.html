@@ -27,10 +27,12 @@
 
             firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
-                    console.log("Still here");
+                    document.getElementById("verify-button").disabled = false;
+                    document.getElementById("connect-button").disabled = false;
                 }
                 else {
-                    console.log("logged out");
+                    document.getElementById("verify-button").disabled = true;
+                    document.getElementById("connect-button").disabled = true;
                 }
             });
 
@@ -96,8 +98,8 @@
         </script>
     </head>
     <body>
-        <button onclick="verifyAuth()">Test Auth</button>
-        <button onclick="connectSocket()">Connect WebSocket</button>
+        <button id="verify-button" onclick="verifyAuth()">Test Auth</button>
+        <button id="connect-button" onclick="connectSocket()">Connect WebSocket</button>
         <textarea id="type_area" placeholder="Message"></textarea>
         <textarea disabled id="message_area" placeholder="Messages"></textarea>
         <button onclick="sendMessage()">Send Message</button>

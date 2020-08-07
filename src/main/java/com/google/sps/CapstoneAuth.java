@@ -10,17 +10,22 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuthException;
-// import com.google.appengine.api.datastore.DatastoreServiceFactory;
-// import com.google.appengine.api.datastore.DatastoreService;
-// import com.google.appengine.api.datastore.Entity;
-// import com.google.appengine.api.datastore.KeyFactory;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreOptions;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.ListValue;
+import com.google.cloud.datastore.StringValue;
+import com.google.cloud.datastore.Value;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
 public final class CapstoneAuth {
 
     private static CapstoneAuth currentInstance;
-    // private DatastoreService datastoreService;
+
+    private final Datastore datastore;
+    private final KeyFactory keyFactory;
 
     private CapstoneAuth() {
         try {
@@ -34,42 +39,55 @@ public final class CapstoneAuth {
                 .build();
 
             FirebaseApp.initializeApp(options);
-
-            // datastoreService = DatastoreServiceFactory.getDatastoreService();
-
-            addTestChatroom();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        datastore = DatastoreOptions.getDefaultInstance().getService();
+        keyFactory = datastore.newKeyFactory().setKind("CHAT_ROOM");
+
+        addTestChatroom();
     }
 
     // To remove method on deploy
     private void addTestChatroom() {
-        // Entity chatRoom = new Entity("CHAT_ROOM","1234goroom");
-        // datastoreService.put(chatRoom);
+        Entity chatRoom = Entity.newBuilder(keyFactory.newKey("1234goroom"))
+                                .build();
+        datastore.put(chatRoom);
     }
 
     // To remove method on deploy
     private void addUserToTestChatroom(String uid) {
-        // try {
-        //     Entity testRoom = datastoreService.get(
-        //         KeyFactory.createKey("CHAT_ROOM", "1234goroom"));
-        //
-        //     if (!testRoom.hasProperty("allowed_users")) {
-        //         testRoom.setProperty("allowed_users", Arrays.asList(uid));
-        //         datastoreService.put(testRoom);
-        //
-        //         return;
-        //     }
-        //
-        //     List<String> allowedUsers =
-        //         (List<String>) testRoom.getProperty("allowed_users");
-        //     allowedUsers.add(uid);
-        //     testRoom.setProperty("allowed_users", allowedUsers);
-        //     datastoreService.put(testRoom);
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
+        try {
+            Entity testRoom = datastore.get(keyFactory.newKey("1234goroom"));
+
+            if (!testRoom.getNames().contains("allowed_users")) {
+                testRoom = Entity.newBuilder(testRoom)
+                                 .set("allowed_users",
+                                    ListValue.of(Arrays.asList(
+                                        StringValue.of(uid))))
+                                 .build();
+
+                datastore.put(testRoom);
+                return;
+            }
+
+            List<Value<String>> allowedUsers =
+                testRoom.getList("allowed_users");
+
+            ListValue addAllowedUser = ListValue.newBuilder()
+                                                .set(allowedUsers)
+                                                .addValue(uid)
+                                                .build();
+
+            testRoom = Entity.newBuilder(testRoom)
+                             .set("allowed_users", addAllowedUser)
+                             .build();
+            datastore.put(testRoom);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getUserId(String idToken) {
@@ -114,22 +132,22 @@ public final class CapstoneAuth {
             currentInstance = new CapstoneAuth();
         }
 
-        // try {
-        //     FirebaseToken decodedToken =
-        //         FirebaseAuth.getInstance().verifyIdToken(idToken);
-        //     String uid = decodedToken.getUid();
-        //
-        //     Entity roomEntity = currentInstance.datastoreService.get(
-        //         KeyFactory.createKey("CHAT_ROOM",chatRoom));
-        //
-        //     List<String> allowedRoomUID =
-        //         (List<String>) roomEntity.getProperty("allowed_users");
-        //
-        //     return allowedRoomUID.contains(uid);
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
+        try {
+            FirebaseToken decodedToken =
+                FirebaseAuth.getInstance().verifyIdToken(idToken);
+            String uid = decodedToken.getUid();
 
-        return true;
+            Entity roomEntity = currentInstance.datastore.get(
+                currentInstance.keyFactory.newKey(chatRoom));
+
+            List<Value<String>> allowedRoomUID =
+                roomEntity.getList("allowed_users");
+
+            return allowedRoomUID.contains(StringValue.of(uid));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

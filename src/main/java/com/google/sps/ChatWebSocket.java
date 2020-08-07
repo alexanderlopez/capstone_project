@@ -87,18 +87,14 @@ public class ChatWebSocket {
         List<Session> participants =
             WebSocketHandler.getInstance().getRoomList(chatRoom);
 
-        System.out.println("Between message and past json");
-
-        String echoJson = "{ \"type\" : \"MSG_RECV\","
-                        + "\"message\" : \"" + msg + "\","
-                        + "\"uid\" : \"" + uid + "\" }";
-
-        System.out.println(participants.size());
-        System.out.println("Past the json part");
+        JSONObject echoData = new JSONObject();
+        echoData.put("type", "MSG_RECV");
+        echoData.put("message", messageData.getString("message"));
+        echoData.put("uid", uid);
+        String echoJson = echoData.toString();
 
         for (Session participant : participants) {
             participant.getBasicRemote().sendText(echoJson);
-            System.out.println(participant.getId());
         }
     }
 

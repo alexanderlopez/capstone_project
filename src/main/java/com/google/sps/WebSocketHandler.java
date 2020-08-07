@@ -3,6 +3,7 @@ package com.google.sps;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import javax.websocket.Session;
 
@@ -30,24 +31,12 @@ public class WebSocketHandler {
         }
 
         chatRoomMap.get(roomId).add(session);
-        System.out.println(chatRoomMap.get(roomId).get(0).getId());
     }
 
     public List<Session> getRoomList(String roomId) {
         if (chatRoomMap.containsKey(roomId)) {
-            System.out.println("Contains the key ID");
-
-            ArrayList<Session> returnList = new ArrayList<Session>();
-
-            System.out.println("After new List");
-
-            for (Session participant : chatRoomMap.get(roomId)) {
-                returnList.add(participant);
-            }
-
-            System.out.println("After key ID");
-
-            return returnList;
+            return Collections.unmodifiableList(
+                chatRoomMap.get(roomId));
         }
 
         return null;
