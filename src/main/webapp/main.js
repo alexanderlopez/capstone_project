@@ -35,19 +35,16 @@ function initMap() {
 
 
 connection.onopen = () => {
-  console.log('connected');
 };
 
 connection.onclose = () => {
-  console.error('disconnected');
 };
 
 connection.onerror = (error) => {
-  console.error('failed to connect', error);
+  console.error(error);
 };
 
 connection.onmessage = (event) => {
-  console.log('received', event.data);
   let li = document.createElement('li');
   
   var obj = JSON.parse(event.data); 
@@ -76,7 +73,6 @@ function getServerUrl() {
     } else {
         protoSpec = 'ws:';
     }
-    console.log("this is auth: " + sendAuth());
 
     return location.protocol + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }

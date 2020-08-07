@@ -28,7 +28,7 @@
         <title>Hello App Engine Flexible</title>
 
     </head>
-    <body onload="loadChatHistory(); getServerUrl()">
+    <body onload="loadChatHistory()">
         
 
         <ul id="past-comments"></ul>
