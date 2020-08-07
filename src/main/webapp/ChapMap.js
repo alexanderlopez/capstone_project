@@ -29,23 +29,6 @@ class ChapMap {
   /** State determining whether the client can add markers or not */
   addingMarkers_;
 
-  constructor() {
-    this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8
-      });
-
-    this.makeMapButtons_();
-    this.addMapClickListener_();
-
-    PermMarker.permInfoWindow = new PermInfoWindow();
-    this.tempMarker_ = new TempMarker();
-    this.addingMarkers_ = false;
-    this.editedPermMarker_ = null;
-  }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// LISTENERS
-
   /**
    * @Private
    * Adds a click listener allowing clients to add markers to the map
@@ -53,94 +36,12 @@ class ChapMap {
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
       if (this.addingMarkers_) {
-        this.editedPermMarker_ = null;
-        this.setTempMarker(e.latLng);
-        this.closePermInfoWindow();
+        var coords = e.latLng;
+        this.myInfoWindow_.close();
+        this.tempMarker_.setTempMarker(coords);
+        this.googleMap_.panTo(coords);
       }
     });
-  }
-
-  /**
-   * @Private
-   * Adds click listeners to the map customization buttons.
-   * A client can only add markers when the "adding markers" mode is on
-   */
-  addBtnListeners_(viewBtn, addMarkerBtn) {
-    addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
-    viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
-  }
-
-  /**
-   * @Private
-   * Disable marker-adding state remove temp marker
-   */
-  disableAddingMarkers_() {
-    if (this.addingMarkers_) {
-      this.toggleAddingMarkers_(/*enable=*/ false);
-    }
-  }
-
-  /**
-   * @Private
-   * Enable marker-adding state remove temp marker
-   */
-  enableAddingMarkers_() {
-    if (!this.addingMarkers_) {
-      this.toggleAddingMarkers_(/*enable=*/ true);
-    }
-  }
-
-  /**
-   * @Private
-   * Toggles the ability for clients to add markers on the map
-   * @param {Boolean} enable whether this mode should be enabled or disabled
-   */
-  toggleAddingMarkers_(enable) {
-    let addMarkerBtn = this.getAddMarkerBtn_();
-    let viewBtn = this.getViewBtn_();
-
-    let enableBtn = enable? addMarkerBtn: viewBtn;
-    let disableBtn = enable? viewBtn: addMarkerBtn;
-
-    this.addingMarkers_ = !this.addingMarkers_;
-    this.removeTempMarker();
-
-    enableBtn.classList.add(ChapMap.SELECTED_CLASS);
-    disableBtn.classList.remove(ChapMap.SELECTED_CLASS);
-  }
-
-  /**
-   * @Private
-   * Retrieves the button disabling marker-adding from the DOM
-   */
-  getViewBtn_() {
-    return document.getElementById("viewBtnWrapper");
-  }
-
-  /**
-   * @Private
-   * Retrieves the button enabling marker-adding from the DOM
-   */
-  getAddMarkerBtn_() {
-    return document.getElementById("addMarkerBtnWrapper");
-  }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// BUILD MAP BUTTONS
-
-  /**
-   * @Private
-   * Overlays add-marker state toggler buttons on the map
-   */
-  makeMapButtons_() {
-    let map = document.getElementById("map");
-    let viewBtn = this.makeViewBtn_();
-    let addMarkerBtn = this.makeAddMarkerBtn_();
-
-    this.addBtnListeners_(viewBtn, addMarkerBtn);
-
-    map.appendChild(viewBtn);
-    map.appendChild(addMarkerBtn);
   }
 
   /**
@@ -187,15 +88,26 @@ class ChapMap {
    * details and prevents the client from creating a new temporary marker
    * @param {PermMarker} permMarker permanent marker to be edited
    */
-  editPermMarker(permMarker) {
-    this.closePermInfoWindow();
-    permMarker.hide();
+  addBtnListeners_(viewBtn, addMarkerBtn) {
+    let SELECTED_CLASS = "selected";
 
-    this.editedPermMarker_ = permMarker;
-    this.disableAddingMarkers_();
+    addMarkerBtn.addEventListener('click', () => {
+      if (!this.addingMarkers_) {
+        this.addingMarkers_ = true;
+        viewBtn.classList.remove(SELECTED_CLASS);
+        addMarkerBtn.classList.add(SELECTED_CLASS);
+        this.removeTempMarker();
+      }
+    });
 
-    this.setTempMarker(permMarker.getPosition());
-    this.tempMarker_.openInfoWindow();
+    viewBtn.addEventListener('click', () => {
+      if (this.addingMarkers_) {
+        this.addingMarkers_ = false;
+        viewBtn.classList.add(SELECTED_CLASS);
+        addMarkerBtn.classList.remove(SELECTED_CLASS);
+        this.removeTempMarker();
+      }
+    });
   }
 
   /**
@@ -225,9 +137,18 @@ class ChapMap {
     this.editedPermMarker_ = null;
   }
 
-  /** Returns the PermMarker currently being edited */
-  editingPermMarker() {
-    return this.editedPermMarker_;
+  constructor() {
+    this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -34.397, lng: 150.644 },
+        zoom: 8
+      });
+
+    this.makeMapEditButtons_();
+    this.addMapClickListener_();
+
+    this.myInfoWindow_ = new MarkerInfoWindow();
+    this.permMarkers_ = new Set();
+    this.tempMarker_ = new TempMarker()
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
