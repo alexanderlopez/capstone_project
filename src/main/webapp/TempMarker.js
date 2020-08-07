@@ -13,30 +13,20 @@
 // limitations under the License.
 
 /** Creates, displays, and modifies a map's temporary marker*/
-class TempMarker {
+class TempMarker extends MarkerTemplate{
 
-  /** google.maps.Marker object acting as the temporary marker */
-  googleTempMarker_;
+  /** TempInfoWindow linked to this marker */
+  tempInfoWindow_;
 
   constructor() {
-    this.googleTempMarker_ = new google.maps.Marker(
+    super();
+    this.googleMarker_ = new google.maps.Marker(
       {
         label: "+"
       });
-    this.googleTempMarker_.setDraggable(true);
+    this.googleMarker_.setDraggable(true);
+    this.tempInfoWindow_ = new TempInfoWindow(this);
     this.setListeners_();
-  }
-
-  /**
-   * Creates or modifies a temparker at the given coordinates
-   * @param {google.maps.LatLng} coords coordinates where to make the marker
-   */
-  setTempMarker(coords) {
-    let marker = this.googleTempMarker_;
-    marker.setPosition(coords);
-    if (!marker.getMap()) {
-      marker.setMap(myMap.getGoogleMap());
-    }
   }
 
   /**
@@ -44,26 +34,46 @@ class TempMarker {
    * Sets click and drag events to the marker
    */
   setListeners_() {
-    // clicking on a temp marker deletes it from the map
-    this.googleTempMarker_.addListener("click", () => {
-      let coords = this.googleTempMarker_.getPosition()
-      let marker = new PermMarker(coords);
-      myMap.addPermMarker(marker);
-      this.remove();
+    // clicking on a temp marker opens its information window
+    this.googleMarker_.addListener("click", () => {
+      myMap.closeInfoWindow();
+      this.tempInfoWindow_.open();
     });
 
-    this.googleTempMarker_.addListener('dragend', () => {
-      myMap.panTo(this.googleTempMarker_.getPosition());
+    this.googleMarker_.addListener('dragend', () => {
+      myMap.panTo(this.googleMarker_.getPosition());
     });
   }
 
   /**
-   * @Private
-   * Removes the temp marker from the map.
+   * Sends the marker given marker details to the map to update a PermMarker
+   * @param {String} title new title of the marker
+   * @param {String} body new body of the marker
    */
-  remove() {
-    if (this.googleTempMarker_.getMap()) {
-      this.googleTempMarker_.setMap(null)
-    }
+  sendPermMarkerInfo(title, body) {
+    myMap.setPermMarkerInfo(this.getPosition(), title, body);
+  }
+
+  /** Hides this temporary marker and info window from the map */
+  hide() {
+    super.hide();
+    this.googleMarker_.setPosition(null);
+    this.tempInfoWindow_.close();
+  }
+
+  /** Opens the temporary information window for this temporary marker */
+  openTempInfoWindow() {
+    this.tempInfoWindow_.open();
+  }
+
+  /** Closes the temporary information window for this temporary marker */
+  closeTempInfoWindow() {
+    this.tempInfoWindow_.close();
+  }
+
+  /** Changes this marker's coords and prevents the info window from opening */
+  setPosition(coords) {
+    super.setPosition(coords);
+    this.closeTempInfoWindow();
   }
 }
