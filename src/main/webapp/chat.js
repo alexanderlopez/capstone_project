@@ -13,12 +13,10 @@
 // limitations under the License.
 
 function loadChatHistory() { 
-
-    // The following URL doesn't exist yet, this is in anticipation for it
-    fetch('/comment-history').then(response => response.text()).then((quote) => {
-    document.getElementById('past-comments').innerText = quote;
-  });
-
+  // TODO(astepin): Fetch from history URL when it is created
+  
+  let quote = "Test quote"
+  document.getElementById('past-comments').innerText = quote;
 }
 
 document.querySelector('form').addEventListener('submit', (event) => {
@@ -36,6 +34,3 @@ function openForm() {
 function closeForm() {
   document.getElementById("myForm").style.display = "none";
 }
-
-
-

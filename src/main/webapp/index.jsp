@@ -10,7 +10,6 @@
 
 <html>
     <head>
-       <script src="chat.js"></script>
         <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
@@ -23,7 +22,7 @@
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
         <script src="authentication.js"></script>
-
+        <script src="chat.js"></script>
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <title>Hello App Engine Flexible</title>
 

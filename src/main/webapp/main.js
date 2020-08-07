@@ -15,7 +15,7 @@
 /** map visible on the website */
 
 let myMap;
-var connection = new WebSocket(getServerlUrl());
+let connection = new WebSocket(getServerlUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -41,21 +41,28 @@ connection.onclose = () => {
 };
 
 connection.onerror = (error) => {
-  console.error(error);
+  throw 'Error'
 };
 
 connection.onmessage = (event) => {
-  let li = document.createElement('li');
   
   var obj = JSON.parse(event.data); 
 
-  if(obj.type !== 'MSG_RECV'){
-      // let Alice deal with it;
-      // obj is a JSON object
-  } else {
-      li.innerText = obj.uid + ": " + obj.message;
-      document.querySelector('#chat').append(li);
-  }  
+  switch(obj.type) {
+      case 'MSG_RECV':
+          let li = document.createElement('li');
+          li.innerText = obj.uid + ": " + obj.message;
+          document.querySelector('#chat').append(li);
+          break;
+      case 'MAP_RECV':
+          // TODO(alicevlasov): Handle MAP_RECV 
+          break;
+      case 'MAP_DEL':
+          // TODO(alicevlasov): Handle MAP_DEL
+          break;
+      default:
+          throw 'Type not found';
+  } 
 };
 
 function getServerUrl() {
@@ -74,5 +81,5 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return location.protocol + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }
