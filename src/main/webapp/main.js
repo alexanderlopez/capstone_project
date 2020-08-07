@@ -71,7 +71,7 @@ function getServerUrl() {
     var protoSpec;
     var defaultIDToken = 12;
 
-    if (location.protocol !== 'https:' && location.hostname != 'localhost:8080') {
+    if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
     } 
 
@@ -81,5 +81,5 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }
