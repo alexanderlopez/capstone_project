@@ -12,20 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Loads chat history and adds it to the index page
+  */
 function loadChatHistory() { 
   // TODO(astepin): Fetch from history URL when it is created
   
   let quote = "Test quote"
   document.getElementById('past-comments').innerText = quote;
 }
-
-document.querySelector('form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  let message = document.querySelector('#message').value;
-  connection.send(message);
-  document.querySelector('#message').value = '';
-});
-
 
 function openForm() {
   document.getElementById("myForm").style.display = "block";
