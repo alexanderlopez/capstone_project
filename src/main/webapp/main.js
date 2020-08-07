@@ -13,7 +13,9 @@
 // limitations under the License.
 
 /** map visible on the website */
+
 let myMap;
+let connection = new WebSocket(getServerlUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -31,5 +33,53 @@ function initMap() {
   myMap = new ChapMap();
 }
 
-//MAP_RECV -> given from websocket
-//MAP_DEL -> delete the marker
+
+connection.onopen = () => {
+};
+
+connection.onclose = () => {
+};
+
+connection.onerror = (error) => {
+  throw 'Error'
+};
+
+connection.onmessage = (event) => {
+
+  var obj = JSON.parse(event.data);
+
+  switch(obj.type) {
+      case 'MSG_RECV':
+          let li = document.createElement('li');
+          li.innerText = obj.uid + ": " + obj.message;
+          document.querySelector('#chat').append(li);
+          break;
+      case 'MAP_RECV':
+          // TODO(alicevlasov): Handle MAP_RECV
+          break;
+      case 'MAP_DEL':
+          // TODO(alicevlasov): Handle MAP_DEL
+          break;
+      default:
+          throw 'Type not found';
+  }
+};
+
+function getServerUrl() {
+
+    var defaultChatRoomID = "1234goroom";
+    var protoSpec;
+    var defaultIDToken = 12;
+
+    if (location.protocol !== 'https:' && location.hostname != 'localhost:8080') {
+        location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    }
+
+    if(location.protocol === 'https:'){
+        protoSpec = 'wss:';
+    } else {
+        protoSpec = 'ws:';
+    }
+
+    return protoSpec + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+}
