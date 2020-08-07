@@ -24,23 +24,36 @@ public class WebSocketHandler {
         return instance;
     }
 
-    public synchronized void addSession(String roomId, Session session) {
+    public void addSession(String roomId, Session session) {
         if (!chatRoomMap.containsKey(roomId)) {
             chatRoomMap.put(roomId, new ArrayList<Session>());
         }
 
         chatRoomMap.get(roomId).add(session);
+        System.out.println(chatRoomMap.get(roomId).get(0).getId());
     }
 
     public List<Session> getRoomList(String roomId) {
         if (chatRoomMap.containsKey(roomId)) {
-            return List.copyOf(chatRoomMap.get(roomId));
+            System.out.println("Contains the key ID");
+
+            ArrayList<Session> returnList = new ArrayList<Session>();
+
+            System.out.println("After new List");
+
+            for (Session participant : chatRoomMap.get(roomId)) {
+                returnList.add(participant);
+            }
+
+            System.out.println("After key ID");
+
+            return returnList;
         }
 
         return null;
     }
 
-    public synchronized void removeSession(String roomId, Session session) {
+    public void removeSession(String roomId, Session session) {
         List<Session> roomList = chatRoomMap.get(roomId);
 
         roomList.remove(session);

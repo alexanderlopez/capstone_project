@@ -81,19 +81,24 @@ public class ChatWebSocket {
 
     private void chatMessage(Session session, JSONObject messageData)
             throws IOException {
-        System.out.println("Text message: " + messageData.getString("message"));
+        String msg = messageData.getString("message");
+        System.out.println("Text message: " + msg);
 
         List<Session> participants =
             WebSocketHandler.getInstance().getRoomList(chatRoom);
 
-        JSONObject echoData = new JSONObject();
-        echoData.put("type", "MSG_RECV");
-        echoData.put("message", messageData.getString("message"));
-        echoData.put("uid", uid);
-        String echoJson = echoData.toString();
+        System.out.println("Between message and past json");
+
+        String echoJson = "{ \"type\" : \"MSG_RECV\","
+                        + "\"message\" : \"" + msg + "\","
+                        + "\"uid\" : \"" + uid + "\" }";
+
+        System.out.println(participants.size());
+        System.out.println("Past the json part");
 
         for (Session participant : participants) {
             participant.getBasicRemote().sendText(echoJson);
+            System.out.println(participant.getId());
         }
     }
 
