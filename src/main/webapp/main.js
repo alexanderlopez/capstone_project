@@ -27,10 +27,20 @@ let mapPromise = new Promise(function(resolve) {
 
 Promise.all([mapPromise, domPromise]).then(() => {
       initMap();
+      initChat();
     });
 
 function initMap() {
   myMap = new ChapMap();
+}
+
+function initChat() {
+  document.querySelector('form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      let message = document.querySelector('#message').value;
+      connection.send(message);
+      document.querySelector('#message').value = '';
+  });
 }
 
 
@@ -65,13 +75,17 @@ connection.onmessage = (event) => {
   } 
 };
 
+/**
+ * Returns the server's URL, forcing it to HTTPS, if necessary
+ * @return {string} The server's URL.
+  */
 function getServerUrl() {
     
     var defaultChatRoomID = "1234goroom";
     var protoSpec;
     var defaultIDToken = 12;
 
-    if (location.protocol !== 'https:' && location.hostname != 'localhost:8080') {
+    if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
     } 
 
@@ -81,5 +95,5 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.hostname + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }
