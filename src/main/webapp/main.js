@@ -36,11 +36,11 @@ function initMap() {
 
 function initChat() {
   document.querySelector('form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  let message = document.querySelector('#message').value;
-  connection.send(message);
-  document.querySelector('#message').value = '';
-});
+      event.preventDefault();
+      let message = document.querySelector('#message').value;
+      connection.send(message);
+      document.querySelector('#message').value = '';
+  });
 }
 
 
