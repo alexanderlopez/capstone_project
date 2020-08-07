@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Defines the basic functions that all markers must have
- * All classes that extend MarkerTemplate must implement:
- *  - openMyInfoWindow()
- *  - closeMyInfoWindow()
- */
+/** Defines the basic functions that all markers must have */
 class MarkerTemplate {
 
   /** The google.maps.Marker object visible on the map */
@@ -27,6 +22,19 @@ class MarkerTemplate {
     this.googleMarker_ = new google.maps.Marker();
     this.setMarkerListeners_();
   }
+
+  /**
+   * Opens the information window related to this marker
+   * @abstract
+   */
+  openInfoWindow() {}
+
+  /**
+   * Closes the information window related to this marker
+   * @abstract
+   */
+  closeInfoWindow() {}
+
 
   /**
    * @Private

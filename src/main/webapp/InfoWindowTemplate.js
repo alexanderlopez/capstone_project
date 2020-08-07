@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Defines the basic functions that all infoWindows must have
- * All classes that extend InfoWindowTemplate must implement:
- *  - makeRightColumn_()
- */
+/** Defines the basic functions that all infoWindows must have */
 class InfoWindowTemplate {
 
   static DELETE_ID = "markerDelete";
@@ -80,6 +76,18 @@ class InfoWindowTemplate {
 
   /**
    * @Private
+   * Puts together info window buttons
+   */
+  makeLeftColumn_() {
+    let leftCol = document.createElement("div");
+    leftCol.classList.add(InfoWindowTemplate.LEFT_COLUMN);
+    leftCol.appendChild(this.makeDeleteButton_());
+    leftCol.appendChild(this.makeEditButton_());
+    return leftCol;
+  }
+
+  /**
+   * @Private
    * Returns the delete button for this marker
    */
   makeDeleteButton_() {
@@ -99,14 +107,8 @@ class InfoWindowTemplate {
   }
 
   /**
-   * @Private
-   * Puts together info window buttons
+   * Builds the right side of the information window
+   * @abstract
    */
-  makeLeftColumn_() {
-    let leftCol = document.createElement("div");
-    leftCol.classList.add(InfoWindowTemplate.LEFT_COLUMN);
-    leftCol.appendChild(this.makeDeleteButton_());
-    leftCol.appendChild(this.makeEditButton_());
-    return leftCol;
-  }
+  makeRightColumn_() {}
 }
