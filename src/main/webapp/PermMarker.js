@@ -15,6 +15,7 @@
 /** Creates a permanent marker which clients can only view */
 class PermMarker extends MarkerTemplate{
 
+  /** Information window used for all permanent markers */
   static permInfoWindow;
 
   /** Displayed title of this marker */
