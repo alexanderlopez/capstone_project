@@ -47,7 +47,7 @@ class ChapMap {
     this.editedPermMarker_ = null;
 
     this.perMarkers_ = {}
-    // this.loadMarkers();
+    this.loadMarkers();
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
@@ -266,14 +266,18 @@ class ChapMap {
   static lngString = "lng";
 
   /**
-   * Parses a json of markers //FINISH
-   * @param {JSON} markerJson json object with all the markers to be added
+   * Retrieves markers from the server and adds them to the map
    */
-  loadMarkers(markerJson) {
-    let markers = markerJson.json().markers;
-    for (const marker in markers) {
-      handleMarker(marker);
-    }
+  loadMarkers() {
+    let key = getUserKey(); // function doesn't exist yet
+
+    fetch("/map-server?idToken=")
+      .then(response => response.json())
+      .then(markers => {
+        for (const marker in markers) {
+          handleMarker(marker);
+        }
+      });
   }
 
   /**
@@ -359,6 +363,9 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // SEND MARKERS TO THE SERVER
 
+  static typeString = "type";
+  static typeValue = "MAP_SEND";
+
   /**
    * @Private
    * Sends marker information to the server
@@ -371,18 +378,10 @@ class ChapMap {
     let editedPermMarker = this.editedPermMarker_;
 
     if (!editedPermMarker) {
-      this.sendMarker_(coords, title, body);
+      connection.send(this.makeJson_(coords, title, body));
     } else {
-      this.sendMarker_(coords, title, body, permMarker.id);
+      connection.send(this.makeJson_(coords, title, body, permMarker.id));
     }
-  }
-
-  /**
-   * @Private
-   * Send a json with marker details to the server FINISHHH
-   */
-  sendMarker_(coords, title, body, id) {
-    return this.makeJson_(coords, title, body, id);
   }
 
   /**
@@ -390,10 +389,11 @@ class ChapMap {
    * Returns a json object with all the information paired with the relevant key
    */
   makeJson_(coords, title, body, id) {
-    let str = [ this.pair_(ChapMap.titleString, title),
-                this.pair_(ChapMap.bodyString, body),
-                this.pair_(ChapMap.latString, coords.lat()),
-                this.pair_(ChapMap.lngString, coords.lng())
+    let str = [this.pair_(ChapMap.typeString, ChapMap.typeValue),
+              this.pair_(ChapMap.titleString, title),
+              this.pair_(ChapMap.bodyString, body),
+              this.pair_(ChapMap.latString, coords.lat()),
+              this.pair_(ChapMap.lngString, coords.lng())
               ].join(",");
 
     if (id) {
@@ -423,7 +423,11 @@ class ChapMap {
    * @param permMarker the permanent marker that needs to be deleted
    */
   sendDeleteRequest(permMarker) {
-    return "{"+this.pair_(ChapMap.idString, permMarker.id)+"}";
+    let str = [this.pair_(ChapMap.idString, permMarker.id),
+               this.pair_(ChapMap.typeString, ChapMap.typeValue)
+             ].join(",");
+    let json = "{"+str+"}";
+    connection.send(JSON.parse(json));
   }
 
 }
