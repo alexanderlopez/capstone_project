@@ -300,7 +300,7 @@ class ChapMap {
    * Retrieves markers from the server and adds them to the map
    */
   getMarkers(idToken) {
-    fetch(`/map-server?idToken=${idToken}`)
+    fetch(`/map-server?idToken=${idToken}&idRoom=1234goroom`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers(markers))
   }
@@ -394,7 +394,6 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // SEND MARKERS TO THE SERVER
 
-  static typeString = "type";
   static typeValue = "MAP_SEND";
 
   /**
@@ -419,34 +418,20 @@ class ChapMap {
    * @Private
    * Returns a json object with all the information paired with the relevant key
    */
-  makeJson_(coords, title, body, id) {
-    let str = [this.pair_(ChapMap.typeString, ChapMap.typeValue),
-              this.pair_(ChapMap.titleString, title),
-              this.pair_(ChapMap.bodyString, body),
-              this.pair_(ChapMap.latString, coords.lat()),
-              this.pair_(ChapMap.lngString, coords.lng())
-              ].join(",");
+  makeJson_(coords, markerTitle, markerBody, markerId) {
+    var jsonObject = {
+        type : ChapMap.typeValue,
+        title : markerTitle,
+        body : markerBody,
+        lat : coords.lat(),
+        lng : coords.lng()
+    };
 
-    if (id) {
-      str = string+","+pair(ChapMap,idString, id);
+    if (markerId) {
+      jsonObject.id = markerId;
     }
 
-    let json = "{"+str+"}";
-    return JSON.parse(json);
-  }
-
-  /**
-   * @Private
-   * Returns a string of format "key:val"
-   * @param {String} key item to be listed as the key
-   * @param {String} val item to be listed as the value
-   */
-  pair_(key, val) {
-    if (value) {
-        return `${key}:${val}`
-    } else {
-      return `${key}:  `;
-    }
+    return JSON.stringify(jsonObject);
   }
 
   /**
@@ -454,11 +439,12 @@ class ChapMap {
    * @param permMarker the permanent marker that needs to be deleted
    */
   sendDeleteRequest(permMarker) {
-    let str = [this.pair_(ChapMap.idString, permMarker.id),
-               this.pair_(ChapMap.typeString, ChapMap.typeValue)
-             ].join(",");
-    let json = "{"+str+"}";
-    connection.send(JSON.parse(json));
+    var jsonObject = {
+        type : "MAP_DEL",
+        id: permMarker.getId()
+    };
+
+    connection.send(JSON.stringify(jsonObject));
   }
 
 }

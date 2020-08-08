@@ -30,7 +30,6 @@ firebase.initializeApp(firebaseConfig);
 // MAP
 
 let myMap;
-let connection = new WebSocket(getServerUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -44,14 +43,20 @@ let firebasePromise = new Promise(function(resolve) {
       firebase.auth().onAuthStateChanged(resolve)
     });
 
+let connection = null;
+
 Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
       let user = firebase.auth().currentUser;
       if (!user) {
         location.href = "/";
       }
-      
-      initMap();
-      initChat();
+
+      getServerUrl().then(result => {
+        connection = new WebSocket(result);
+        initWebsocket();
+        initMap();
+        initChat();
+      })
     });
 
 function initMap() {
@@ -70,46 +75,47 @@ function initChat() {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
 
-connection.onopen = () => {
-};
+function initWebsocket() {
+  connection.onopen = () => {
+  };
 
-connection.onclose = () => {
-};
+  connection.onclose = () => {
+  };
 
-connection.onerror = (error) => {
-  throw 'Error'
-};
+  connection.onerror = (error) => {
+    throw 'Error'
+  };
 
-connection.onmessage = (event) => {
+  connection.onmessage = (event) => {
 
-  var obj = JSON.parse(event.data);
+    var obj = JSON.parse(event.data);
 
-  switch(obj.type) {
-      case 'MSG_RECV':
-          let li = document.createElement('li');
-          li.innerText = obj.uid + ": " + obj.message;
-          document.querySelector('#chat').append(li);
-          break;
-      case 'MAP_RECV':
-          myMap.handleMarker(obj);
-          break;
-      case 'MAP_DEL':
-          myMap.deleteMarker(obj);
-          break;
-      default:
-          throw 'Type not found';
-  }
-};
+    switch(obj.type) {
+        case 'MSG_RECV':
+            let li = document.createElement('li');
+            li.innerText = obj.uid + ": " + obj.message;
+            document.querySelector('#chat').append(li);
+            break;
+        case 'MAP_RECV':
+            myMap.handleMarker(obj);
+            break;
+        case 'MAP_DEL':
+            myMap.deleteMarker(obj);
+            break;
+        default:
+            throw 'Type not found';
+    }
+  };
+}
+
 
 /**
  * Returns the server's URL, forcing it to HTTPS, if necessary
  * @return {string} The server's URL.
   */
-function getServerUrl() {
-
+async function getServerUrl() {
     var defaultChatRoomID = "1234goroom";
     var protoSpec;
-    var defaultIDToken = 12;
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
@@ -121,5 +127,7 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + defaultIDToken;
+    let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
+
+    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
 }
