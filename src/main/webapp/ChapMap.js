@@ -46,8 +46,8 @@ class ChapMap {
     this.addingMarkers_ = false;
     this.editedPermMarker_ = null;
 
-    this.perMarkers_ = {}
-    this.loadMarkers();
+    this.perMarkers_ = {};
+    this.loadMarkers_();
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
@@ -287,19 +287,28 @@ class ChapMap {
   static latString = "lat";
   static lngString = "lng";
 
+
+  loadMarkers_() {
+    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+        .then(idToken => myMap.getMarkers(idToken))
+        .catch(error => {
+          throw "Problem getting markers";
+        });
+  }
+
   /**
    * Retrieves markers from the server and adds them to the map
    */
-  loadMarkers() {
-    let key = getUserKey(); // function doesn't exist yet
-
-    fetch("/map-server?idToken=")
+  getMarkers(idToken) {
+    fetch(`map-server?idToken=${idToken}`)
       .then(response => response.json())
-      .then(markers => {
-        for (const marker in markers) {
-          handleMarker(marker);
-        }
-      });
+      .then(markers => myMap.handleMarkers(markers))
+  }
+
+  handleMarkers(markers) {
+    for (const marker in markers) {
+      myMap.handleMarker(marker);
+    }
   }
 
   /**

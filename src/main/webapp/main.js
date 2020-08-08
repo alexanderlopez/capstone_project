@@ -12,6 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Your web app's Firebase configuration
+var firebaseConfig = {
+  apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
+  authDomain: "chap-2020-capstone.firebaseapp.com",
+  databaseURL: "https://chap-2020-capstone.firebaseio.com",
+  projectId: "chap-2020-capstone",
+  storageBucket: "chap-2020-capstone.appspot.com",
+  messagingSenderId: "155287718044",
+  appId: "1:155287718044:web:e7daa339ab8dffe2c98559"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (!user) {
+    location.href = "/";
+  }
+});
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // MAP
 
@@ -44,6 +64,8 @@ function initChat() {
   });
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// WEBSOCKET
 
 connection.onopen = () => {
 };
