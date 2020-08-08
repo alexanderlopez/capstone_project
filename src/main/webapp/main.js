@@ -26,12 +26,6 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-firebase.auth().onAuthStateChanged(function(user) {
-  if (!user) {
-    location.href = "/";
-  }
-});
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // MAP
 
@@ -46,7 +40,16 @@ let mapPromise = new Promise(function(resolve) {
       document.getElementById("mapAPI").addEventListener("load", resolve);
     });
 
-Promise.all([mapPromise, domPromise]).then(() => {
+let firebasePromise = new Promise(function(resolve) {
+      firebase.auth().onAuthStateChanged(resolve)
+    });
+
+Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
+      let user = firebase.auth().currentUser;
+      if (!user) {
+        location.href = "/";
+      }
+      
       initMap();
       initChat();
     });
