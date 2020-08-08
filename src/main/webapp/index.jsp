@@ -42,13 +42,15 @@
 
         <h1>Hello App Engine -- Flexible!!!</h1>
 
+        <p>Click <a href='mapSelection.html'>here</a> for map selection page</p>
+
         <p>This is <%= HelloAppEngine.getInfo() %>.</p>
         <table>
             <tr>
                 <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
             </tr>
             <tr>
-                <td><a href='mapSelection.html'>The servlet</a></td>
+                <td><a href='chatroom.html'>The servlet</a></td>
             </tr>
         </table>
         <div id="firebaseui-auth-container"></div>
