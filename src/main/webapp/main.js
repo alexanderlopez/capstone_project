@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** map visible on the website */
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// MAP
 
 let myMap;
 let connection = new WebSocket(getServerUrl());
@@ -65,10 +66,10 @@ connection.onmessage = (event) => {
           document.querySelector('#chat').append(li);
           break;
       case 'MAP_RECV':
-          // TODO(alicevlasov): Handle MAP_RECV
+          myMap.handleMarker(obj);
           break;
       case 'MAP_DEL':
-          // TODO(alicevlasov): Handle MAP_DEL
+          myMap.deleteMarker(obj);
           break;
       default:
           throw 'Type not found';
