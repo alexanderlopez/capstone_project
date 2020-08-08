@@ -22,12 +22,12 @@
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
         <script src="authentication.js"></script>
-        <script src="chat.js"></script>
+  
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <title>Hello App Engine Flexible</title>
 
     </head>
-    <body onload="loadChatHistory()">
+    <body>
         
 
         <ul id="past-comments"></ul>
@@ -48,7 +48,7 @@
                 <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
             </tr>
             <tr>
-                <td><a href='chatroom.html'>The servlet</a></td>
+                <td><a href='mapSelection.html'>The servlet</a></td>
             </tr>
         </table>
         <div id="firebaseui-auth-container"></div>

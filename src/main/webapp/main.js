@@ -15,7 +15,8 @@
 /** map visible on the website */
 
 let myMap;
-let connection = new WebSocket(getServerlUrl());
+let chatRoomID = (new URLSearchParams(location.search)).get('roomId');
+let connection = new WebSocket(getServerUrl());
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -80,8 +81,6 @@ connection.onmessage = (event) => {
  * @return {string} The server's URL.
   */
 function getServerUrl() {
-    
-    var defaultChatRoomID = "1234goroom";
     var protoSpec;
     var defaultIDToken = 12;
 
@@ -95,5 +94,5 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + chatRoomID + "?idToken=" + defaultIDToken;
 }
