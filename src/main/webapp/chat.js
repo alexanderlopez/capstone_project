@@ -12,16 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Loads chat history and adds it to the index page
-  */
-function loadChatHistory() {
-  // TODO(astepin): Fetch from history URL when it is created
-
-  let quote = "Test quote"
-  document.getElementById('past-comments').innerText = quote;
-}
-
 let chatOpen = false;
 
 function toggleChat() {
@@ -42,4 +32,30 @@ function closeChat() {
   document.getElementById("myForm").classList.remove("chatOpen");
   document.getElementById("map").classList.add("expanded");
   chatOpen = false;
+}
+
+/**
+ * Loads chat history and adds it to the index page
+  */
+function loadChatHistory() {
+  fetch('/chat-server').then(response => response.text()).then((quote) => {
+      document.getElementById('past-comments').innerText = quote;
+  });
+}
+
+/**
+ * Sends chat comment to server
+*/
+function addChatComment() {
+    var commentObj = {
+           'type' : 'MSG_SEND',
+           'comment' : document.getElementById('comment-container').value,
+    };
+
+    document.getElementById('comment-container').value = "";
+    connection.send(commentObj);
+
+    if (webSocket) {
+        webSocket.send(JSON.stringify(messageData));
+    }
 }
