@@ -46,7 +46,7 @@ class ChapMap {
     this.addingMarkers_ = false;
     this.editedPermMarker_ = null;
 
-    this.perMarkers_ = {};
+    this.permMarkers_ = {};
     this.loadMarkers_();
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,7 +344,7 @@ class ChapMap {
   makeNewPermMarker_(id, title, body, coords) {
     let permMarker = new PermMarker(id);
     this.permMarkers_.id = permMarker;
-    this.updatePermMarker__(permMarker, cooords, title, body);
+    this.updatePermMarker_(permMarker, coords, title, body);
   }
 
   /**
@@ -405,7 +405,7 @@ class ChapMap {
     if (!editedPermMarker) {
       connection.send(this.makeJson_(coords, title, body));
     } else {
-      connection.send(this.makeJson_(coords, title, body, permMarker.id));
+      connection.send(this.makeJson_(coords, title, body, editedPermMarker.id));
     }
   }
 

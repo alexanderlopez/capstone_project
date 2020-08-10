@@ -74,4 +74,9 @@ class PermMarker extends MarkerTemplate{
     return this.body_;
   }
 
+  /** Returns the unique id of this marker */
+  getId() {
+    return this.id_;
+  }
+
 }

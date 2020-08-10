@@ -90,7 +90,7 @@ public final class CapstoneAuth {
         }
     }
 
-    public static String getUserId(String idToken) {
+    public static synchronized String getUserId(String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
         }
@@ -107,7 +107,7 @@ public final class CapstoneAuth {
         return null;
     }
 
-    public static boolean isUserAuthenticated(String idToken) {
+    public static synchronized boolean isUserAuthenticated(String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
         }
@@ -126,7 +126,7 @@ public final class CapstoneAuth {
         return false;
     }
 
-    public static boolean isUserChatroomAuthenticated(String chatRoom,
+    public static synchronized boolean isUserChatroomAuthenticated(String chatRoom,
             String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
