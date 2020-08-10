@@ -21,7 +21,7 @@
 
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <link rel='stylesheet' type='text/css' href='welcomeStyle.css'>
-        <title>Hello App Engine Flexible</title>
+        <title>CHAP</title>
 
     </head>
     <body>
