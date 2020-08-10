@@ -103,8 +103,8 @@ public class ChatWebSocket {
     private void mapMessage(Session session, JSONObject messageData)
             throws IOException {
         System.out.println("Map data: "
-            + messageData.getString("lat")
-            + messageData.getString("lng"));
+            + messageData.getDouble("lat")
+            + messageData.getDouble("lng"));
 
         DatastoreManager.getInstance().addMarker(chatRoom, new JSONObject(
             messageData, new String[]{"title", "body", "lat", "lng"}));
