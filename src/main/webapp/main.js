@@ -32,8 +32,6 @@ firebase.initializeApp(firebaseConfig);
 let myMap;
 let chatRoomID = (new URLSearchParams(location.search)).get('roomId');
 
-let connection = new WebSocket(getServerUrl());
-
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
     });
