@@ -22,12 +22,12 @@
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
         <script src="authentication.js"></script>
-        <script src="chat.js"></script>
+  
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <title>Hello App Engine Flexible</title>
 
     </head>
-    <body onload="loadChatHistory()">
+    <body>
         
 
         <ul id="past-comments"></ul>
@@ -41,6 +41,8 @@
         </form>
 
         <h1>Hello App Engine -- Flexible!!!</h1>
+
+        <p>Click <a href='mapSelection.html'>here</a> for map selection page</p>
 
         <p>This is <%= HelloAppEngine.getInfo() %>.</p>
         <table>
