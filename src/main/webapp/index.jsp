@@ -35,8 +35,6 @@
 
           <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1234goroom'" id="myMaps" class="myBtn">
 
-          <div id="loader">Loading...</div>
-
           <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out</button>
         </div>
     </body>

@@ -15,8 +15,6 @@
 /** Creates a Google Map where clients can add/edit/removes custom markers */
 class ChapMap {
 
-  static SELECTED_CLASS = "selected";
-
   /** The google.maps.Map that will be displayed on the page. */
   googleMap_;
 
@@ -136,6 +134,8 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // BUILD MAP BUTTONS
 
+  static SELECTED_CLASS = "selected";
+
   /**
    * @Private
    * Overlays add-marker state toggler buttons on the map
@@ -163,7 +163,7 @@ class ChapMap {
     let viewBtnWrapper = document.createElement("div");
     viewBtnWrapper.id = "viewBtnWrapper";
     viewBtnWrapper.classList.add("btnWrapper");
-    viewBtnWrapper.classList.add("selected");
+    viewBtnWrapper.classList.add(ChapMap.SELECTED_CLASS);
 
     let viewBtn = document.createElement("button");
     viewBtn.id = "viewBtn";
@@ -213,6 +213,11 @@ class ChapMap {
     return chatBtnWrapper;
   }
 
+
+  /**
+   * @Private
+   * Returns a button that will be used to go back to the home page
+   */
   makeBackBtn_() {
     let backBtnWrapper = document.createElement("div");
     backBtnWrapper.id = "backBtnWrapper";

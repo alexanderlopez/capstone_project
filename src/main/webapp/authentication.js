@@ -29,7 +29,6 @@ var uiConfig = {
             return true;
         },
         uiShown: function() {
-            document.getElementById('loader').style.display = 'none';
             document.getElementById('sign-out').style.display = 'none';
         }
     },
@@ -40,35 +39,15 @@ var uiConfig = {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         document.getElementById('firebaseui-auth-container').innerText = '';
-        document.getElementById('loader').style.display = 'none';
         document.getElementById('myMaps').style.display = 'block';
         document.getElementById('sign-out').style.display = 'block';
     } else {
         document.getElementById('firebaseui-auth-container').innerText = '';
         document.getElementById('myMaps').style.display = 'none';
-        document.getElementById('loader').style.display = 'block';
         ui.start('#firebaseui-auth-container', uiConfig);
     }
 });
 
 function logOut() {
     firebase.auth().signOut();
-}
-
-function sendAuth() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-        // Send token to your backend via HTTPS
-        fetch('/authentication', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/html'
-            },
-            body: idToken
-        }).then(response => response.text()).then(responseText => {
-            console.log(responseText);
-        });
-    }).catch(function(error) {
-        // Handle error
-        console.log(error);
-    });
 }
