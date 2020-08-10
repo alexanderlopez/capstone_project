@@ -71,10 +71,11 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn) {
+  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn) {
     addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
     viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
     chatBtn.addEventListener('click', () => toggleChat());
+    backBtn.addEventListener('click', () => window.location='/');
   }
 
   /**
@@ -144,12 +145,14 @@ class ChapMap {
     let viewBtn = this.makeViewBtn_();
     let addMarkerBtn = this.makeAddMarkerBtn_();
     let chatBtn = this.makeChatBtn_();
+    let backBtn = this.makeBackBtn_();
 
-    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn);
+    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn);
 
     map.appendChild(viewBtn);
     map.appendChild(addMarkerBtn);
     map.appendChild(chatBtn);
+    map.appendChild(backBtn);
   }
 
   /**
@@ -198,14 +201,33 @@ class ChapMap {
     let chatBtnWrapper = document.createElement("div");
     chatBtnWrapper.id = "chatBtnWrapper";
     chatBtnWrapper.classList.add("btnWrapper");
+    chatBtnWrapper.classList.add("textBtnWrapper");
 
     let btn = document.createElement("button");
+    btn.classList.add("textBtn");
     btn.id = "chatButton";
     btn.innerHTML = "Chat";
 
     chatBtnWrapper.appendChild(btn);
 
     return chatBtnWrapper;
+  }
+
+  makeBackBtn_() {
+    let backBtnWrapper = document.createElement("div");
+    backBtnWrapper.id = "backBtnWrapper";
+    backBtnWrapper.classList.add("btnWrapper");
+    backBtnWrapper.classList.add("textBtnWrapper");
+
+    let backBtn = document.createElement("input");
+    backBtn.classList.add("textBtn");
+    backBtn.id = "backButton";
+    backBtn.type = "submit";
+    backBtn.value = "Back";
+
+    backBtnWrapper.appendChild(backBtn);
+
+    return backBtnWrapper;
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PERM MARKER HANDLERS

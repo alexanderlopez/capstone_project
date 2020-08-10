@@ -130,3 +130,31 @@ body, html {
 #viewBtn {
   background-image: url(icons/pointer.png);
 }
+
+.textBtn, .textBtn:focus {
+  background-color: rgb(255, 255, 255);
+  color: #423f3f;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  outline: 0;
+}
+
+.textBtnWrapper {
+  top: 10px;
+  width: 80px;
+  height: 40px;
+  border-radius: 2px;
+}
+
+#chatBtnWrapper {
+  right: 100px;
+}
+
+#backBtnWrapper {
+  right: 210px;
+}
