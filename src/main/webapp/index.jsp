@@ -33,7 +33,7 @@
         <div id="pageContent">
           <div id="firebaseui-auth-container"></div>
 
-          <input type="submit" value="My Maps" onclick="location='/mapSelection.html'" id="myMaps" class="myBtn">
+          <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1234goroom'" id="myMaps" class="myBtn">
 
           <div id="loader">Loading...</div>
 
