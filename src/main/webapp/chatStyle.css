@@ -35,9 +35,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
 /* Add styles to the form container */
 .form-container {
   width: 100%;
+  min-width: 400px;
   padding: 4%;
   background-color: white;
-  height: 100%
+  height: 100%;
 }
 
 /* Full-width textarea */
@@ -83,7 +84,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 }
 
 #myForm.chatOpen {
-  width: 30%;
+  width: 400px;
 }
 
 #submitBtn {
