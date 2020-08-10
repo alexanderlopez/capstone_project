@@ -369,12 +369,13 @@ class ChapMap {
    * @param {JSON} markerJson json object with the id of the deleted marker
    */
   deleteMarker(markerJson) {
+    console.log("receive deleting");
     let id = markerJson.id;
-    let permMarker = this.permMarkers_.id;
+    let permMarker = this.permMarkers_[id];
 
     if (permMarker) {
       permMarker.hide();
-      delete this.permMarkers_.id;
+      delete this.permMarkers_[id];
     }
   }
 
@@ -427,6 +428,7 @@ class ChapMap {
    * @param permMarker the permanent marker that needs to be deleted
    */
   sendDeleteRequest(permMarker) {
+    console.log("deleting");
     var jsonObject = {
         type : "MAP_DEL",
         id: permMarker.getId()
