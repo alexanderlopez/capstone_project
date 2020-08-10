@@ -22,6 +22,9 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public final class CapstoneAuth {
 
+    private static final String TEST_ROOM_ID = "1234goroom";
+    private static final String ALLOWED_USERS = "allowed_users";
+
     private static CapstoneAuth currentInstance;
 
     private final Datastore datastore;
@@ -44,26 +47,27 @@ public final class CapstoneAuth {
         }
 
         datastore = DatastoreOptions.getDefaultInstance().getService();
-        keyFactory = datastore.newKeyFactory().setKind("CHAT_ROOM");
+        keyFactory = datastore.newKeyFactory().setKind(
+            DatastoreManager.KIND_CHATROOM);
 
         addTestChatroom();
     }
 
-    // To remove method on deploy
+    // TODO(lopezalexander): Remove method on deploy.
     private void addTestChatroom() {
-        Entity chatRoom = Entity.newBuilder(keyFactory.newKey("1234goroom"))
+        Entity chatRoom = Entity.newBuilder(keyFactory.newKey(TEST_ROOM_ID))
                                 .build();
         datastore.put(chatRoom);
     }
 
-    // To remove method on deploy
+    // TODO(lopezalexander): Remove method on deploy.
     private void addUserToTestChatroom(String uid) {
         try {
-            Entity testRoom = datastore.get(keyFactory.newKey("1234goroom"));
+            Entity testRoom = datastore.get(keyFactory.newKey(TEST_ROOM_ID));
 
-            if (!testRoom.getNames().contains("allowed_users")) {
+            if (!testRoom.getNames().contains(ALLOWED_USERS)) {
                 testRoom = Entity.newBuilder(testRoom)
-                                 .set("allowed_users",
+                                 .set(ALLOWED_USERS,
                                     ListValue.of(Arrays.asList(
                                         StringValue.of(uid))))
                                  .build();
@@ -73,7 +77,7 @@ public final class CapstoneAuth {
             }
 
             List<Value<String>> allowedUsers =
-                testRoom.getList("allowed_users");
+                testRoom.getList(ALLOWED_USERS);
 
             ListValue addAllowedUser = ListValue.newBuilder()
                                                 .set(allowedUsers)
@@ -81,7 +85,7 @@ public final class CapstoneAuth {
                                                 .build();
 
             testRoom = Entity.newBuilder(testRoom)
-                             .set("allowed_users", addAllowedUser)
+                             .set(ALLOWED_USERS, addAllowedUser)
                              .build();
             datastore.put(testRoom);
 
@@ -141,7 +145,7 @@ public final class CapstoneAuth {
                 currentInstance.keyFactory.newKey(chatRoom));
 
             List<Value<String>> allowedRoomUID =
-                roomEntity.getList("allowed_users");
+                roomEntity.getList(ALLOWED_USERS);
 
             return allowedRoomUID.contains(StringValue.of(uid));
         } catch (Exception e) {
