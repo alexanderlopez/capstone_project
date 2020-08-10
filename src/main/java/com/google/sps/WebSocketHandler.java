@@ -11,10 +11,10 @@ public class WebSocketHandler {
 
     private static WebSocketHandler instance;
 
-    private HashMap<String, List<Session>> chatRoomMap;
+    private HashMap<Long, List<Session>> chatRoomMap;
 
     private WebSocketHandler() {
-        chatRoomMap = new HashMap<String, List<Session>>();
+        chatRoomMap = new HashMap<Long, List<Session>>();
     }
 
     public static WebSocketHandler getInstance() {
@@ -25,7 +25,7 @@ public class WebSocketHandler {
         return instance;
     }
 
-    public void addSession(String roomId, Session session) {
+    public void addSession(long roomId, Session session) {
         if (!chatRoomMap.containsKey(roomId)) {
             chatRoomMap.put(roomId, new ArrayList<Session>());
         }
@@ -33,7 +33,7 @@ public class WebSocketHandler {
         chatRoomMap.get(roomId).add(session);
     }
 
-    public List<Session> getRoomList(String roomId) {
+    public List<Session> getRoomList(long roomId) {
         if (chatRoomMap.containsKey(roomId)) {
             return Collections.unmodifiableList(
                 chatRoomMap.get(roomId));
@@ -42,7 +42,7 @@ public class WebSocketHandler {
         return null;
     }
 
-    public void removeSession(String roomId, Session session) {
+    public void removeSession(long roomId, Session session) {
         List<Session> roomList = chatRoomMap.get(roomId);
 
         roomList.remove(session);

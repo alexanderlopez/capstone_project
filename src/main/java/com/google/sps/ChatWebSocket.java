@@ -41,16 +41,16 @@ public class ChatWebSocket {
     public static final String SOCKET_PARAMETER_ROOM = "chatroom";
     public static final String SOCKET_PARAMETER_ID = "idToken";
 
-    private String chatRoom;
+    private long chatRoomId;
     private boolean isAuthenticated = false;
     private String uid;
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
         // Get session and check if the user is authenticated with Firebase
-        String chatRoom = session.getPathParameters()
+        String chatRoomId = session.getPathParameters()
                                  .get(SOCKET_PARAMETER_ROOM);
-        this.chatRoom = chatRoom;
+        this.chatRoomId = Long.parseLong(chatRoomId);
 
         String idToken = session.getRequestParameterMap()
                                 .get(SOCKET_PARAMETER_ID)
@@ -67,7 +67,8 @@ public class ChatWebSocket {
 
         uid = CapstoneAuth.getUserId(idToken);
 
-        if (!CapstoneAuth.isUserChatroomAuthenticated(chatRoom, idToken)) {
+        if (!DatastoreManager.getInstance().isUserAllowedChatroom(uid,
+                this.chatRoomId)) {
             session.close(new CloseReason(
                 CloseReason.CloseCodes.PROTOCOL_ERROR,
                  "User not allowed to use this chat room."));
@@ -79,7 +80,7 @@ public class ChatWebSocket {
         isAuthenticated = true;
 
         // If the user is authenticated then add the session to the chatroom.
-        WebSocketHandler.getInstance().addSession(chatRoom, session);
+        WebSocketHandler.getInstance().addSession(this.chatRoomId, session);
     }
 
     @OnMessage
@@ -103,7 +104,7 @@ public class ChatWebSocket {
 
     private void broadcastString(String broadcastMessage) throws IOException {
         List<Session> participants =
-            WebSocketHandler.getInstance().getRoomList(chatRoom);
+            WebSocketHandler.getInstance().getRoomList(chatRoomId);
 
         for (Session participant : participants) {
             participant.getBasicRemote().sendText(broadcastMessage);
@@ -117,7 +118,7 @@ public class ChatWebSocket {
         echoData.put(JSON_MESSAGE, messageData.getString(JSON_MESSAGE));
         echoData.put(JSON_USER_ID, uid);
 
-        DatastoreManager.getInstance().addMessage(chatRoom, echoData);
+        DatastoreManager.getInstance().addMessage(chatRoomId, echoData);
 
         broadcastString(echoData.toString());
     }
@@ -129,7 +130,7 @@ public class ChatWebSocket {
 
         //Delete marker
         long markerId = messageData.getLong(JSON_ID);
-        DatastoreManager.getInstance().deleteMarker(chatRoom, markerId);
+        DatastoreManager.getInstance().deleteMarker(chatRoomId, markerId);
 
         //Broadcast deletion
         echoData.put(JSON_TYPE, MAP_DELETE);
@@ -144,16 +145,14 @@ public class ChatWebSocket {
                     JSON_LONGITUDE});
 
         if (messageData.has(JSON_ID)) {
-            System.out.println("Has id: " + messageData.getLong(JSON_ID));
             echoData.put(JSON_ID, messageData.getLong(JSON_ID));
-            DatastoreManager.getInstance().updateMarker(chatRoom, echoData);
+            DatastoreManager.getInstance().updateMarker(chatRoomId, echoData);
         }
         else {
             long markerId =
-                DatastoreManager.getInstance().addMarker(chatRoom, echoData);
+                DatastoreManager.getInstance().addMarker(chatRoomId, echoData);
 
             echoData.put(JSON_ID, markerId);
-            System.out.println("No id: " + markerId);
         }
 
         echoData.put(JSON_TYPE, MAP_RECEIVE);
@@ -167,6 +166,6 @@ public class ChatWebSocket {
             return;
         }
 
-        WebSocketHandler.getInstance().removeSession(chatRoom, session);
+        WebSocketHandler.getInstance().removeSession(chatRoomId, session);
     }
 }

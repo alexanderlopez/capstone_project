@@ -17,7 +17,7 @@ public class MarkerHistory extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String tokenId = request.getParameter("idToken");
-        String roomId = request.getParameter("idRoom");
+        long roomId = Long.parseLong(request.getParameter("idRoom"));
 
         if (!CapstoneAuth.isUserAuthenticated(tokenId)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
