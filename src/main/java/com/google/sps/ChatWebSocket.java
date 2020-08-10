@@ -23,6 +23,24 @@ import org.json.JSONObject;
 @ServerEndpoint(value = "/chat/{chatroom}")
 public class ChatWebSocket {
 
+    public static final String MESSAGE_SEND = "MSG_SEND";
+    public static final String MESSAGE_RECEIVE = "MSG_RECV";
+    public static final String MAP_SEND = "MAP_SEND";
+    public static final String MAP_RECEIVE = "MAP_RECV";
+    public static final String MAP_DELETE = "MAP_DEL";
+
+    public static final String JSON_MESSAGE = "message";
+    public static final String JSON_TITLE = "title";
+    public static final String JSON_BODY = "body";
+    public static final String JSON_LATITUDE = "lat";
+    public static final String JSON_LONGITUDE = "lng";
+    public static final String JSON_TYPE = "type";
+    public static final String JSON_USER_ID = "uid";
+    public static final String JSON_ID = "id";
+
+    public static final String SOCKET_PARAMETER_ROOM = "chatroom";
+    public static final String SOCKET_PARAMETER_ID = "idToken";
+
     private String chatRoom;
     private boolean isAuthenticated = false;
     private String uid;
@@ -31,11 +49,11 @@ public class ChatWebSocket {
     public void onOpen(Session session) throws IOException {
         // Get session and check if the user is authenticated with Firebase
         String chatRoom = session.getPathParameters()
-                                 .get("chatroom");
+                                 .get(SOCKET_PARAMETER_ROOM);
         this.chatRoom = chatRoom;
 
         String idToken = session.getRequestParameterMap()
-                                .get("idToken")
+                                .get(SOCKET_PARAMETER_ID)
                                 .get(0);
 
         if (!CapstoneAuth.isUserAuthenticated(idToken)) {
@@ -65,87 +83,90 @@ public class ChatWebSocket {
     }
 
     @OnMessage
-    public void textMessage(Session session, String msg) throws IOException {
+    public void onTextMessage(Session session, String msg) throws IOException {
         JSONObject messageJson = new JSONObject(msg);
 
-        switch (messageJson.getString("type")) {
-            case "MSG_SEND":
-                chatMessage(session, messageJson);
+        switch (messageJson.getString(JSON_TYPE)) {
+            case MESSAGE_SEND:
+                handleChatMessage(session, messageJson);
                 break;
-            case "MAP_SEND":
-                mapMessage(session, messageJson);
+            case MAP_SEND:
+                handleMapMessage(session, messageJson);
+                break;
+            case MAP_DELETE:
+                handleMapDelete(session, messageJson);
                 break;
             default:
-                System.out.println("Invalid message");
+                throw new IllegalArgumentException("Invalid message type.");
         }
     }
 
-    private void chatMessage(Session session, JSONObject messageData)
-            throws IOException {
-        String msg = messageData.getString("message");
-        System.out.println("Text message: " + msg);
-
+    private void broadcastString(String broadcastMessage) throws IOException {
         List<Session> participants =
             WebSocketHandler.getInstance().getRoomList(chatRoom);
 
+        for (Session participant : participants) {
+            participant.getBasicRemote().sendText(broadcastMessage);
+        }
+    }
+
+    private void handleChatMessage(Session session, JSONObject messageData)
+            throws IOException {
         JSONObject echoData = new JSONObject();
-        echoData.put("type", "MSG_RECV");
-        echoData.put("message", messageData.getString("message"));
-        echoData.put("uid", uid);
+        echoData.put(JSON_TYPE, MESSAGE_RECEIVE);
+        echoData.put(JSON_MESSAGE, messageData.getString(JSON_MESSAGE));
+        echoData.put(JSON_USER_ID, uid);
 
         DatastoreManager.getInstance().addMessage(chatRoom, echoData);
 
-        for (Session participant : participants) {
-            participant.getBasicRemote().sendText(echoData.toString());
-        }
+        broadcastString(echoData.toString());
     }
 
-    private void mapMessage(Session session, JSONObject messageData)
+    private void handleMapDelete(Session session, JSONObject messageData)
             throws IOException {
-        System.out.println("Map data: "
-            + messageData.getDouble("lat")
-            + messageData.getDouble("lng"));
+        JSONObject echoData = new JSONObject(messageData,
+            new String[]{JSON_ID});
+
+        //Delete marker
+        long markerId = messageData.getLong(JSON_ID);
+        DatastoreManager.getInstance().deleteMarker(chatRoom, markerId);
+
+        //Broadcast deletion
+        echoData.put(JSON_TYPE, MAP_DELETE);
+
+        broadcastString(echoData.toString());
+    }
+
+    private void handleMapMessage(Session session, JSONObject messageData)
+            throws IOException {
         JSONObject echoData = new JSONObject(
-            messageData, new String[]{"title", "body", "lat", "lng"});
+            messageData, new String[]{JSON_TITLE, JSON_BODY, JSON_LATITUDE,
+                    JSON_LONGITUDE});
 
-        DatastoreManager.getInstance().addMarker(chatRoom, echoData);
-
-        echoData.put("type", "MAP_RECV");
-
-        List<Session> participants =
-            WebSocketHandler.getInstance().getRoomList(chatRoom);
-
-        for (Session participant : participants) {
-            participant.getBasicRemote().sendText(echoData.toString());
+        if (messageData.has(JSON_ID)) {
+            System.out.println("Has id: " + messageData.getLong(JSON_ID));
+            echoData.put(JSON_ID, messageData.getLong(JSON_ID));
+            DatastoreManager.getInstance().updateMarker(chatRoom, echoData);
         }
-    }
+        else {
+            long markerId =
+                DatastoreManager.getInstance().addMarker(chatRoom, echoData);
 
-    @OnMessage
-    public void binaryMessage(Session session, ByteBuffer msg) {
-        System.out.println("Binary message: " + msg.toString());
-    }
-    @OnMessage
-    public void pongMessage(Session session, PongMessage msg) {
-        System.out.println("Pong message: " +
-            msg.getApplicationData().toString());
+            echoData.put(JSON_ID, markerId);
+            System.out.println("No id: " + markerId);
+        }
+
+        echoData.put(JSON_TYPE, MAP_RECEIVE);
+
+        broadcastString(echoData.toString());
     }
 
     @OnClose
     public void onClose(Session session) throws IOException {
-        // WebSocket connection closes
-
-        System.out.println("Socket " + session.getId() + " closed. " +
-            "Was authenticated: " + isAuthenticated);
-
         if (!isAuthenticated) {
             return;
         }
 
         WebSocketHandler.getInstance().removeSession(chatRoom, session);
-    }
-
-    @OnError
-    public void onError(Session session, Throwable throwable) {
-        // Do error handling here
     }
 }

@@ -376,8 +376,7 @@ class ChapMap {
    * @param {JSON} markerJson json object with the id of the deleted marker
    */
   deleteMarker(markerJson) {
-    markerInfo = markerJson.json();
-    let id = markerInfo[ChapMap.idString];
+    let id = markerJson.id;
     let permMarker = this.permMarkers_.id;
 
     if (permMarker) {

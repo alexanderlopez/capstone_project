@@ -20,10 +20,10 @@ import com.google.cloud.datastore.QueryResults;
 
 public class DatastoreManager {
 
-    private static final String KIND_CHATROOM = "CHAT_ROOM";
-    private static final String KIND_USERS = "USER_DATA";
-    private static final String KIND_CHATROOM_HISTORY = "CHAT_HISTORY";
-    private static final String KIND_CHATROOM_MARKERS = "MAP_MARKERS";
+    public static final String KIND_CHATROOM = "CHAT_ROOM";
+    public static final String KIND_USERS = "USER_DATA";
+    public static final String KIND_CHATROOM_HISTORY = "CHAT_HISTORY";
+    public static final String KIND_CHATROOM_MARKERS = "MAP_MARKERS";
 
     private static DatastoreManager currentInstance;
 
@@ -44,17 +44,38 @@ public class DatastoreManager {
                      .setKind(KIND_CHATROOM_MARKERS);
 
         Key markerKey = datastore.allocateId(markerFactory.newKey());
+
+        return putMarker(roomId, markerData, markerKey);
+    }
+
+    public long updateMarker(String roomId, JSONObject markerData) {
+        KeyFactory markerFactory =
+            datastore.newKeyFactory()
+                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId))
+                     .setKind(KIND_CHATROOM_MARKERS);
+
+        Key markerKey = markerFactory.newKey(markerData.getLong(
+            ChatWebSocket.JSON_ID));
+
+        return putMarker(roomId, markerData, markerKey);
+    }
+
+    private long putMarker(String roomId, JSONObject markerData, Key key) {
         Entity markerEntity =
-            Entity.newBuilder(markerKey)
-                  .set("title", markerData.getString("title"))
-                  .set("body", markerData.getString("body"))
-                  .set("lat", markerData.getDouble("lat"))
-                  .set("lng", markerData.getDouble("lng"))
+            Entity.newBuilder(key)
+                  .set(ChatWebSocket.JSON_TITLE,
+                        markerData.getString(ChatWebSocket.JSON_TITLE))
+                  .set(ChatWebSocket.JSON_BODY,
+                        markerData.getString(ChatWebSocket.JSON_BODY))
+                  .set(ChatWebSocket.JSON_LATITUDE,
+                        markerData.getDouble(ChatWebSocket.JSON_LATITUDE))
+                  .set(ChatWebSocket.JSON_LONGITUDE,
+                        markerData.getDouble(ChatWebSocket.JSON_LONGITUDE))
                   .build();
 
         datastore.put(markerEntity);
 
-        return markerKey.getId();
+        return key.getId();
     }
 
     public void deleteMarker(String roomId, long markerId) {
@@ -75,8 +96,10 @@ public class DatastoreManager {
         Entity messageEntity =
             Entity.newBuilder(datastore.allocateId(
                      chatHistoryFactory.newKey()))
-                  .set("uid", messageData.getString("uid"))
-                  .set("message", messageData.getString("message"))
+                  .set(ChatWebSocket.JSON_USER_ID,
+                        messageData.getString(ChatWebSocket.JSON_USER_ID))
+                  .set(ChatWebSocket.JSON_MESSAGE,
+                        messageData.getString(ChatWebSocket.JSON_MESSAGE))
                   .build();
 
         datastore.put(messageEntity);
@@ -97,11 +120,17 @@ public class DatastoreManager {
             Entity markerEntity = markers.next();
 
             JSONObject markerObject = new JSONObject();
-            markerObject.put("id",((Key) markerEntity.getKey()).getId())
-                        .put("title", markerEntity.getString("title"))
-                        .put("body", markerEntity.getString("body"))
-                        .put("lat", markerEntity.getDouble("lat"))
-                        .put("lng", markerEntity.getDouble("lng"));
+            markerObject.put(ChatWebSocket.JSON_ID,
+                            ((Key) markerEntity.getKey()).getId())
+                        .put(ChatWebSocket.JSON_TITLE,
+                            markerEntity.getString(ChatWebSocket.JSON_TITLE))
+                        .put(ChatWebSocket.JSON_BODY,
+                            markerEntity.getString(ChatWebSocket.JSON_BODY))
+                        .put(ChatWebSocket.JSON_LATITUDE,
+                            markerEntity.getDouble(ChatWebSocket.JSON_LATITUDE))
+                        .put(ChatWebSocket.JSON_LONGITUDE,
+                            markerEntity.getDouble(
+                                ChatWebSocket.JSON_LONGITUDE));
 
             markersJson.put(markerObject);
         }
@@ -124,8 +153,10 @@ public class DatastoreManager {
             Entity messageEntity = history.next();
 
             JSONObject messageObject = new JSONObject();
-            messageObject.put("uid", messageEntity.getString("uid"))
-                         .put("message", messageEntity.getString("message"));
+            messageObject.put(ChatWebSocket.JSON_USER_ID,
+                           messageEntity.getString(ChatWebSocket.JSON_USER_ID))
+                         .put(ChatWebSocket.JSON_MESSAGE,
+                           messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 
             historyJson.put(messageObject);
         }
