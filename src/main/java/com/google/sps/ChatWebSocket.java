@@ -105,11 +105,8 @@ public class ChatWebSocket {
         System.out.println("Map data: "
             + messageData.getDouble("lat")
             + messageData.getDouble("lng"));
-<<<<<<< HEAD
         JSONObject echoData = new JSONObject(
             messageData, new String[]{"title", "body", "lat", "lng"});
-=======
->>>>>>> f534176f8f388d187df2ec153a2a83704b32d8ef
 
         DatastoreManager.getInstance().addMarker(chatRoom, echoData);
 
