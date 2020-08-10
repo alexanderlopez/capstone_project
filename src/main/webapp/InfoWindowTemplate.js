@@ -24,7 +24,6 @@ class InfoWindowTemplate {
   /** google.maps.Marker object this info window is anchored to */
   myMarker_;
 
-
   /** The google.maps.InfoWindow object visible on the map */
   googleInfoWindow_;
 
@@ -55,7 +54,7 @@ class InfoWindowTemplate {
    */
   setDeleteEvent_() {
     let deleteBtn = document.getElementById(InfoWindowTemplate.DELETE_ID);
-    deleteBtn.onclick = () => this.myMarker_.hide();
+    deleteBtn.onclick = () => this.myMarker_.remove();
   }
 
   /**

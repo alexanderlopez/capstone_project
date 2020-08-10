@@ -24,12 +24,12 @@ class PermMarker extends MarkerTemplate{
   /** Displayed description of this marker */
   body_;
 
-  /**
-   * @param {google.maps.LatLng} coords the coordinates for the marker
-   */
-  constructor(coords) {
+  /** The id of this marker in datastore */
+  id_;
+
+  constructor(id) {
     super();
-    this.setPosition(coords);
+    this.id_ = id;
   }
 
   /** Opens the information window for this marker */
@@ -40,6 +40,11 @@ class PermMarker extends MarkerTemplate{
 
   closeInfoWindow() {
     PermMarker.permInfoWindow.close();
+  }
+
+  /** Removes the marker from the map and deletes it from the server */
+  remove() {
+    myMap.sendDeleteRequest(this);
   }
 
   /**
@@ -66,6 +71,11 @@ class PermMarker extends MarkerTemplate{
   /** Returns the body describing this marker */
   getBody() {
     return this.body_;
+  }
+
+  /** Returns the unique id of this marker */
+  getId() {
+    return this.id_;
   }
 
 }

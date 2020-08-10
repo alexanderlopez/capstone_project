@@ -29,6 +29,9 @@ class ChapMap {
   /** State determining whether the client can add markers or not */
   addingMarkers_;
 
+  /** object containing all permanent markers visible on the map */
+  permMarkers_;
+
   constructor() {
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -34.397, lng: 150.644 },
@@ -42,6 +45,9 @@ class ChapMap {
     this.tempMarker_ = new TempMarker();
     this.addingMarkers_ = false;
     this.editedPermMarker_ = null;
+
+    this.permMarkers_ = {};
+    this.loadMarkers_();
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
@@ -220,33 +226,6 @@ class ChapMap {
     this.tempMarker_.openInfoWindow();
   }
 
-  /**
-   * Updates the edited marker or create a new marker with the given information
-   * @param {google.maps.LatLng} coords where to place the marker
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
-   */
-  setPermMarkerInfo(coords, title, body) {
-    this.removeTempMarker();
-    let permMarker = this.editedPermMarker_;
-
-    if (permMarker) {
-      permMarker.setPosition(coords);
-    } else {
-      permMarker = new PermMarker(coords);
-    }
-
-    if (title) {
-      permMarker.setTitle(title);
-    }
-    if (body) {
-      permMarker.setBody(body);
-    }
-
-    permMarker.openInfoWindow();
-    this.editedPermMarker_ = null;
-  }
-
   /** Returns the PermMarker currently being edited */
   editingPermMarker() {
     return this.editedPermMarker_;
@@ -298,4 +277,169 @@ class ChapMap {
   panTo(coords) {
     this.googleMap_.panTo(coords);
   }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// RECEIVE MARKERS FROM THE SERVER
+
+  static idString = "id";
+  static titleString = "title";
+  static bodyString = "body";
+  static latString = "lat";
+  static lngString = "lng";
+
+
+  loadMarkers_() {
+    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+        .then(idToken => myMap.getMarkers(idToken))
+        .catch(error => {
+          throw "Problem getting markers";
+        });
+  }
+
+  /**
+   * Retrieves markers from the server and adds them to the map
+   */
+  getMarkers(idToken) {
+    fetch(`/map-server?idToken=${idToken}&idRoom=1234goroom`)
+      .then(response => response.json())
+      .then(markers => myMap.handleMarkers(markers))
+  }
+
+  handleMarkers(markers) {
+    for (const marker in markers) {
+      myMap.handleMarker(markers[marker]);
+    }
+  }
+
+  /**
+   * Modifies or creates a new PermMarker with the given details
+   * @param {JSON} markerJson json containing marker details
+  */
+  handleMarker(markerJson) {
+    let markerId = markerJson.id;
+    let title    = markerJson.title;
+    let body     = markerJson.body;
+    let lat      = markerJson.lat;
+    let lng      = markerJson.lng;
+
+    let coords = new google.maps.LatLng(lat, lng);
+
+    let permMarker = this.permMarkers_.markerId;
+
+    if (!permMarker) {
+      this.makeNewPermMarker_(markerId, title, body, coords)
+    } else {
+      this.updatePermMarker_(permMarker, coords, title, body);
+    }
+  }
+
+  /**
+   * @Private
+   * Creates a new PermMarker with the given details and stores it
+   * @param {String} title the title of the marker
+   * @param {String} body the body of the marker description
+   * @param {String} id the id of the marker
+   * @param {google.maps.LatLng} coords the coordinates of the marker
+   */
+  makeNewPermMarker_(id, title, body, coords) {
+    let permMarker = new PermMarker(id);
+    this.permMarkers_.id = permMarker;
+    this.updatePermMarker_(permMarker, coords, title, body);
+  }
+
+  /**
+   * @Private
+   * Updates an existing perm marker's details with the info from the server
+   * @param {PermMarker} permMarker marker that needs to be modified
+   * @param {String} title the title of the marker
+   * @param {String} body the body of the marker description
+   */
+  updatePermMarker_(permMarker, coords, title, body) {
+    if (coords) {
+      permMarker.setPosition(coords);
+    }
+    if (title) {
+      permMarker.setTitle(title);
+    }
+    if (body) {
+      permMarker.setBody(body);
+    }
+
+    if (permMarker === this.editedPermMarker_) {
+      permMarker.openInfoWindow();
+      this.editedPermMarker_ = null;
+    }
+  }
+
+  /**
+   * Execute marker delete based on the json given by the server
+   * @param {JSON} markerJson json object with the id of the deleted marker
+   */
+  deleteMarker(markerJson) {
+    markerInfo = markerJson.json();
+    let id = markerInfo[ChapMap.idString];
+    let permMarker = this.permMarkers_.id;
+
+    if (permMarker) {
+      permMarker.hide();
+      delete this.permMarkers_.id;
+    }
+  }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// SEND MARKERS TO THE SERVER
+
+  static typeValue = "MAP_SEND";
+
+  /**
+   * @Private
+   * Sends marker information to the server
+   * @param {google.maps.LatLng} coords where to place the marker
+   * @param {String} title the title of the marker
+   * @param {String} body the body of the marker description
+   */
+  sendPermMarkerInfo(coords, title, body) {
+    this.removeTempMarker();
+    let editedPermMarker = this.editedPermMarker_;
+
+    if (!editedPermMarker) {
+      connection.send(this.makeJson_(coords, title, body));
+    } else {
+      connection.send(this.makeJson_(coords, title, body, editedPermMarker.id));
+    }
+  }
+
+  /**
+   * @Private
+   * Returns a json object with all the information paired with the relevant key
+   */
+  makeJson_(coords, markerTitle, markerBody, markerId) {
+    var jsonObject = {
+        type : ChapMap.typeValue,
+        title : markerTitle,
+        body : markerBody,
+        lat : coords.lat(),
+        lng : coords.lng()
+    };
+
+    if (markerId) {
+      jsonObject.id = markerId;
+    }
+
+    return JSON.stringify(jsonObject);
+  }
+
+  /**
+   * Tells the server to delete this marker from datastore FINISH
+   * @param permMarker the permanent marker that needs to be deleted
+   */
+  sendDeleteRequest(permMarker) {
+    var jsonObject = {
+        type : "MAP_DEL",
+        id: permMarker.getId()
+    };
+
+    connection.send(JSON.stringify(jsonObject));
+  }
+
 }
