@@ -281,13 +281,6 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
-  static idString = "id";
-  static titleString = "title";
-  static bodyString = "body";
-  static latString = "lat";
-  static lngString = "lng";
-
-
   loadMarkers_() {
     firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
         .then(idToken => myMap.getMarkers(idToken))
@@ -324,7 +317,7 @@ class ChapMap {
 
     let coords = new google.maps.LatLng(lat, lng);
 
-    let permMarker = this.permMarkers_.markerId;
+    let permMarker = this.permMarkers_[markerId];
 
     if (!permMarker) {
       this.makeNewPermMarker_(markerId, title, body, coords)
@@ -343,7 +336,7 @@ class ChapMap {
    */
   makeNewPermMarker_(id, title, body, coords) {
     let permMarker = new PermMarker(id);
-    this.permMarkers_.id = permMarker;
+    this.permMarkers_[id] = permMarker;
     this.updatePermMarker_(permMarker, coords, title, body);
   }
 
@@ -404,7 +397,8 @@ class ChapMap {
     if (!editedPermMarker) {
       connection.send(this.makeJson_(coords, title, body));
     } else {
-      connection.send(this.makeJson_(coords, title, body, editedPermMarker.id));
+      let id = editedPermMarker.getId();
+      connection.send(this.makeJson_(coords, title, body, id));
     }
   }
 
