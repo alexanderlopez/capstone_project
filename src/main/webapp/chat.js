@@ -53,9 +53,8 @@ function addChatComment() {
     };
 
     document.getElementById('comment-container').value = "";
-    connection.send(commentObj);
 
-    if (webSocket) {
-        webSocket.send(JSON.stringify(messageData));
+    if (connection) {
+        connection.send(JSON.stringify(commentObj));
     }
 }
