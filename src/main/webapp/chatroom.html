@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="mapStyle.css">
     <link rel="stylesheet" href="chatStyle.css">
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II" type="text/javascript" id="mapAPI"></script>
-    <script src="MarkerInfoWindow.js"></script>
+    <script src="MarkerTemplate.js"></script>
+    <script src="InfoWindowTemplate.js"></script>
+    <script src="PermInfoWindow.js"></script>
+    <script src="TempInfoWindow.js"></script>
     <script src="PermMarker.js"></script>
     <script src="TempMarker.js"></script>
     <script src="ChapMap.js"></script>
@@ -15,17 +18,17 @@
   </head>
   <body>
 
-    <div id="map"></div>
-    <button class="open-button" onclick="openForm()">Chat</button>
+    <div id="map" class="expanded"></div>
+
     <div class="chat-popup" id="myForm">
-        <div class="form-container">
-            <h1>[Map Name] Chat <button type="button" class="cancel" onclick="closeForm()">X</button></h1>
+      <div class="form-container">
+          <h1>[Map Name] Chat></h1>
 
-            <label for="msg"><b>Enter Message Here: </b></label>
-            <textarea placeholder="Type message.." name="msg" required></textarea>
+              <label for="msg"><b>Enter Message Here: </b></label>
+              <textarea placeholder="Type message.." name="msg" required></textarea>
 
-            <button type="submit" class="btn">Send</button>
-        </div>
+          <button id="submitBtn" type="submit" class="btn">Send</button>
+      </div>
     </div>
   </body>
 </html>

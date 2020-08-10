@@ -1,4 +1,132 @@
+body, html {
+  height: 100%;
+}
+
 #map {
-  height: 1000px;
-  width: 1000px;
+  height: 100%;
+  width: 70%;
+  transition: width 2s;
+}
+
+#map.expanded {
+  width: 100%
+}
+
+.contentWrapper {
+  width: 20em;
+}
+
+.leftColumn {
+  float: left;
+  width: 2em;
+  margin-right: 1em;
+}
+
+.rightColumn {
+  float: left;
+  width: calc(100% - 4em);
+}
+
+#markerDelete, #markerEdit {
+  height: 1.5em;
+  width: 2em;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  padding: 0;
+  background-color: white;
+}
+
+#markerDelete {
+  background-image: url("icons/delete.png");
+  margin: 1.5em 0 .5em 0 !important;
+}
+
+#markerEdit {
+  background-image: url("icons/edit.png");
+  margin: .5em 0 1.5em 0 !important;
+}
+
+#markerDelete:hover, #markerEdit:hover {
+  cursor: pointer;
+}
+
+#markerDelete:focus, #markerEdit:focus {
+  outline: 0;
+}
+
+.markerTitle {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 0;
+}
+
+#titleInput {
+  width: 60%;
+  margin-bottom: 5px;
+  height: 1.25em;
+  resize: none;
+}
+
+#bodyInput {
+  resize: none;
+  height: 6em;
+  width: 100%;
+}
+
+.btnWrapper {
+  position: absolute;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+#viewBtnWrapper {
+  bottom: 270px;
+}
+
+#addMarkerBtnWrapper {
+  bottom: 210px;
+}
+
+.btnIcon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 30px;
+  width: 30px;
+  border: none;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.btnIcon:focus, .btnIcon:hover {
+  outline: 0;
+}
+
+.selected .btnIcon {
+  top: 2px;
+  left: 2px;
+  height: 36px;
+  width: 36px;
+}
+
+.selected {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 7px 7px -1px;
+}
+
+#addMarkerBtn {
+  background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png);
+}
+
+#viewBtn {
+  background-image: url(icons/pointer.png);
 }

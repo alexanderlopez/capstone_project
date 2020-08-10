@@ -16,6 +16,7 @@
 
 let myMap;
 let chatRoomID = (new URLSearchParams(location.search)).get('roomId');
+
 let connection = new WebSocket(getServerUrl());
 
 let domPromise = new Promise(function(resolve) {
@@ -36,7 +37,7 @@ function initMap() {
 }
 
 function initChat() {
-  document.querySelector('form').addEventListener('submit', (event) => {
+  document.getElementById('submitBtn').addEventListener('click', (event) => {
       event.preventDefault();
       let message = document.querySelector('#message').value;
       connection.send(message);
@@ -56,8 +57,8 @@ connection.onerror = (error) => {
 };
 
 connection.onmessage = (event) => {
-  
-  var obj = JSON.parse(event.data); 
+
+  var obj = JSON.parse(event.data);
 
   switch(obj.type) {
       case 'MSG_RECV':
@@ -66,14 +67,14 @@ connection.onmessage = (event) => {
           document.querySelector('#chat').append(li);
           break;
       case 'MAP_RECV':
-          // TODO(alicevlasov): Handle MAP_RECV 
+          // TODO(alicevlasov): Handle MAP_RECV
           break;
       case 'MAP_DEL':
           // TODO(alicevlasov): Handle MAP_DEL
           break;
       default:
           throw 'Type not found';
-  } 
+  }
 };
 
 /**
@@ -86,7 +87,7 @@ function getServerUrl() {
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
-    } 
+    }
 
     if(location.protocol === 'https:'){
         protoSpec = 'wss:';

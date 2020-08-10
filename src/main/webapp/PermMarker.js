@@ -12,47 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-class PermMarker {
+/** Creates a permanent marker which clients can only view */
+class PermMarker extends MarkerTemplate{
 
-  /** The google.maps.Marker object visible on the map*/
-  googleMarker;
+  /** Information window used for all permanent markers */
+  static permInfoWindow;
 
-  /** Information window associated with this marker */
-  myInfoWindow;
+  /** Displayed title of this marker */
+  title_;
+
+  /** Displayed description of this marker */
+  body_;
 
   /**
    * @param {google.maps.LatLng} coords the coordinates for the marker
    */
   constructor(coords) {
-    this.googleMarker = new google.maps.Marker(
-      {
-        position: coords,
-        map: myMap.googleMap
-      });
-    this.myInfoWindow = new MarkerInfoWindow(this);
-    this.setMarkerListeners();
-    this.myInfoWindow.open();
+    super();
+    this.setPosition(coords);
+  }
+
+  /** Opens the information window for this marker */
+  openInfoWindow() {
+    myMap.closeTempInfoWindow();
+    PermMarker.permInfoWindow.open(this);
+  }
+
+  closeInfoWindow() {
+    PermMarker.permInfoWindow.close();
   }
 
   /**
-   * Sets marker-triggered events
+   * Sets the title this marker to the given value
+   * @param {String} title the title of this marker
    */
-  setMarkerListeners() {
-    this.googleMarker.addListener('dblclick', () => {
-      this.remove();
-      myMap.removeTempMarker();
-    });
-    this.googleMarker.addListener('click', () => {
-      this.myInfoWindow.open();
-    });;
+  setTitle(title) {
+    this.title_ = title;
+  }
+
+  /** Returns the title describing this marker */
+  getTitle() {
+    return this.title_;
   }
 
   /**
-   * Removes the marker from the map
+   * Sets the body property of this marker to the given value
+   * @param {String} body the body of this marker
    */
-  remove() {
-    myMap.deletePermMarker(this);
-    this.myInfoWindow.close();
-    this.googleMarker.setMap(null);
+  setBody(body) {
+    this.body_ = body;
   }
+
+  /** Returns the body describing this marker */
+  getBody() {
+    return this.body_;
+  }
+
 }
