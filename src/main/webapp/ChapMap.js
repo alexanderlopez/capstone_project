@@ -307,7 +307,7 @@ class ChapMap {
 
   handleMarkers(markers) {
     for (const marker in markers) {
-      myMap.handleMarker(marker);
+      myMap.handleMarker(markers[marker]);
     }
   }
 
@@ -316,18 +316,13 @@ class ChapMap {
    * @param {JSON} markerJson json containing marker details
   */
   handleMarker(markerJson) {
-    markerInfo = markerJson.json();
-    let markerId = markerInfo[ChapMap.idString];
-    let title    = markerInfo[ChapMap.titleString];
-    let body     = markerInfo[ChapMap.bodyString];
-    let lat      = markerInfo[ChapMap.latString];
-    let lng      = markerInfo[ChapMap.lngString];
+    let markerId = markerJson.id;
+    let title    = markerJson.title;
+    let body     = markerJson.body;
+    let lat      = markerJson.lat;
+    let lng      = markerJson.lng;
 
-    try {
-      let coords = new google.maps.LatLng(lat, lng);
-    } catch(err) {
-      let coords = null;
-    }
+    let coords = new google.maps.LatLng(lat, lng);
 
     let permMarker = this.permMarkers_.markerId;
 
