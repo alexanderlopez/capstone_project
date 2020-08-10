@@ -44,7 +44,6 @@ class PermMarker extends MarkerTemplate{
 
   /** Removes the marker from the map and deletes it from the server */
   remove() {
-    super.hide();
     myMap.sendDeleteRequest(this);
   }
 
