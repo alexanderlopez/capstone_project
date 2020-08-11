@@ -38,8 +38,12 @@ public class ChatWebSocket {
     public static final String JSON_LONGITUDE = "lng";
     public static final String JSON_TYPE = "type";
     public static final String JSON_USER_ID = "uid";
+    public static final String JSON_USER_NAME = "name";
     public static final String JSON_ID = "id";
     public static final String JSON_TIMESTAMP = "time";
+    public static final String JSON_ROOM_NAME = "name";
+    public static final String JSON_ROOM_ID = "id";
+    public static final String JSON_ROOM_ARRAY = "rooms";
 
     public static final String SOCKET_PARAMETER_ROOM = "chatroom";
     public static final String SOCKET_PARAMETER_ID = "idToken";
