@@ -57,7 +57,7 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
         initWebsocket();
         initMap();
         initChat();
-      })
+      });
     });
 
 function initMap() {

@@ -47,12 +47,14 @@ function loadChatHistory() {
  * Retrieves chat history from the server and adds them to the page
  */
 function getChatHistory(idToken) {
-  fetch(`/chat-server?idToken=${idToken}&idRoom=1`).then(response => response.json()).then((comments) => {
-    for (const index in comments) {
-      let comment = comments[index];
-      handleChatMessage(comment);
-    }
-  });
+  fetch(`/chat-server?idToken=${idToken}&idRoom=${roomId}`)
+        .then(response => response.json())
+        .then((comments) => {
+          for (const index in comments) {
+            let comment = comments[index];
+            handleChatMessage(comment);
+          }
+        });
 }
 
 
@@ -62,7 +64,7 @@ function getChatHistory(idToken) {
 function addChatComment() {
     var commentObj = {
            type : "MSG_SEND",
-           message : document.getElementById('comment-container').value,
+           message : document.getElementById('comment-container').value
     };
 
     document.getElementById('comment-container').value = "";
@@ -79,16 +81,14 @@ function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
   var node = document.createElement("ul");
   var textnode = document.createTextNode(obj.message);
-  console.log(obj);
-  console.log("this is uid: " + obj.uid);
-  console.log("this is current id token: " + firebase.auth().currentUser.getIdToken);
 
-  if(obj.uid == firebase.auth().currentUser.getIdToken){
+  let token = firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
+  if(obj.uid == token) {
     node.style = "background-color: #eeeeee; text-align: right";
   } else {
     node.style = "text-align: left; background-color: #cccccc";
   }
-  
+
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }

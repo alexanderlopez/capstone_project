@@ -322,7 +322,7 @@ class ChapMap {
   getMarkers(idToken) {
     fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
       .then(response => response.json())
-      .then(markers => myMap.handleMarkers(markers))
+      .then(markers => myMap.handleMarkers(markers));
   }
 
   handleMarkers(markers) {
