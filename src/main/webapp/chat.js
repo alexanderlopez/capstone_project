@@ -77,8 +77,18 @@ function addChatComment() {
  */
 function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
-  var node = document.createElement("LI");
-  var textnode = document.createTextNode(obj.message);         
+  var node = document.createElement("ul");
+  var textnode = document.createTextNode(obj.message);
+  console.log(obj);
+  console.log("this is uid: " + obj.uid);
+  console.log("this is current id token: " + firebase.auth().currentUser.getIdToken);
+
+  if(obj.uid == firebase.auth().currentUser.getIdToken){
+    node.style = "background-color: #eeeeee; text-align: right";
+  } else {
+    node.style = "text-align: left; background-color: #cccccc";
+  }
+  
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }
