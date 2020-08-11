@@ -64,12 +64,7 @@ function initMap() {
 }
 
 function initChat() {
-  document.getElementById('submitBtn').addEventListener('click', (event) => {
-      event.preventDefault();
-      let message = document.querySelector('#message').value;
-      connection.send(message);
-      document.querySelector('#message').value = '';
-  });
+  loadChatHistory();
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,9 +87,7 @@ function initWebsocket() {
 
     switch(obj.type) {
         case 'MSG_RECV':
-            let li = document.createElement('li');
-            li.innerText = obj.uid + ": " + obj.message;
-            document.querySelector('#chat').append(li);
+            handleChatMessage(obj);
             break;
         case 'MAP_RECV':
             myMap.handleMarker(obj);
@@ -114,7 +107,7 @@ function initWebsocket() {
  * @return {string} The server's URL.
   */
 async function getServerUrl() {
-    var defaultChatRoomID = "1234goroom";
+    var defaultChatRoomID = "1";
     var protoSpec;
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {

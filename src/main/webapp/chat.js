@@ -34,22 +34,32 @@ function closeChat() {
   chatOpen = false;
 }
 
-/**
- * Loads chat history and adds it to the index page
-  */
+
 function loadChatHistory() {
-  fetch('/chat-server').then(response => response.text()).then((quote) => {
-      document.getElementById('past-comments').innerText = quote;
-  });
+  firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+      .then(idToken => getChatHistory(idToken))
+      .catch(error => {
+        throw "Problem getting chat history";
+      });
 }
+
+/**
+ * Retrieves chat history from the server and adds them to the page
+ */
+function getChatHistory(idToken) {
+  fetch(`/chat-server?idToken=${idToken}&idRoom=1`).then(response => response.text()).then((quote) => {
+          document.getElementById('past-comments').innerText = quote;
+      });
+}
+
 
 /**
  * Sends chat comment to server
 */
 function addChatComment() {
     var commentObj = {
-           'type' : 'MSG_SEND',
-           'comment' : document.getElementById('comment-container').value,
+           type : "MSG_SEND",
+           message : document.getElementById('comment-container').value,
     };
 
     document.getElementById('comment-container').value = "";
@@ -57,4 +67,15 @@ function addChatComment() {
     if (connection) {
         connection.send(JSON.stringify(commentObj));
     }
+}
+
+/**
+ * Add comment to page
+ */
+function handleChatMessage(obj) {
+  //TODO(astepin): Include User ID and timestamp in the message
+  var node = document.createElement("LI");
+  var textnode = document.createTextNode(obj.message);         
+  node.appendChild(textnode);
+  document.getElementById("past-comments").appendChild(node);
 }

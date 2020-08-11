@@ -31,11 +31,11 @@
     <div class="chat-popup" id="myForm">
       <div class="form-container">
           <h1>[Map Name] Chat></h1>
-
+              <ul id="past-comments"></ul>
               <label for="msg"><b>Enter Message Here: </b></label>
-              <textarea placeholder="Type message.." name="msg" required></textarea>
+              <textarea id="comment-container" placeholder="Type message.." name="msg" required></textarea>
 
-          <button id="submitBtn" type="submit" class="btn">Send</button>
+          <button onClick="addChatComment()" id="submitBtn" type="submit" class="btn">Send</button>
       </div>
     </div>
   </body>

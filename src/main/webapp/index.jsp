@@ -27,12 +27,7 @@
         <title>Hello App Engine Flexible</title>
 
     </head>
-    <body onload="loadChatHistory()">
-        
-
-        <ul id="past-comments"></ul>
-
-        <ul id="chat"></ul>
+    <body>
 
         <form>
             <textarea rows="8" cols="80" id="message"></textarea>
