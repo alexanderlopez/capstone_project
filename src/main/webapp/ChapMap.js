@@ -308,6 +308,10 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
+  /**
+   * @Private
+   * Fetches all the map's markers from the server and loads them to the map
+   */
   loadMarkers_() {
     firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
         .then(idToken => myMap.getMarkers(idToken))
@@ -318,14 +322,20 @@ class ChapMap {
 
   /**
    * Retrieves markers from the server and adds them to the map
+   * @param {firebase.idToken} idToken the current user's getIdToken
    */
   getMarkers(idToken) {
     fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
       .then(response => response.json())
-      .then(markers => myMap.handleMarkers(markers));
+      .then(markers => myMap.handleMarkers_(markers));
   }
 
-  handleMarkers(markers) {
+  /**
+   * @Private
+   * Processes a list of markers and adds them to the map
+   * @param {JSON} markers json array of markers that need to be processed
+   */
+  handleMarkers_(markers) {
     for (const marker in markers) {
       myMap.handleMarker(markers[marker]);
     }
@@ -373,6 +383,7 @@ class ChapMap {
    * @param {PermMarker} permMarker marker that needs to be modified
    * @param {String} title the title of the marker
    * @param {String} body the body of the marker description
+   * @param {google.maps.LatLng} coords the coordinates of the marker
    */
   updatePermMarker_(permMarker, coords, title, body) {
     if (coords) {
@@ -411,7 +422,6 @@ class ChapMap {
   static typeValue = "MAP_SEND";
 
   /**
-   * @Private
    * Sends marker information to the server
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} title the title of the marker
@@ -432,6 +442,10 @@ class ChapMap {
   /**
    * @Private
    * Returns a json object with all the information paired with the relevant key
+   * @param {google.maps.LatLng} coords where to place the marker
+   * @param {String} markerTitle the title of the marker
+   * @param {String} markerBody the body of the marker description
+   * @param {String} markerId the datastore id of this marker
    */
   makeJson_(coords, markerTitle, markerBody, markerId) {
     var jsonObject = {
@@ -461,5 +475,4 @@ class ChapMap {
 
     connection.send(JSON.stringify(jsonObject));
   }
-
 }
