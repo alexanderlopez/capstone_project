@@ -14,6 +14,8 @@ import javax.websocket.CloseReason;
 import javax.websocket.PongMessage;
 import javax.websocket.server.ServerEndpoint;
 
+import com.google.cloud.datastore.Key;
+
 import com.google.sps.WebSocketHandler;
 import com.google.sps.CapstoneAuth;
 import com.google.sps.DatastoreManager;
@@ -118,7 +120,11 @@ public class ChatWebSocket {
         echoData.put(JSON_MESSAGE, messageData.getString(JSON_MESSAGE));
         echoData.put(JSON_USER_ID, uid);
 
-        DatastoreManager.getInstance().addMessage(chatRoomId, echoData);
+        new Thread(){
+            public void run() {
+                DatastoreManager.getInstance().addMessage(chatRoomId, echoData);
+            }
+        }.start();
 
         broadcastString(echoData.toString());
     }
@@ -146,13 +152,26 @@ public class ChatWebSocket {
 
         if (messageData.has(JSON_ID)) {
             echoData.put(JSON_ID, messageData.getLong(JSON_ID));
-            DatastoreManager.getInstance().updateMarker(chatRoomId, echoData);
+
+            new Thread(){
+                public void run() {
+                    DatastoreManager.getInstance()
+                                    .updateMarker(chatRoomId, echoData);
+                }
+            }.start();
         }
         else {
-            long markerId =
-                DatastoreManager.getInstance().addMarker(chatRoomId, echoData);
+            Key markerKey =
+                DatastoreManager.getInstance().newMarkerKey(chatRoomId);
 
-            echoData.put(JSON_ID, markerId);
+            new Thread(){
+                public void run() {
+                    DatastoreManager.getInstance()
+                                    .addMarker(markerKey, echoData);
+                }
+            }.start();
+
+            echoData.put(JSON_ID, markerKey.getId());
         }
 
         echoData.put(JSON_TYPE, MAP_RECEIVE);
