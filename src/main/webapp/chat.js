@@ -14,39 +14,55 @@
 
 let chatOpen = false;
 
+/**
+ * Changes the status of the chat's open-ness
+ */
 function toggleChat() {
   if (chatOpen) {
-    closeChat();
+    closeChat_();
   } else {
-    openChat();
+    openChat_();
   }
 }
 
-function openChat() {
+/**
+ * @Private
+ * Opens the chat
+ */
+function openChat_() {
   document.getElementById("myForm").classList.add("chatOpen");
   document.getElementById("map").classList.remove("expanded");
   chatOpen =  true;
 }
 
-function closeChat() {
+/**
+ * @Private
+ * Closes the chat
+ */
+function closeChat_() {
   document.getElementById("myForm").classList.remove("chatOpen");
   document.getElementById("map").classList.add("expanded");
   chatOpen = false;
 }
 
-
+/**
+ * Loads chat 
+ * @throws Will throw an error if cannot get chat history associated with current user
+ */
 function loadChatHistory() {
   firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-      .then(idToken => getChatHistory(idToken))
+      .then(idToken => getChatHistory_(idToken))
       .catch(error => {
         throw "Problem getting chat history";
       });
 }
 
 /**
+ * @Private
  * Retrieves chat history from the server and adds them to the page
+ * @param{number} idToken The ID associated with the current user
  */
-function getChatHistory(idToken) {
+function getChatHistory_(idToken) {
   fetch(`/chat-server?idToken=${idToken}&idRoom=${roomId}`)
         .then(response => response.json())
         .then((comments) => {
@@ -59,7 +75,7 @@ function getChatHistory(idToken) {
 
 
 /**
- * Sends chat comment to server
+ * Sends chat comment from text area to server
 */
 function addChatComment() {
     var commentObj = {
@@ -75,7 +91,8 @@ function addChatComment() {
 }
 
 /**
- * Add comment to page
+ * @param{!Object} obj A JSON Object that represents the comment to be added 
+ * Adds comment to page
  */
 function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
