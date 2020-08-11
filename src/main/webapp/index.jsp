@@ -25,14 +25,9 @@
 
     </head>
     <body>
-<<<<<<< HEAD
-=======
-
         <div id="header">
           <h1>CHAP</h1>
         </div>
->>>>>>> 361a1cd850bea2e5836e6c0257eea84b37956ea7
-
         <div id="pageContent">
           <div id="firebaseui-auth-container"></div>
 
