@@ -46,7 +46,7 @@ function closeChat_() {
 }
 
 /**
- * Loads chat 
+ * Loads chat
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
@@ -91,7 +91,7 @@ function addChatComment() {
 }
 
 /**
- * @param{!Object} obj A JSON Object that represents the comment to be added 
+ * @param{!Object} obj A JSON Object that represents the comment to be added
  * Adds comment to page
  */
 function handleChatMessage(obj) {
@@ -105,6 +105,7 @@ function handleChatMessage(obj) {
   } else {
     node.classList.add("otherMessage");
   }
+  node.classList.add("message");
 
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);

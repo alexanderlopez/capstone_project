@@ -14,23 +14,32 @@ gbody {font-family: Arial, Helvetica, sans-serif;}
 /* Add styles to the form container */
 .form-container {
   width: 100%;
-  min-width: 400px;
+  min-width: 360px;
   padding: 4%;
   background-color: white;
   height: 100%;
-  overflow: scroll;
+}
+
+.form-container h1 {
+  text-align: center;
+  font-size: 4em;
 }
 
 /* Full-width textarea */
 .form-container textarea {
-  width: 100%;
+  width: 92%;
+  min-width: 360px;
   padding: 5%;
-  margin: 3% 0 5% 0;
+  margin: 10px 0 10px 0;
   border: none;
   background: #f1f1f1;
   resize: none;
   max-height: 100px;
   height: 70%;
+  position: absolute;
+  right: 4%;
+  bottom: 100px;
+  border-radius: 2px;
 }
 
 /* When the textarea gets focus, do something */
@@ -60,6 +69,7 @@ gbody {font-family: Arial, Helvetica, sans-serif;}
   height: 100%;
   overflow-x: hidden;
   transition: width 2s;
+  border-radius: 2px;
 }
 
 #myForm.chatOpen {
@@ -67,23 +77,42 @@ gbody {font-family: Arial, Helvetica, sans-serif;}
 }
 
 #submitBtn {
-  background-color: #BDBDBD;
+  background-color: #7a7d80;
   color: white;
-  padding: 4% 5%;
   border: none;
   cursor: pointer;
   width: 92%;
-  bottom: 4%;
+  min-width: 360px;
+  bottom: 50px;
   position: absolute;
   right: 4%;
+  height: 50px;
+  border-radius: 2px;
+  font-size: 2em;
+}
+
+.message {
+  min-height: 3em;
+  font-size: 1.25em;
+  padding: .835em 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  color: white;
 }
 
 .myMessage {
-  background-color: #eeeeee;
-  text-align: right
+  background-color: #7ac0e4;
+  text-align: right;
+  margin-left: 90px;
 }
 
 .otherMessage {
-  background-color: #cccccc;
+  background-color: #0081cb;
   text-align: left;
+  margin-right: 90px;
+}
+
+#past-comments {
+  height: calc(100% - 200px - 10em);
+  overflow-y: scroll;
 }
