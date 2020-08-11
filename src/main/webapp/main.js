@@ -114,7 +114,7 @@ function initWebsocket() {
  * @return {string} The server's URL.
   */
 async function getServerUrl() {
-    var defaultChatRoomID = "1234goroom";
+    var defaultChatRoomID = "1";
     var protoSpec;
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {

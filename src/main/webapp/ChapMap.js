@@ -293,7 +293,7 @@ class ChapMap {
    * Retrieves markers from the server and adds them to the map
    */
   getMarkers(idToken) {
-    fetch(`/map-server?idToken=${idToken}&idRoom=1234goroom`)
+    fetch(`/map-server?idToken=${idToken}&idRoom=1`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers(markers))
   }
