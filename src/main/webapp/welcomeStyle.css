@@ -1,0 +1,47 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  background-image: url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80);
+  background-size: cover;
+  background-position-y: 62%;
+  background-repeat: no-repeat;
+}
+
+#header {
+  height: 20em;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+#header h1 {
+  text-align: center;
+  width: 100%;
+  font-size: 20em;
+  margin: 0;
+  height: 100%;
+}
+
+.myBtn, .myBtn:focus {
+  display: block;
+  width: 14rem;
+  height: 8rem;
+  border-radius: 5px;
+  outline: 0;
+  border: 0;
+  margin-right: 100px;
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+#pageContent {
+  display: flex;
+  justify-content: center;
+}
+
+#pageContent button {
+  margin-right: 0;
+}
