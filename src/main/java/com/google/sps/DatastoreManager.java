@@ -39,10 +39,17 @@ public class DatastoreManager {
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
     }
 
+    /**
+     * Adds the marker @param markerData to the datastore using the specified
+     * key @param newKey. Returns @return the long id of the marker added.
+     */
     public long addMarker(Key newKey, JSONObject markerData) {
         return putMarker(markerData, newKey);
     }
 
+    /**
+     * Creates a new key object for a new marker with the given @param roomId.
+     */
     public Key newMarkerKey(long roomId) {
         KeyFactory markerFactory =
             datastore.newKeyFactory()
@@ -54,6 +61,11 @@ public class DatastoreManager {
         return markerKey;
     }
 
+    /**
+     * Updates the marker with the given @param roomId and with information
+     * @param markerData that includes the datastore id of the marker.
+     * This pushes the changes to datastore.
+     */
     public long updateMarker(long roomId, JSONObject markerData) {
         KeyFactory markerFactory =
             datastore.newKeyFactory()
@@ -84,6 +96,9 @@ public class DatastoreManager {
         return key.getId();
     }
 
+    /**
+     * Deletes the marker with the associated @param markerId and @param roomId.
+     */
     public void deleteMarker(long roomId, long markerId) {
         KeyFactory markerFactory =
             datastore.newKeyFactory()
@@ -93,6 +108,9 @@ public class DatastoreManager {
         datastore.delete(markerFactory.newKey(markerId));
     }
 
+    /**
+     * Adds a message with the given @param roomId to the datastore.
+     */
     public void addMessage(long roomId, JSONObject messageData) {
         KeyFactory chatHistoryFactory =
             datastore.newKeyFactory()
@@ -111,6 +129,10 @@ public class DatastoreManager {
         datastore.put(messageEntity);
     }
 
+    /**
+     * Loads the marker information from datastore associated with the room
+     * @param roomId .
+     */
     public String loadMarkerData(long roomId) {
         Query<Entity> markerQuery = Query.newEntityQueryBuilder()
             .setKind(KIND_CHATROOM_MARKERS)
@@ -144,6 +166,10 @@ public class DatastoreManager {
         return markersJson.toString();
     }
 
+    /**
+     * Loads the chat history from datastore associated with the room
+     * @param roomId .
+     */
     public String loadChatHistory(long roomId) {
         Query<Entity> historyQuery = Query.newEntityQueryBuilder()
             .setKind(KIND_CHATROOM_HISTORY)
@@ -211,6 +237,10 @@ public class DatastoreManager {
         datastore.put(allowedUser);
     }
 
+    /**
+     * Verifies using datastore if the @param uid is allowed in the chatroom
+     * @param chatRoomId .
+     */
     public boolean isUserAllowedChatroom(String uid, long chatRoomId) {
         Key userKey = datastore.newKeyFactory()
                                .setKind(KIND_USERS)
@@ -221,6 +251,10 @@ public class DatastoreManager {
         return (datastore.get(userKey) != null);
     }
 
+    /**
+     * Gets the current instance of DatastoreManager. Creates one if it does not
+     * exist.
+     */
     public static DatastoreManager getInstance() {
         if (currentInstance == null) {
             currentInstance = new DatastoreManager();

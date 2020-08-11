@@ -47,6 +47,12 @@ public class ChatWebSocket {
     private boolean isAuthenticated = false;
     private String uid;
 
+    /**
+     * Method called every time that a websocket is opened. Initializes the
+     * socket by adding it to the list of session associated to the chatroom.
+     * Verifies if the user is authenticated, if this is not the case the
+     * connection is closed.
+     */
     @OnOpen
     public void onOpen(Session session) throws IOException {
         // Get session and check if the user is authenticated with Firebase
@@ -85,6 +91,11 @@ public class ChatWebSocket {
         WebSocketHandler.getInstance().addSession(this.chatRoomId, session);
     }
 
+    /**
+     * Method called when the websocket receives string data from the client.
+     * Parses the type of message received with types MSG_SEND, MAP_SEND,
+     * MAP_DELETE, and processes them accordingly.
+     */
     @OnMessage
     public void onTextMessage(Session session, String msg) throws IOException {
         JSONObject messageJson = new JSONObject(msg);
@@ -179,6 +190,11 @@ public class ChatWebSocket {
         broadcastString(echoData.toString());
     }
 
+    /**
+     * Method called when the websocket connection with the client is closed.
+     * If this is the case, and the user is authenticated, the socket endpoint
+     * is removed from the list of sessions associated with the chatroom.
+     */
     @OnClose
     public void onClose(Session session) throws IOException {
         if (!isAuthenticated) {
