@@ -39,30 +39,34 @@ public class DatastoreManager {
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
     }
 
-    public long addMarker(long roomId, JSONObject markerData) {
+    public long addMarker(Key newKey, JSONObject markerData) {
+        return putMarker(markerData, newKey);
+    }
+
+    public Key newMarkerKey(long roomId) {
         KeyFactory markerFactory =
             datastore.newKeyFactory()
-                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId))
-                     .setKind(KIND_CHATROOM_MARKERS);
+                     .setKind(KIND_CHATROOM_MARKERS)
+                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
 
         Key markerKey = datastore.allocateId(markerFactory.newKey());
 
-        return putMarker(roomId, markerData, markerKey);
+        return markerKey;
     }
 
     public long updateMarker(long roomId, JSONObject markerData) {
         KeyFactory markerFactory =
             datastore.newKeyFactory()
-                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId))
-                     .setKind(KIND_CHATROOM_MARKERS);
+                     .setKind(KIND_CHATROOM_MARKERS)
+                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
 
         Key markerKey = markerFactory.newKey(markerData.getLong(
             ChatWebSocket.JSON_ID));
 
-        return putMarker(roomId, markerData, markerKey);
+        return putMarker(markerData, markerKey);
     }
 
-    private long putMarker(long roomId, JSONObject markerData, Key key) {
+    private long putMarker(JSONObject markerData, Key key) {
         Entity markerEntity =
             Entity.newBuilder(key)
                   .set(ChatWebSocket.JSON_TITLE,
@@ -92,8 +96,8 @@ public class DatastoreManager {
     public void addMessage(long roomId, JSONObject messageData) {
         KeyFactory chatHistoryFactory =
             datastore.newKeyFactory()
-                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId))
-                     .setKind(KIND_CHATROOM_HISTORY);
+                     .setKind(KIND_CHATROOM_HISTORY)
+                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
 
         Entity messageEntity =
             Entity.newBuilder(datastore.allocateId(
