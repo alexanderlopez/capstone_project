@@ -29,9 +29,7 @@ var uiConfig = {
             return true;
         },
         uiShown: function() {
-            document.getElementById('loader').style.display = 'none';
             document.getElementById('sign-out').style.display = 'none';
-            document.getElementById('send-auth').style.display = 'none';
         }
     },
     signInFlow: 'popup',
@@ -40,35 +38,16 @@ var uiConfig = {
 
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-        document.getElementById('firebaseui-auth-container').innerText = 'Hello User!';
-        document.getElementById('loader').style.display = 'none';
+        document.getElementById('firebaseui-auth-container').innerText = '';
+        document.getElementById('myMaps').style.display = 'block';
         document.getElementById('sign-out').style.display = 'block';
-        document.getElementById('send-auth').style.display = 'block';
     } else {
         document.getElementById('firebaseui-auth-container').innerText = '';
-        document.getElementById('loader').style.display = 'block';
+        document.getElementById('myMaps').style.display = 'none';
         ui.start('#firebaseui-auth-container', uiConfig);
     }
 });
 
 function logOut() {
     firebase.auth().signOut();
-}
-
-function sendAuth() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-        // Send token to your backend via HTTPS
-        fetch('/authentication', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/html'
-            },
-            body: idToken
-        }).then(response => response.text()).then(responseText => {
-            console.log(responseText);
-        });
-    }).catch(function(error) {
-        // Handle error
-        console.log(error);
-    });
 }

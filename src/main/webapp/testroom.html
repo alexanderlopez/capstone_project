@@ -64,7 +64,7 @@
 
                     webSocket = new WebSocket(
                         socketProtocol + "//" + location.host
-                         + "/chat/1234goroom?idToken=" + idToken);
+                         + "/chat/1?idToken=" + idToken);
 
                     webSocket.onopen = function (event) {
                         console.log(webSocket.readyState);

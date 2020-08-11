@@ -15,8 +15,6 @@
 /** Creates a Google Map where clients can add/edit/removes custom markers */
 class ChapMap {
 
-  static SELECTED_CLASS = "selected";
-
   /** The google.maps.Map that will be displayed on the page. */
   googleMap_;
 
@@ -71,10 +69,11 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn) {
+  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn) {
     addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
     viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
     chatBtn.addEventListener('click', () => toggleChat());
+    backBtn.addEventListener('click', () => window.location='/');
   }
 
   /**
@@ -135,6 +134,8 @@ class ChapMap {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // BUILD MAP BUTTONS
 
+  static SELECTED_CLASS = "selected";
+
   /**
    * @Private
    * Overlays add-marker state toggler buttons on the map
@@ -144,12 +145,14 @@ class ChapMap {
     let viewBtn = this.makeViewBtn_();
     let addMarkerBtn = this.makeAddMarkerBtn_();
     let chatBtn = this.makeChatBtn_();
+    let backBtn = this.makeBackBtn_();
 
-    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn);
+    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn);
 
     map.appendChild(viewBtn);
     map.appendChild(addMarkerBtn);
     map.appendChild(chatBtn);
+    map.appendChild(backBtn);
   }
 
   /**
@@ -160,7 +163,7 @@ class ChapMap {
     let viewBtnWrapper = document.createElement("div");
     viewBtnWrapper.id = "viewBtnWrapper";
     viewBtnWrapper.classList.add("btnWrapper");
-    viewBtnWrapper.classList.add("selected");
+    viewBtnWrapper.classList.add(ChapMap.SELECTED_CLASS);
 
     let viewBtn = document.createElement("button");
     viewBtn.id = "viewBtn";
@@ -198,14 +201,38 @@ class ChapMap {
     let chatBtnWrapper = document.createElement("div");
     chatBtnWrapper.id = "chatBtnWrapper";
     chatBtnWrapper.classList.add("btnWrapper");
+    chatBtnWrapper.classList.add("textBtnWrapper");
 
     let btn = document.createElement("button");
+    btn.classList.add("textBtn");
     btn.id = "chatButton";
     btn.innerHTML = "Chat";
 
     chatBtnWrapper.appendChild(btn);
 
     return chatBtnWrapper;
+  }
+
+
+  /**
+   * @Private
+   * Returns a button that will be used to go back to the home page
+   */
+  makeBackBtn_() {
+    let backBtnWrapper = document.createElement("div");
+    backBtnWrapper.id = "backBtnWrapper";
+    backBtnWrapper.classList.add("btnWrapper");
+    backBtnWrapper.classList.add("textBtnWrapper");
+
+    let backBtn = document.createElement("input");
+    backBtn.classList.add("textBtn");
+    backBtn.id = "backButton";
+    backBtn.type = "submit";
+    backBtn.value = "Back";
+
+    backBtnWrapper.appendChild(backBtn);
+
+    return backBtnWrapper;
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PERM MARKER HANDLERS
@@ -293,7 +320,7 @@ class ChapMap {
    * Retrieves markers from the server and adds them to the map
    */
   getMarkers(idToken) {
-    fetch(`/map-server?idToken=${idToken}&idRoom=1234goroom`)
+    fetch(`/map-server?idToken=${idToken}&idRoom=1`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers(markers))
   }

@@ -22,7 +22,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 public final class CapstoneAuth {
 
-    private static final String TEST_ROOM_ID = "1234goroom";
+    public static final long TEST_ROOM_ID = 1;
     private static final String ALLOWED_USERS = "allowed_users";
 
     private static CapstoneAuth currentInstance;
@@ -49,49 +49,6 @@ public final class CapstoneAuth {
         datastore = DatastoreOptions.getDefaultInstance().getService();
         keyFactory = datastore.newKeyFactory().setKind(
             DatastoreManager.KIND_CHATROOM);
-
-        addTestChatroom();
-    }
-
-    // TODO(lopezalexander): Remove method on deploy.
-    private void addTestChatroom() {
-        Entity chatRoom = Entity.newBuilder(keyFactory.newKey(TEST_ROOM_ID))
-                                .build();
-        datastore.put(chatRoom);
-    }
-
-    // TODO(lopezalexander): Remove method on deploy.
-    private void addUserToTestChatroom(String uid) {
-        try {
-            Entity testRoom = datastore.get(keyFactory.newKey(TEST_ROOM_ID));
-
-            if (!testRoom.getNames().contains(ALLOWED_USERS)) {
-                testRoom = Entity.newBuilder(testRoom)
-                                 .set(ALLOWED_USERS,
-                                    ListValue.of(Arrays.asList(
-                                        StringValue.of(uid))))
-                                 .build();
-
-                datastore.put(testRoom);
-                return;
-            }
-
-            List<Value<String>> allowedUsers =
-                testRoom.getList(ALLOWED_USERS);
-
-            ListValue addAllowedUser = ListValue.newBuilder()
-                                                .set(allowedUsers)
-                                                .addValue(uid)
-                                                .build();
-
-            testRoom = Entity.newBuilder(testRoom)
-                             .set(ALLOWED_USERS, addAllowedUser)
-                             .build();
-            datastore.put(testRoom);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static synchronized String getUserId(String idToken) {
@@ -121,37 +78,13 @@ public final class CapstoneAuth {
                 FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
 
-            currentInstance.addUserToTestChatroom(uid);
+            //TODO(lopezalexander) remove on deploy
+            DatastoreManager.getInstance().createTestRoom("Test Room", uid);
 
             return (uid != null);
         } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
-        return false;
-    }
-
-    public static synchronized boolean isUserChatroomAuthenticated(String chatRoom,
-            String idToken) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
-
-        try {
-            FirebaseToken decodedToken =
-                FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String uid = decodedToken.getUid();
-
-            Entity roomEntity = currentInstance.datastore.get(
-                currentInstance.keyFactory.newKey(chatRoom));
-
-            List<Value<String>> allowedRoomUID =
-                roomEntity.getList(ALLOWED_USERS);
-
-            return allowedRoomUID.contains(StringValue.of(uid));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         return false;
     }
 }
