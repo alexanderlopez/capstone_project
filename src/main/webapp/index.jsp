@@ -31,7 +31,7 @@
         <div id="pageContent">
           <div id="firebaseui-auth-container"></div>
 
-          <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1234goroom'" id="myMaps" class="myBtn">
+          <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1'" id="myMaps" class="myBtn">
 
           <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out</button>
         </div>

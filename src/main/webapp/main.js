@@ -30,7 +30,7 @@ firebase.initializeApp(firebaseConfig);
 // MAP
 
 let myMap;
-let chatRoomID = (new URLSearchParams(location.search)).get('roomId');
+let roomId = (new URLSearchParams(location.search)).get('roomId');
 
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
@@ -108,7 +108,6 @@ function initWebsocket() {
  * @return {string} The server's URL.
   */
 async function getServerUrl() {
-    var defaultChatRoomID = "1";
     var protoSpec;
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
@@ -123,5 +122,5 @@ async function getServerUrl() {
 
     let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
 
-    return protoSpec + "//" + location.host + "/chat/" + defaultChatRoomID + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
 }
