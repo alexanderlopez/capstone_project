@@ -320,7 +320,7 @@ class ChapMap {
    * Retrieves markers from the server and adds them to the map
    */
   getMarkers(idToken) {
-    fetch(`/map-server?idToken=${idToken}&idRoom=1`)
+    fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers(markers))
   }
@@ -396,7 +396,6 @@ class ChapMap {
    * @param {JSON} markerJson json object with the id of the deleted marker
    */
   deleteMarker(markerJson) {
-    console.log("receive deleting");
     let id = markerJson.id;
     let permMarker = this.permMarkers_[id];
 
@@ -455,7 +454,6 @@ class ChapMap {
    * @param permMarker the permanent marker that needs to be deleted
    */
   sendDeleteRequest(permMarker) {
-    console.log("deleting");
     var jsonObject = {
         type : "MAP_DEL",
         id: permMarker.getId()
