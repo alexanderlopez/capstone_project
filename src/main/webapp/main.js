@@ -76,6 +76,9 @@ function initWebsocket() {
   };
 
   connection.onclose = () => {
+    getServerUrl().then(result => {
+      connection = new WebSocket(result);
+    });
   };
 
   connection.onerror = (error) => {
