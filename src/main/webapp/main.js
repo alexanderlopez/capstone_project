@@ -32,20 +32,26 @@ firebase.initializeApp(firebaseConfig);
 let myMap;
 let roomId = (new URLSearchParams(location.search)).get('roomId');
 
+/** Waits for the page HTML to load */
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
     });
 
+/** Waits for the google Maps API to load */
 let mapPromise = new Promise(function(resolve) {
       document.getElementById("mapAPI").addEventListener("load", resolve);
     });
 
+/** Waits for the firebase authenticator to initialize */
 let firebasePromise = new Promise(function(resolve) {
       firebase.auth().onAuthStateChanged(resolve)
     });
 
 let connection = null;
 
+/** Waits until all promises are fullfilled before opening the websocket and
+ * setting up the map and chat
+ */
 Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
       let user = firebase.auth().currentUser;
       if (!user) {
@@ -55,27 +61,23 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        initMap();
-        initChat();
+        myMap = new ChapMap();
+        loadChatHistory();
       });
     });
-
-function initMap() {
-  myMap = new ChapMap();
-}
-
-function initChat() {
-  loadChatHistory();
-}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
 
+/** Sets up all websocket listeners */
 function initWebsocket() {
   connection.onopen = () => {
   };
 
   connection.onclose = () => {
+    getServerUrl().then(result => {
+      connection = new WebSocket(result);
+    });
   };
 
   connection.onerror = (error) => {
