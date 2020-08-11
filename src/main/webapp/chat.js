@@ -82,8 +82,8 @@ function handleChatMessage(obj) {
   var node = document.createElement("ul");
   var textnode = document.createTextNode(obj.message);
 
-  let token = firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
-  if(obj.uid == token) {
+  let userId = firebase.auth().currentUser.uid;
+  if(obj.uid === userId) {
     node.style = "background-color: #eeeeee; text-align: right";
   } else {
     node.style = "text-align: left; background-color: #cccccc";
