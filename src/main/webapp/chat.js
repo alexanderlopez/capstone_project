@@ -97,7 +97,7 @@ function addChatComment() {
 function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
 
-  fetch(`/user-server?idToken=${obj.uid}&getUserDetails=false`)
+  fetch(`/user-server?idToken=${obj.idToken}&getUserDetails=false`)
     .then(response => response.json())
     .then((comments) => {
       let name = comments[name];
