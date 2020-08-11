@@ -79,14 +79,14 @@ function addChatComment() {
  */
 function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
-  var node = document.createElement("ul");
+  var node = document.createElement("div");
   var textnode = document.createTextNode(obj.message);
 
   let userId = firebase.auth().currentUser.uid;
   if(obj.uid === userId) {
-    node.style = "background-color: #eeeeee; text-align: right";
+    node.classList.add("myMessage");
   } else {
-    node.style = "text-align: left; background-color: #cccccc";
+    node.classList.add("otherMessage");
   }
 
   node.appendChild(textnode);

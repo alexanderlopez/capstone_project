@@ -77,3 +77,13 @@ gbody {font-family: Arial, Helvetica, sans-serif;}
   position: absolute;
   right: 4%;
 }
+
+.myMessage {
+  background-color: #eeeeee;
+  text-align: right
+}
+
+.otherMessage {
+  background-color: #cccccc;
+  text-align: left;
+}
