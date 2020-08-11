@@ -16,7 +16,11 @@ import com.google.cloud.datastore.Value;
 import com.google.cloud.datastore.PathElement;
 import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
+import com.google.cloud.datastore.StructuredQuery.OrderBy;
 import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.TimestampValue;
+
+import com.google.cloud.Timestamp;
 
 public class DatastoreManager {
 
@@ -124,6 +128,8 @@ public class DatastoreManager {
                         messageData.getString(ChatWebSocket.JSON_USER_ID))
                   .set(ChatWebSocket.JSON_MESSAGE,
                         messageData.getString(ChatWebSocket.JSON_MESSAGE))
+                  .set(ChatWebSocket.JSON_TIMESTAMP,
+                        TimestampValue.of(Timestamp.now()))
                   .build();
 
         datastore.put(messageEntity);
@@ -175,6 +181,7 @@ public class DatastoreManager {
             .setKind(KIND_CHATROOM_HISTORY)
             .setFilter(PropertyFilter.hasAncestor(
                 roomFactory.newKey(roomId)))
+            .setOrderBy(OrderBy.asc(ChatWebSocket.JSON_TIMESTAMP))
             .build();
 
         QueryResults<Entity> history = datastore.run(historyQuery);
