@@ -47,9 +47,12 @@ function loadChatHistory() {
  * Retrieves chat history from the server and adds them to the page
  */
 function getChatHistory(idToken) {
-  fetch(`/chat-server?idToken=${idToken}&idRoom=1`).then(response => response.text()).then((quote) => {
-          document.getElementById('past-comments').innerText = quote;
-      });
+  fetch(`/chat-server?idToken=${idToken}&idRoom=1`).then(response => response.json()).then((comments) => {
+    for (const index in comments) {
+      let comment = comments[index];
+      handleChatMessage(comment);
+    }
+  });
 }
 
 
