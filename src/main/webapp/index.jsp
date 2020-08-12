@@ -27,9 +27,9 @@
           <h1>CHAP</h1>
           <h4 id="welcome-message"></h4>
         </div>
-
         <div id="pageContent">
-
+          <div id="loading">Loading...</div>
+          
           <div id="user-details" class="panel">
             <h2 id="profile" class="panel-header">Profile</h2>
           </div>

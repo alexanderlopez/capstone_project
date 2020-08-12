@@ -74,6 +74,7 @@ function getUserInfo_(user, userIdToken) {
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {
+  hideLoading_();
   let isNewUser = Object.keys(userJson).length === 0;
 
   if (isNewUser) {
@@ -246,6 +247,11 @@ function makeRoomButton_(id, name) {
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
+  hideLoading_();
+  hideEl_(getMapsWrapper_());
+  hideEl_(getUserDetails_());
+  hideEl_(getNewMapForm_());
+  hideEl_(getUsernameForm_());
   showEl_(getLoginDiv_());
   ui.start('#firebaseui-auth-container', uiConfig);
 }
@@ -259,6 +265,24 @@ function logOut() {
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Helper functions
+
+/**
+ * @Private
+ * Hides the loading element
+ */
+function hideLoading_() {
+  el = document.getElementById("loading");
+  setDisplay_(el, 'none');
+}
+
+/**
+ * @Private
+ * Changes the display style of the DOM element to none
+ * @param {Element} el DOM element of object to be modified
+ */
+function hideEl_(el) {
+  setDisplay_(el, 'none');
+}
 
 /**
  * @Private
@@ -317,4 +341,12 @@ function getNewMapForm_() {
  */
 function getMapsWrapper_() {
   return document.getElementById('maps-wrapper');
+}
+
+/**
+ * @Private
+ * Retrieves the details wrapper DOM element from the page
+ */
+function getUserDetails_() {
+  return document.getElementById('user-details');
 }
