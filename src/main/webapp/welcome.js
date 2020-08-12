@@ -61,7 +61,7 @@ var idToken;
  */
 function getUserInfo_(user, userIdToken) {
   idToken = userIdToken;
-  let userEmail = firebase.auth().currentUser.emailVerified;
+  let userEmail = firebase.auth().currentUser.email;
   let userDetails = fetch(`/user-server?idToken=${idToken}&getUserDetails=true`)
         .then(response => response.json())
         .then((userJson) => displayUserInfo_(userJson, userEmail));
@@ -81,12 +81,13 @@ function displayUserInfo_(userJson, email) {
     showEl_(getUsernameForm_());
     hideEl_(getNewMapForm_());
   } else {
-    setWelcomeMessage_(userJson.userName);
+    hideEl_(getUsernameForm_());
+    setWelcomeMessage_(userJson.name);
     showUserMaps_(userJson.rooms);
     showEl_(getNewMapForm_());
   }
 
-  showUserDetails_(userEmail, userJson.userName);
+  showUserDetails_(email, userJson.name);
 
   hideEl_(getLoginDiv_());
   showEl_(getSignOutBtn_());
@@ -117,8 +118,8 @@ function setWelcomeMessage_(userName) {
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = getElementById("map-name");
-  submitNewItem_("room-server", input, "name");
+  let input = document.getElementById("map-name");
+  submitNewItem_("room-server", input);
 }
 
 /**
@@ -126,23 +127,30 @@ function submitMap() {
  */
 function submitUsername() {
   let input = document.getElementById("input-username");
-  submitNewItem_("user-server", input, "name");
+  submitNewItem_("user-server", input);
 }
 
 /**
  * @Private
  * Retrieves input value, sends to the given server, and handles server response
  */
-function submitNewItem_(server, input, inputName) {
-  const params = new URLSearchParams();
-  params.append(inputName, input.value);
-  params.append('id', idToken);
-  input.value = "";
+function submitNewItem_(server, input) {
+  var params = {
+      name: input.value,
+      id: idToken
+  };
 
-  fetch(`/${server}`, {method:'POST', body: params})
-    .then((response) => response.text())
+  console.log(JSON.stringify(params));
+
+  fetch(`/${server}`, {
+      method:'POST',
+      headers: {
+                'Content-Type': 'text/html'
+            },
+      body: JSON.stringify(params)
+  }).then((response) => response.text())
     .then((worked) => {
-      if (worked === true) {
+      if (worked == 'true') {
         location.href = "/";
       }
       else {
@@ -224,7 +232,9 @@ function showUserMaps_(mapsJson) {
 function makeRoomButton_(id, name) {
   let roomBtn = document.createElement("button");
   roomBtn.innerHTML = name;
-  roomBtn.onclick = `location='/chatroom.html?roomId=${id}'`;
+  roomBtn.addEventListener('click', () => {
+     location.href=`/chatroom.html?roomId=${id}`;
+  });
   roomBtn.classList.add("roomBtn");
   return roomBtn;
 }

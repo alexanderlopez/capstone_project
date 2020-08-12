@@ -1,6 +1,6 @@
 package com.google.sps;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -39,10 +39,15 @@ public class DatastoreManager {
     private final KeyFactory roomFactory;
     private final KeyFactory userFactory;
 
+    // User Id -> username
+    private HashMap<String, String> idToName;
+
     private DatastoreManager() {
         datastore = DatastoreOptions.getDefaultInstance().getService();
         roomFactory = datastore.newKeyFactory().setKind(KIND_CHATROOM);
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
+
+        idToName = new HashMap<String, String>();
     }
 
     /**
@@ -194,8 +199,9 @@ public class DatastoreManager {
             Entity messageEntity = history.next();
 
             JSONObject messageObject = new JSONObject();
-            messageObject.put(ChatWebSocket.JSON_USER_ID,
-                           messageEntity.getString(ChatWebSocket.JSON_USER_ID))
+            messageObject.put(ChatWebSocket.JSON_USER_NAME,
+                           getUserName(messageEntity.getString(
+                                ChatWebSocket.JSON_USER_ID)))
                          .put(ChatWebSocket.JSON_MESSAGE,
                            messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 
@@ -203,6 +209,27 @@ public class DatastoreManager {
         }
 
         return historyJson.toString();
+    }
+
+    public String getUserName(String uid) {
+        if (idToName.containsKey(uid)) {
+            return idToName.get(uid);
+        }
+
+        Entity userEntity = datastore.get(userFactory.newKey(uid));
+
+        if (userEntity == null) {
+            return null;
+        }
+
+        String username = userEntity.getString(USER_ATTRIBUTE_NAME);
+        idToName.put(uid, username);
+
+        return username;
+    }
+
+    public void refreshNameCache() {
+        idToName = new HashMap<String, String>();
     }
 
     public long createChatRoom(String roomName, String allowedUserId) {
@@ -219,6 +246,7 @@ public class DatastoreManager {
 
         Entity childChatRoom =
             Entity.newBuilder(childChatRoomKey)
+                  .set(ROOM_ATTRIBUTE_NAME, roomName)
                   .build();
 
         datastore.put(newChatRoom);

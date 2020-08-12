@@ -142,6 +142,9 @@ public class ChatWebSocket {
             }
         }.start();
 
+        echoData.put(JSON_USER_NAME, DatastoreManager.getInstance()
+            .getUserName(uid));
+
         broadcastString(echoData.toString());
     }
 

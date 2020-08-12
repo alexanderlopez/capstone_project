@@ -21,6 +21,7 @@ public class ChatHistory extends HttpServlet {
 
         if (!CapstoneAuth.isUserAuthenticated(tokenId)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
 
         response.setContentType("application/json");
