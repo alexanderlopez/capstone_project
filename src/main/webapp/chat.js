@@ -26,6 +26,17 @@ function toggleChat() {
 }
 
 /**
+ * @param {*} e KeyBoardInput
+ * On 'Enter' adds nonempty comments to server
+ */
+function inputKeyUp(e) {
+  e.which = e.which || e.keyCode;
+  if(e.which == 13) {
+      addChatComment();
+  }
+}
+
+/**
  * @Private
  * Opens the chat
  */
@@ -75,18 +86,24 @@ function getChatHistory_(idToken) {
 
 
 /**
- * Sends chat comment from text area to server
+ * Sends nonempty chat comment from text area to server
 */
 function addChatComment() {
-    var commentObj = {
-           type : "MSG_SEND",
-           message : document.getElementById('comment-container').value
-    };
+    var commentContent = document.getElementById('comment-container').value;
 
-    document.getElementById('comment-container').value = "";
+    if(commentContent.indexOf("\n")==0 || commentContent===""){
+      document.getElementById('comment-container').value = "";
+    } else {
+      var commentObj = {
+        type : "MSG_SEND",
+        message : commentContent
+      };
 
-    if (connection) {
-        connection.send(JSON.stringify(commentObj));
+      document.getElementById('comment-container').value = "";
+
+      if (connection) {
+          connection.send(JSON.stringify(commentObj));
+      }
     }
 }
 
@@ -95,7 +112,7 @@ function addChatComment() {
  * Adds comment to page
  */
 function handleChatMessage(obj) {
-  //TODO(astepin): Include User ID and timestamp in the message
+  //TODO(astepin): Include timestamp in the message
 
   var node = document.createElement("div");
   var textnode = document.createTextNode(obj.name + ": " + obj.message);
@@ -110,3 +127,5 @@ function handleChatMessage(obj) {
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }
+
+
