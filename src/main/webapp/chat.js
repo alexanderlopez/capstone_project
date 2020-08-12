@@ -96,8 +96,9 @@ function addChatComment() {
  */
 function handleChatMessage(obj) {
   //TODO(astepin): Include User ID and timestamp in the message
+
   var node = document.createElement("div");
-  var textnode = document.createTextNode(obj.message);
+  var textnode = document.createTextNode(obj.name + ": " + obj.message);
 
   let userId = firebase.auth().currentUser.uid;
   if(obj.uid === userId) {

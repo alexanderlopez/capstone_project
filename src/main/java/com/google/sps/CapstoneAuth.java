@@ -79,7 +79,10 @@ public final class CapstoneAuth {
             String uid = decodedToken.getUid();
 
             //TODO(lopezalexander) remove on deploy
-            DatastoreManager.getInstance().createTestRoom("Test Room", uid);
+            String userMail =
+                FirebaseAuth.getInstance().getUser(uid).getEmail();
+            DatastoreManager.getInstance().createTestRoom("Test Room", uid,
+                userMail);
 
             return (uid != null);
         } catch (FirebaseAuthException e) {
