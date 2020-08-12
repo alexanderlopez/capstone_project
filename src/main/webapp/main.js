@@ -107,7 +107,7 @@ function initWebsocket() {
 
 /**
  * Returns the server's URL, forcing it to HTTPS, if necessary
- * @return {string} The server's URL.
+ * @return {String} The server's URL.
   */
 async function getServerUrl() {
     var protoSpec;

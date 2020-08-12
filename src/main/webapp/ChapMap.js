@@ -343,7 +343,7 @@ class ChapMap {
 
   /**
    * Modifies or creates a new PermMarker with the given details
-   * @param {JSON} markerJson json containing marker details
+   * @param {Object} markerJson json containing marker details
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
@@ -404,7 +404,7 @@ class ChapMap {
 
   /**
    * Execute marker delete based on the json given by the server
-   * @param {JSON} markerJson json object with the id of the deleted marker
+   * @param {Object} markerJson json object with the id of the deleted marker
    */
   deleteMarker(markerJson) {
     let id = markerJson.id;

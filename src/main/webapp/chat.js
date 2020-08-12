@@ -91,7 +91,7 @@ function addChatComment() {
 }
 
 /**
- * @param{!Object} obj A JSON Object that represents the comment to be added 
+ * @param{Object} obj A JSON Object that represents the comment to be added 
  * Adds comment to page
  */
 function handleChatMessage(obj) {
