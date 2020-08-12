@@ -78,15 +78,17 @@ function displayUserInfo_(userJson, email) {
 
   if (isNewUser) {
     setWelcomeMessage_();
+    showUserMaps_({});
     showEl_(getUsernameForm_());
     hideEl_(getNewMapForm_());
   } else {
     setWelcomeMessage_(userJson.userName);
     showUserMaps_(userJson.rooms);
     showEl_(getNewMapForm_());
+    hideEl_(getUsernameForm_());
   }
 
-  showUserDetails_(userEmail, userJson.userName);
+  showUserDetails_(email, userJson.userName);
 
   hideEl_(getLoginDiv_());
   showEl_(getSignOutBtn_());
@@ -241,6 +243,9 @@ function displayLoginInfo_() {
   hideEl_(getSignOutBtn_());
   hideEl_(getUsernameForm_());
   hideEl_(getNewMapForm_());
+  hideEl_(getMapsWrapper_());
+  hideEl_(getDetailsWrapper_());
+  hideEl_(getWelcomeMessage_());
   ui.start('#firebaseui-auth-container', uiConfig);
 }
 
@@ -312,4 +317,29 @@ function getUsernameForm_() {
  */
 function getNewMapForm_() {
   return document.getElementById('new-map-form');
+}
+
+/**
+ * @Private
+ * Retrieves the profile panel DOM element from the page
+ */
+function getDetailsWrapper_() {
+  return document.getElementById('user-details');
+}
+
+/**
+ * @Private
+ * Retrieves the map display panel DOM element from the page
+ */
+function getMapsWrapper_() {
+  return document.getElementById('maps-wrapper');
+}
+
+
+/**
+ * @Private
+ * Retrieves the welcome message DOM element from the page
+ */
+function getWelcomeMessage_() {
+  return document.getElementById('welcome-message');
 }

@@ -25,28 +25,39 @@
     <body>
         <div id="header">
           <h1>CHAP</h1>
-          <h4 id="welcome-message"><h4>
+          <h4 id="welcome-message"></h4>
         </div>
-        <div id="user-details"></div>
+
         <div id="pageContent">
+
+          <div id="user-details" class="panel">
+            <h2 id="profile" class="panel-header">Profile</h2>
+          </div>
 
           <div id="firebaseui-auth-container"></div>
 
-          <form id="username-form" onsubmit="submitUsername()">
-            <label for="input-username">My Username:</label>
-            <textarea id="input-username"></textarea>
+          <form id="username-form" onsubmit="submitUsername()"
+                class="panel form">
+            <label for="input-username" class="panel-header">My Username:
+              </label>
+            <textarea id="input-username" placeholder="Enter name...">
+              </textarea>
             <input type="submit" value="Submit">
           </form>
 
-          <form id="new-map-form" onsubmit="submitMap()">
-            <label for="map-name">New Map Name:</label>
-            <textarea id="map-name"></textarea>
+          <form id="new-map-form" onsubmit="submitMap()" class="panel form">
+            <label for="map-name" class="panel-header">New Map:</label>
+            <textarea id="map-name" placeholder="Enter name..."></textarea>
             <input type="submit" value="Submit">
           </form>
 
-          <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out
-              </button>
+          <div id="maps-wrapper" class="panel">
+            <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <div id="user-maps"></div>
+          </div>
         </div>
-        <div id="user-maps"></div>
+
+        <button id="sign-out" onclick="logOut()">Sign Out
+            </button>
     </body>
 </html>
