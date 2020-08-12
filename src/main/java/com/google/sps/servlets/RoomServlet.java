@@ -26,7 +26,6 @@ public class RoomServlet extends HttpServlet {
 
         if (!CapstoneAuth.isUserAuthenticated(tokenId)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            System.out.println("Failed");
             return;
         }
 

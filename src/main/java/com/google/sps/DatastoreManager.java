@@ -31,6 +31,7 @@ public class DatastoreManager {
 
     public static final String ROOM_ATTRIBUTE_NAME = "name";
     public static final String USER_ATTRIBUTE_NAME = "preferred_name";
+    public static final String USER_ATTRIBUTE_EMAIL = "email";
     public static final String CHILD_ROOM_ATTRIBUTE_ID = "room_id";
 
     private static DatastoreManager currentInstance;
@@ -255,16 +256,44 @@ public class DatastoreManager {
         return chatRoomKey.getId();
     }
 
-    public void addUserToChatRoom(String uid, long roomId) {
-        // Add chatroom to users
-        //Key userKey
+    public void addUserToChatRoom(long roomId, String email) {
+        Entity roomEntity = datastore.get(roomFactory.newKey(roomId));
 
-        // Add user to chatroom
+        if (roomEntity == null) {
+            return;
+        }
+
+        String roomName = roomEntity.getString(ROOM_ATTRIBUTE_NAME);
+
+        Query<Entity> userQuery = Query.newEntityQueryBuilder()
+            .setKind(KIND_USERS)
+            .setFilter(PropertyFilter.eq(USER_ATTRIBUTE_EMAIL, email))
+            .build();
+
+        QueryResults<Entity> usersResult = datastore.run(userQuery);
+
+        while (usersResult.hasNext()) {
+            Entity user = usersResult.next();
+            String uid = ((Key) user.getKey()).getName();
+
+            Key childChatRoomKey = datastore.newKeyFactory()
+                                            .setKind(KIND_CHATROOM)
+                                            .addAncestor(PathElement.of(
+                                                KIND_USERS, uid))
+                                            .newKey(roomId);
+            Entity childChatRoom = Entity.newBuilder(childChatRoomKey)
+                                         .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                         .build();
+
+            datastore.put(childChatRoom);
+        }
     }
 
     public void createUser(String uid, String preferredName) {
         Entity userEntity = Entity.newBuilder(userFactory.newKey(uid))
                                   .set(USER_ATTRIBUTE_NAME, preferredName)
+                                  .set(USER_ATTRIBUTE_EMAIL,
+                                        CapstoneAuth.getUserEmail(uid))
                                   .build();
         datastore.put(userEntity);
     }
