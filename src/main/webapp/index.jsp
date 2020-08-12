@@ -36,19 +36,17 @@
 
           <div id="firebaseui-auth-container"></div>
 
-          <div id="username-form" onsubmit="submitUsername()"
-                class="panel form">
+          <div id="username-form" class="panel form">
             <label for="input-username" class="panel-header">My Username:
               </label>
-            <textarea id="input-username" placeholder="Enter name...">
-              </textarea>
-            <input type="submit" value="Submit">
+            <textarea id="input-username" placeholder="Enter name..."></textarea>
+            <input type="button" value="Submit" onclick="submitUsername()">
           </div>
 
-          <div id="new-map-form" onsubmit="submitMap()" class="panel form">
+          <div id="new-map-form" class="panel form">
             <label for="map-name" class="panel-header">New Map:</label>
             <textarea id="map-name" placeholder="Enter name..."></textarea>
-            <input type="submit" value="Submit">
+            <input type="button" value="Submit" onclick="submitMap()">
           </div>
 
           <div id="maps-wrapper" class="panel">

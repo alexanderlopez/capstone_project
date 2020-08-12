@@ -51,17 +51,13 @@ public final class CapstoneAuth {
             DatastoreManager.KIND_CHATROOM);
     }
 
-    public static synchronized String getUserEmail(String idToken) {
+    public static synchronized String getUserEmail(String uid) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();
         }
 
         try {
-            FirebaseToken decodedToken =
-                FirebaseAuth.getInstance().verifyIdToken(idToken);
-
-            return FirebaseAuth.getInstance()
-                               .getUser(decodedToken.getUid()).getEmail();
+            return FirebaseAuth.getInstance().getUser(uid).getEmail();
         } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
@@ -95,12 +91,6 @@ public final class CapstoneAuth {
             FirebaseToken decodedToken =
                 FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
-
-            //TODO(lopezalexander) remove on deploy
-            String userMail =
-                FirebaseAuth.getInstance().getUser(uid).getEmail();
-            DatastoreManager.getInstance().createTestRoom("Test Room", uid,
-                userMail);
 
             return (uid != null);
         } catch (FirebaseAuthException e) {

@@ -61,7 +61,7 @@ var idToken;
  */
 function getUserInfo_(user, userIdToken) {
   idToken = userIdToken;
-  let userEmail = firebase.auth().currentUser.emailVerified;
+  let userEmail = firebase.auth().currentUser.email;
   let userDetails = fetch(`/user-server?idToken=${idToken}&getUserDetails=true`)
         .then(response => response.json())
         .then((userJson) => displayUserInfo_(userJson, userEmail));
@@ -80,17 +80,14 @@ function displayUserInfo_(userJson, email) {
     setWelcomeMessage_();
     showUserMaps_({});
     showEl_(getUsernameForm_());
-    hideEl_(getNewMapForm_());
   } else {
-    setWelcomeMessage_(userJson.userName);
+    setWelcomeMessage_(userJson.name);
     showUserMaps_(userJson.rooms);
     showEl_(getNewMapForm_());
-    hideEl_(getUsernameForm_());
   }
 
-  showUserDetails_(email, userJson.userName);
+  showUserDetails_(email, userJson.name);
 
-  hideEl_(getLoginDiv_());
   showEl_(getSignOutBtn_());
 }
 
@@ -101,6 +98,7 @@ function displayUserInfo_(userJson, email) {
  */
 function setWelcomeMessage_(userName) {
   let messageDiv = document.getElementById('welcome-message');
+  showEl_(messageDiv);
   let message = "";
 
   if (userName) {
@@ -119,8 +117,8 @@ function setWelcomeMessage_(userName) {
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = getElementById("map-name");
-  submitNewItem_("room-server", input, "name");
+  let input = document.getElementById("map-name");
+  submitNewItem_("room-server", input);
 }
 
 /**
@@ -128,29 +126,34 @@ function submitMap() {
  */
 function submitUsername() {
   let input = document.getElementById("input-username");
-  submitNewItem_("user-server", input, "name");
+  submitNewItem_("user-server", input);
 }
 
 /**
  * @Private
  * Retrieves input value, sends to the given server, and handles server response
  */
-function submitNewItem_(server, input, inputName) {
-  const params = new URLSearchParams();
-  params.append(inputName, input.value);
-  params.append('id', idToken);
-  input.value = "";
+ function submitNewItem_(server, input) {
+   var params = {
+       name: input.value,
+       id: idToken
+   };
 
-  fetch(`/${server}`, {method:'POST', body: params})
-    .then((response) => response.text())
-    .then((worked) => {
-      if (worked === true) {
-        location.href = "/";
-      }
-      else {
-        alert("Submit failed, please try again");
-      }
-    });
+   console.log(JSON.stringify(params));
+
+   fetch(`/${server}`, {
+         method:'POST',
+         headers: { 'Content-Type': 'text/html' },
+         body: JSON.stringify(params)
+     }).then((response) => response.text())
+       .then((worked) => {
+        if (worked == 'true') {
+          location.href = "/";
+        }
+        else {
+          alert("Submit failed, please try again");
+        }
+      });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -163,7 +166,7 @@ function submitNewItem_(server, input, inputName) {
  * @param {String} username the user's chosen username
  */
 function showUserDetails_(email, username) {
-  var emailBlock = makeDetailsGroup_("email", email)
+  var emailBlock = makeDetailsGroup_("email", email);
 
   if (username) {
     var usernameBlock = makeDetailsGroup_("username", username);
@@ -171,7 +174,7 @@ function showUserDetails_(email, username) {
     var usernameBlock = makeDetailsGroup_("username", "");
   }
 
-  let displayDiv = document.getElementById('user-details');;
+  let displayDiv = document.getElementById('user-details');
   displayDiv.appendChild(emailBlock);
   displayDiv.appendChild(usernameBlock);
   showEl_(displayDiv);
@@ -208,7 +211,9 @@ function makeDetailsGroup_(name, val) {
  * @param {JSON} mapsJson json array containing map ids and names
  */
 function showUserMaps_(mapsJson) {
-  let rooms = document.getElementById('user-maps');;
+  let rooms = document.getElementById('user-maps');
+  showEl_(getMapsWrapper_());
+
   for (const i in mapsJson) {
     let room = mapsJson[i];
     let roomId = room.id;
@@ -226,7 +231,9 @@ function showUserMaps_(mapsJson) {
 function makeRoomButton_(id, name) {
   let roomBtn = document.createElement("button");
   roomBtn.innerHTML = name;
-  roomBtn.onclick = `location='/chatroom.html?roomId=${id}'`;
+  roomBtn.addEventListener('click', () => {
+     location.href=`/chatroom.html?roomId=${id}`;
+  });
   roomBtn.classList.add("roomBtn");
   return roomBtn;
 }
@@ -240,12 +247,6 @@ function makeRoomButton_(id, name) {
  */
 function displayLoginInfo_() {
   showEl_(getLoginDiv_());
-  hideEl_(getSignOutBtn_());
-  hideEl_(getUsernameForm_());
-  hideEl_(getNewMapForm_());
-  hideEl_(getMapsWrapper_());
-  hideEl_(getDetailsWrapper_());
-  hideEl_(getWelcomeMessage_());
   ui.start('#firebaseui-auth-container', uiConfig);
 }
 
@@ -266,15 +267,6 @@ function logOut() {
  */
 function showEl_(el) {
   setDisplay_(el, 'block');
-}
-
-/**
- * @Private
- * Changes the display style of the DOM element to none
- * @param {Element} el DOM element of object to be modified
- */
-function hideEl_(el) {
-  setDisplay_(el, 'none');
 }
 
 /**
@@ -321,25 +313,8 @@ function getNewMapForm_() {
 
 /**
  * @Private
- * Retrieves the profile panel DOM element from the page
- */
-function getDetailsWrapper_() {
-  return document.getElementById('user-details');
-}
-
-/**
- * @Private
  * Retrieves the map display panel DOM element from the page
  */
 function getMapsWrapper_() {
   return document.getElementById('maps-wrapper');
-}
-
-
-/**
- * @Private
- * Retrieves the welcome message DOM element from the page
- */
-function getWelcomeMessage_() {
-  return document.getElementById('welcome-message');
 }
