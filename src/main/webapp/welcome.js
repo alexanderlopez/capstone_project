@@ -217,7 +217,7 @@ function showUserMaps_(mapsJson) {
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
-    let roomId = room.id;
+    let roomId = room.roomId;
     let roomName = room.name;
     rooms.appendChild(makeRoomButton_(roomId, roomName));
   }

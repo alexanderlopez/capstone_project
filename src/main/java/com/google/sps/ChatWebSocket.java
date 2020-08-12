@@ -42,7 +42,7 @@ public class ChatWebSocket {
     public static final String JSON_ID = "id";
     public static final String JSON_TIMESTAMP = "time";
     public static final String JSON_ROOM_NAME = "name";
-    public static final String JSON_ROOM_ID = "id";
+    public static final String JSON_ROOM_ID = "roomId";
     public static final String JSON_ROOM_ARRAY = "rooms";
     public static final String JSON_EMAIL_ARRAY = "emails";
 
