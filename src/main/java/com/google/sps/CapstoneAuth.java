@@ -51,6 +51,24 @@ public final class CapstoneAuth {
             DatastoreManager.KIND_CHATROOM);
     }
 
+    public static synchronized String getUserEmail(String idToken) {
+        if (currentInstance == null) {
+            currentInstance = new CapstoneAuth();
+        }
+
+        try {
+            FirebaseToken decodedToken =
+                FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            return FirebaseAuth.getInstance()
+                               .getUser(decodedToken.getUid()).getEmail();
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static synchronized String getUserId(String idToken) {
         if (currentInstance == null) {
             currentInstance = new CapstoneAuth();

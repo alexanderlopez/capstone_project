@@ -44,6 +44,7 @@ public class ChatWebSocket {
     public static final String JSON_ROOM_NAME = "name";
     public static final String JSON_ROOM_ID = "id";
     public static final String JSON_ROOM_ARRAY = "rooms";
+    public static final String JSON_EMAIL_ARRAY = "emails";
 
     public static final String SOCKET_PARAMETER_ROOM = "chatroom";
     public static final String SOCKET_PARAMETER_ID = "idToken";
