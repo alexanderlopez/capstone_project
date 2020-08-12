@@ -57,7 +57,7 @@ function closeChat_() {
 }
 
 /**
- * Loads chat
+ * Loads chat 
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
@@ -79,6 +79,7 @@ function getChatHistory_(idToken) {
         .then((comments) => {
           for (const index in comments) {
             let comment = comments[index];
+            console.log("this is comment" + JSON.stringify(comment));
             handleChatMessage(comment);
           }
         });
@@ -90,7 +91,7 @@ function getChatHistory_(idToken) {
 */
 function addChatComment() {
     var commentContent = document.getElementById('comment-container').value;
-
+    console.log("Comment content:__" + "__");
     if(commentContent.indexOf("\n")==0 || commentContent===""){
       document.getElementById('comment-container').value = "";
     } else {
@@ -108,24 +109,21 @@ function addChatComment() {
 }
 
 /**
- * @param{!Object} obj A JSON Object that represents the comment to be added
+ * @param{!Object} obj A JSON Object that represents the comment to be added 
  * Adds comment to page
  */
 function handleChatMessage(obj) {
   //TODO(astepin): Include timestamp in the message
-
-  var node = document.createElement("div");
-  var textnode = document.createTextNode(obj.name + ": " + obj.message);
-
   let userId = firebase.auth().currentUser.uid;
+  var node = document.createElement("div");
+  var textnode = node.innerHTML = "<b>" + obj.name + "</b>: " + obj.message;
+
   if(obj.uid === userId) {
     node.classList.add("myMessage");
   } else {
     node.classList.add("otherMessage");
   }
-  node.classList.add("message");
 
-  node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }
 
