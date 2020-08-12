@@ -31,9 +31,8 @@
     <div class="chat-popup" id="myForm">
       <div class="form-container">
           <h1>Your Chat</h1>
-              <ul id="past-comments"></ul>
-              <label for="msg"><b>Enter Message Here: </b></label>
-              <textarea onkeyup="inputKeyUp(event)" id="comment-container" placeholder="Type message.." name="msg" required></textarea>
+              <div id="past-comments"></div>
+              <textarea id="comment-container" placeholder="Type message.." name="msg" required></textarea>
 
           <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn">Send</button>
       </div>
