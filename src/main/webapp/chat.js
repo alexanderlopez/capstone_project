@@ -79,6 +79,7 @@ function getChatHistory_(idToken) {
         .then((comments) => {
           for (const index in comments) {
             let comment = comments[index];
+            console.log("this is comment" + JSON.stringify(comment));
             handleChatMessage(comment);
           }
         });
@@ -90,6 +91,7 @@ function getChatHistory_(idToken) {
 */
 function addChatComment() {
     var commentContent = document.getElementById('comment-container').value;
+    console.log("Comment content:__" + "__");
     if(commentContent.indexOf("\n")==0 || commentContent===""){
       document.getElementById('comment-container').value = "";
     } else {
