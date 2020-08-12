@@ -1,6 +1,6 @@
 package com.google.sps;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -30,6 +30,9 @@ public class DatastoreManager {
     public static final String KIND_CHATROOM_MARKERS = "MAP_MARKERS";
 
     public static final String ROOM_ATTRIBUTE_NAME = "name";
+    public static final String USER_ATTRIBUTE_NAME = "preferred_name";
+    public static final String USER_ATTRIBUTE_EMAIL = "email";
+    public static final String CHILD_ROOM_ATTRIBUTE_ID = "room_id";
 
     private static DatastoreManager currentInstance;
 
@@ -37,10 +40,15 @@ public class DatastoreManager {
     private final KeyFactory roomFactory;
     private final KeyFactory userFactory;
 
+    // User Id -> username
+    private HashMap<String, String> idToName;
+
     private DatastoreManager() {
         datastore = DatastoreOptions.getDefaultInstance().getService();
         roomFactory = datastore.newKeyFactory().setKind(KIND_CHATROOM);
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
+
+        idToName = new HashMap<String, String>();
     }
 
     /**
@@ -192,8 +200,12 @@ public class DatastoreManager {
             Entity messageEntity = history.next();
 
             JSONObject messageObject = new JSONObject();
-            messageObject.put(ChatWebSocket.JSON_USER_ID,
-                           messageEntity.getString(ChatWebSocket.JSON_USER_ID))
+            messageObject.put(ChatWebSocket.JSON_USER_NAME,
+                           getUserName(messageEntity.getString(
+                                ChatWebSocket.JSON_USER_ID)))
+                         .put(ChatWebSocket.JSON_USER_ID,
+                                messageEntity.getString(
+                                    ChatWebSocket.JSON_USER_ID))
                          .put(ChatWebSocket.JSON_MESSAGE,
                            messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 
@@ -203,45 +215,154 @@ public class DatastoreManager {
         return historyJson.toString();
     }
 
+    public String getUserName(String uid) {
+        if (idToName.containsKey(uid)) {
+            return idToName.get(uid);
+        }
+
+        Entity userEntity = datastore.get(userFactory.newKey(uid));
+
+        if (userEntity == null) {
+            return null;
+        }
+
+        String username = userEntity.getString(USER_ATTRIBUTE_NAME);
+        idToName.put(uid, username);
+
+        return username;
+    }
+
+    public void refreshNameCache() {
+        idToName = new HashMap<String, String>();
+    }
+
     public long createChatRoom(String roomName, String allowedUserId) {
         Key chatRoomKey = datastore.allocateId(roomFactory.newKey());
-        Key allowedUserKey = datastore.newKeyFactory()
-                                      .setKind(KIND_USERS)
-                                      .addAncestor(PathElement.of(KIND_CHATROOM,
-                                            chatRoomKey.getId()))
-                                      .newKey(allowedUserId);
+        Key childChatRoomKey = datastore.newKeyFactory()
+                                        .setKind(KIND_CHATROOM)
+                                        .addAncestor(PathElement.of(
+                                                KIND_USERS, allowedUserId))
+                                        .newKey(chatRoomKey.getId());
 
         Entity newChatRoom = Entity.newBuilder(chatRoomKey)
                                    .set(ROOM_ATTRIBUTE_NAME, roomName)
                                    .build();
 
-        Entity allowedUser = Entity.newBuilder(allowedUserKey)
-                                   .build();
+        Entity childChatRoom =
+            Entity.newBuilder(childChatRoomKey)
+                  .set(ROOM_ATTRIBUTE_NAME, roomName)
+                  .build();
 
         datastore.put(newChatRoom);
-        datastore.put(allowedUser);
+        datastore.put(childChatRoom);
 
         return chatRoomKey.getId();
     }
 
+    public void addUserToChatRoom(long roomId, String email) {
+        Entity roomEntity = datastore.get(roomFactory.newKey(roomId));
+
+        if (roomEntity == null) {
+            return;
+        }
+
+        String roomName = roomEntity.getString(ROOM_ATTRIBUTE_NAME);
+
+        Query<Entity> userQuery = Query.newEntityQueryBuilder()
+            .setKind(KIND_USERS)
+            .setFilter(PropertyFilter.eq(USER_ATTRIBUTE_EMAIL, email))
+            .build();
+
+        QueryResults<Entity> usersResult = datastore.run(userQuery);
+
+        while (usersResult.hasNext()) {
+            Entity user = usersResult.next();
+            String uid = ((Key) user.getKey()).getName();
+
+            Key childChatRoomKey = datastore.newKeyFactory()
+                                            .setKind(KIND_CHATROOM)
+                                            .addAncestor(PathElement.of(
+                                                KIND_USERS, uid))
+                                            .newKey(roomId);
+            Entity childChatRoom = Entity.newBuilder(childChatRoomKey)
+                                         .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                         .build();
+
+            datastore.put(childChatRoom);
+        }
+    }
+
+    public void createUser(String uid, String preferredName) {
+        Entity userEntity = Entity.newBuilder(userFactory.newKey(uid))
+                                  .set(USER_ATTRIBUTE_NAME, preferredName)
+                                  .set(USER_ATTRIBUTE_EMAIL,
+                                        CapstoneAuth.getUserEmail(uid))
+                                  .build();
+        datastore.put(userEntity);
+    }
+
+    public String getUserData(String uid, boolean getDetails) {
+        // Gets the user name, the and the chatrooms that the user is logged in to.
+        JSONObject userData = new JSONObject();
+
+        Key userKey = userFactory.newKey(uid);
+        Entity userEntity = datastore.get(userFactory.newKey(uid));
+
+        if (userEntity == null || !userEntity.contains(USER_ATTRIBUTE_NAME)) {
+            return (new JSONObject()).toString();
+        }
+
+        userData.put(ChatWebSocket.JSON_USER_NAME,
+            userEntity.getString(USER_ATTRIBUTE_NAME));
+
+        if (getDetails) {
+            JSONArray userRooms = new JSONArray();
+            Query<Entity> roomsQuery = Query.newEntityQueryBuilder()
+                .setKind(KIND_CHATROOM)
+                .setFilter(PropertyFilter.hasAncestor(userKey))
+                .build();
+
+            QueryResults<Entity> rooms = datastore.run(roomsQuery);
+
+            while (rooms.hasNext()) {
+                Entity roomEntity = rooms.next();
+                JSONObject roomObject = new JSONObject();
+
+                roomObject.put(ChatWebSocket.JSON_ROOM_NAME,
+                                roomEntity.getString(ROOM_ATTRIBUTE_NAME))
+                          .put(ChatWebSocket.JSON_ROOM_ID,
+                                ((Key) roomEntity.getKey()).getId());
+
+                userRooms.put(roomObject);
+            }
+
+            userData.put(ChatWebSocket.JSON_ROOM_ARRAY, userRooms);
+        }
+
+        return userData.toString();
+    }
+
     //TODO(lopezalexander) Remove on deploy
-    public void createTestRoom(String roomName, String allowedUserId) {
+    public void createTestRoom(String roomName, String allowedUserId,
+        String userName) {
+        createUser(allowedUserId, userName);
+
         Key chatRoomKey = roomFactory.newKey(CapstoneAuth.TEST_ROOM_ID);
-        Key allowedUserKey = datastore.newKeyFactory()
-                                      .setKind(KIND_USERS)
-                                      .addAncestor(PathElement.of(KIND_CHATROOM,
-                                            chatRoomKey.getId()))
-                                      .newKey(allowedUserId);
+        Key childChatRoomKey = datastore.newKeyFactory()
+                                        .setKind(KIND_CHATROOM)
+                                        .addAncestor(PathElement.of(
+                                            KIND_USERS, allowedUserId))
+                                        .newKey(chatRoomKey.getId());
 
-        Entity newChatRoom = Entity.newBuilder(chatRoomKey)
-                                   .set(ROOM_ATTRIBUTE_NAME, roomName)
-                                   .build();
+        Entity chatRoom = Entity.newBuilder(chatRoomKey)
+                                .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                .build();
+        Entity childChatRoom = Entity.newBuilder(childChatRoomKey)
+                                     .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                     .build();
 
-        Entity allowedUser = Entity.newBuilder(allowedUserKey)
-                                   .build();
-
-        datastore.put(newChatRoom);
-        datastore.put(allowedUser);
+        datastore.put(chatRoom);
+        datastore.put(childChatRoom);
     }
 
     /**
@@ -249,13 +370,13 @@ public class DatastoreManager {
      * @param chatRoomId .
      */
     public boolean isUserAllowedChatroom(String uid, long chatRoomId) {
-        Key userKey = datastore.newKeyFactory()
-                               .setKind(KIND_USERS)
-                               .addAncestor(PathElement.of(KIND_CHATROOM,
-                                    chatRoomId))
-                               .newKey(uid);
+        Key childChatRoomKey = datastore.newKeyFactory()
+                                        .setKind(KIND_CHATROOM)
+                                        .addAncestor(PathElement.of(
+                                            KIND_USERS, uid))
+                                        .newKey(chatRoomId);
 
-        return (datastore.get(userKey) != null);
+        return (datastore.get(childChatRoomKey) != null);
     }
 
     /**

@@ -46,7 +46,7 @@ function closeChat_() {
 }
 
 /**
- * Loads chat 
+ * Loads chat
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
@@ -75,29 +75,36 @@ function getChatHistory_(idToken) {
 
 
 /**
- * Sends chat comment from text area to server
+ * Sends nonempty chat comment from text area to server
 */
 function addChatComment() {
-    var commentObj = {
-           type : "MSG_SEND",
-           message : document.getElementById('comment-container').value
-    };
+    var commentContent = document.getElementById('comment-container').value;
 
-    document.getElementById('comment-container').value = "";
+    if(commentContent.indexOf("\n")==0 || commentContent===""){
+      document.getElementById('comment-container').value = "";
+    } else {
+      var commentObj = {
+        type : "MSG_SEND",
+        message : commentContent
+      };
 
-    if (connection) {
-        connection.send(JSON.stringify(commentObj));
+      document.getElementById('comment-container').value = "";
+
+      if (connection) {
+          connection.send(JSON.stringify(commentObj));
+      }
     }
 }
 
 /**
- * @param{Object} obj A JSON Object that represents the comment to be added 
+ * @param{!Object} obj A JSON Object that represents the comment to be added
  * Adds comment to page
  */
 function handleChatMessage(obj) {
-  //TODO(astepin): Include User ID and timestamp in the message
+  //TODO(astepin): Include timestamp in the message
+
   var node = document.createElement("div");
-  var textnode = document.createTextNode(obj.message);
+  var textnode = document.createTextNode(obj.name + ": " + obj.message);
 
   let userId = firebase.auth().currentUser.uid;
   if(obj.uid === userId) {
@@ -105,7 +112,10 @@ function handleChatMessage(obj) {
   } else {
     node.classList.add("otherMessage");
   }
+  node.classList.add("message");
 
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }
+
+

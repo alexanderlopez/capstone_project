@@ -62,7 +62,7 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
         connection = new WebSocket(result);
         initWebsocket();
         myMap = new ChapMap();
-        loadChatHistory();
+        initChat();
       });
     });
 
@@ -125,4 +125,19 @@ async function getServerUrl() {
     let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
 
     return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
+}
+
+/**
+ * Sets up chat listeners
+ */
+function initChat() {
+  loadChatHistory();
+
+  var input = document.getElementById("comment-container");
+  input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("submitBtn").click();
+    }
+  });
 }

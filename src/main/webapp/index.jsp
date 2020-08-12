@@ -15,7 +15,7 @@
 
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
-        <script src="authentication.js"></script>
+        <script src="welcome.js"></script>
 
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <link rel='stylesheet' type='text/css' href='welcomeStyle.css'>
@@ -25,13 +25,37 @@
     <body>
         <div id="header">
           <h1>CHAP</h1>
+          <h4 id="welcome-message"></h4>
         </div>
         <div id="pageContent">
+          <div id="loading">Loading...</div>
+          
+          <div id="user-details" class="panel">
+            <h2 id="profile" class="panel-header">Profile</h2>
+          </div>
+
           <div id="firebaseui-auth-container"></div>
 
-          <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1'" id="myMaps" class="myBtn">
+          <div id="username-form" class="panel form">
+            <label for="input-username" class="panel-header">My Username:
+              </label>
+            <textarea id="input-username" placeholder="Enter name..."></textarea>
+            <input type="button" value="Submit" onclick="submitUsername()">
+          </div>
 
-          <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out</button>
+          <div id="new-map-form" class="panel form">
+            <label for="map-name" class="panel-header">New Map:</label>
+            <textarea id="map-name" placeholder="Enter name..."></textarea>
+            <input type="button" value="Submit" onclick="submitMap()">
+          </div>
+
+          <div id="maps-wrapper" class="panel">
+            <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <div id="user-maps"></div>
+          </div>
         </div>
+
+        <button id="sign-out" onclick="logOut()">Sign Out
+            </button>
     </body>
 </html>
