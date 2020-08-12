@@ -25,13 +25,28 @@
     <body>
         <div id="header">
           <h1>CHAP</h1>
+          <h4 id="welcome-message"><h4>
         </div>
+        <div id="user-details"></div>
         <div id="pageContent">
+
           <div id="firebaseui-auth-container"></div>
 
-          <input type="submit" value="My Map" onclick="location='/chatroom.html?roomId=1'" id="myMaps" class="myBtn">
+          <form id="username-form" onsubmit="submitUsername()">
+            <label for="input-username">My Username:</label>
+            <textarea id="input-username"></textarea>
+            <input type="submit" value="Submit">
+          </form>
 
-          <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out</button>
+          <form id="new-map-form" onsubmit="submitMap()">
+            <label for="map-name">New Map Name:</label>
+            <textarea id="map-name"></textarea>
+            <input type="submit" value="Submit">
+          </form>
+
+          <button id="sign-out" onclick="logOut()" class="myBtn">Sign Out
+              </button>
         </div>
+        <div id="user-maps"></div>
     </body>
 </html>
