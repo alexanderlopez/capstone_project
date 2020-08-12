@@ -70,7 +70,7 @@ function getUserInfo_(user, userIdToken) {
 /**
  * @Private
  * Retrieves the current user's details and customizes the page accordingly
- * @param {JSON} userJson json containing the user's details
+ * @param {Object} userJson json containing the user's details
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {

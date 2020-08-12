@@ -15,7 +15,7 @@
 
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
-        <script src="authentication.js"></script>
+        <script src="welcome.js"></script>
 
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <link rel='stylesheet' type='text/css' href='welcomeStyle.css'>
@@ -36,20 +36,20 @@
 
           <div id="firebaseui-auth-container"></div>
 
-          <form id="username-form" onsubmit="submitUsername()"
+          <div id="username-form" onsubmit="submitUsername()"
                 class="panel form">
             <label for="input-username" class="panel-header">My Username:
               </label>
             <textarea id="input-username" placeholder="Enter name...">
               </textarea>
             <input type="submit" value="Submit">
-          </form>
+          </div>
 
-          <form id="new-map-form" onsubmit="submitMap()" class="panel form">
+          <div id="new-map-form" onsubmit="submitMap()" class="panel form">
             <label for="map-name" class="panel-header">New Map:</label>
             <textarea id="map-name" placeholder="Enter name..."></textarea>
             <input type="submit" value="Submit">
-          </form>
+          </div>
 
           <div id="maps-wrapper" class="panel">
             <h2 id="my-maps" class="panel-header">My Maps</h2>
