@@ -26,8 +26,24 @@
   </head>
   <body>
 
-    <div id="map" class="expanded"></div>
+    <div id="mapOverlay" class="expanded">
+      <div id="viewBtnWrapper" class="btnWrapper selected">
+        <button id="viewBtn" class="btnIcon"></button>
+      </div>
+      <div id="addMarkerBtnWrapper" class="btnWrapper">
+        <button id="addMarkerBtn" class="btnIcon"></button>
+      </div>
+      <div id="chatBtnWrapper" class="btnWrapper textBtnWrapper">
+        <button id="chatButton" class="textBtn">Chat</button>
+      </div>
+      <div id="backBtnWrapper" class="btnWrapper textBtnWrapper">
+        <input type="submit" id="backButton" class="textBtn"
+          value="Back"></input>
+      </div>
 
+
+      <div id="map"></div>
+    </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
           <h1>Your Chat</h1>

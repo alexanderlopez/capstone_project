@@ -3,14 +3,21 @@ body, html {
   margin: 0;
 }
 
-#map {
+#mapOverlay {
   height: 100%;
   width: calc(100% - 400px);
   transition: width 2s;
+  position: relative;
 }
 
-#map.expanded {
-  width: 100%
+#mapOverlay.expanded {
+  width: 100%;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: -1;
 }
 
 .contentWrapper {

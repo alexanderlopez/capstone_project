@@ -140,8 +140,6 @@ function submitUsername() {
        id: idToken
    };
 
-   console.log(JSON.stringify(params));
-
    fetch(`/${server}`, {
          method:'POST',
          headers: { 'Content-Type': 'text/html' },

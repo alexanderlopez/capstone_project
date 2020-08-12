@@ -30,13 +30,15 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
+  static SELECTED_CLASS = "selected";
+
   constructor() {
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -34.397, lng: 150.644 },
         zoom: 8
       });
 
-    this.makeMapButtons_();
+    this.addBtnListeners_();
     this.addMapClickListener_();
 
     PermMarker.permInfoWindow = new PermInfoWindow();
@@ -69,11 +71,25 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn) {
+  addBtnListeners_() {
+    let addMarkerBtn = this.getEl_("addMarkerBtnWrapper");
+    let backBtn = this.getEl_("backBtnWrapper");
+    let viewBtn = this.getEl_("viewBtnWrapper");
+    let chatBtn = this.getEl_("chatBtnWrapper");
+
     addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
     viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
     chatBtn.addEventListener('click', () => toggleChat());
     backBtn.addEventListener('click', () => window.location='/');
+  }
+
+  /**
+   * @Private
+   * Returns the element with the given id.
+   * @param {String} id the id of the DOM element
+   */
+  getEl_(id) {
+    return document.getElementById(id);
   }
 
   /**
@@ -102,8 +118,8 @@ class ChapMap {
    * @param {Boolean} enable whether this mode should be enabled or disabled
    */
   toggleAddingMarkers_(enable) {
-    let addMarkerBtn = this.getAddMarkerBtn_();
-    let viewBtn = this.getViewBtn_();
+    let viewBtn = this.getEl_("viewBtnWrapper");
+    let addMarkerBtn = this.getEl_("addMarkerBtnWrapper");
 
     let enableBtn = enable? addMarkerBtn: viewBtn;
     let disableBtn = enable? viewBtn: addMarkerBtn;
@@ -113,126 +129,6 @@ class ChapMap {
 
     enableBtn.classList.add(ChapMap.SELECTED_CLASS);
     disableBtn.classList.remove(ChapMap.SELECTED_CLASS);
-  }
-
-  /**
-   * @Private
-   * Retrieves the button disabling marker-adding from the DOM
-   */
-  getViewBtn_() {
-    return document.getElementById("viewBtnWrapper");
-  }
-
-  /**
-   * @Private
-   * Retrieves the button enabling marker-adding from the DOM
-   */
-  getAddMarkerBtn_() {
-    return document.getElementById("addMarkerBtnWrapper");
-  }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// BUILD MAP BUTTONS
-
-  static SELECTED_CLASS = "selected";
-
-  /**
-   * @Private
-   * Overlays add-marker state toggler buttons on the map
-   */
-  makeMapButtons_() {
-    let map = document.getElementById("map");
-    let viewBtn = this.makeViewBtn_();
-    let addMarkerBtn = this.makeAddMarkerBtn_();
-    let chatBtn = this.makeChatBtn_();
-    let backBtn = this.makeBackBtn_();
-
-    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn);
-
-    map.appendChild(viewBtn);
-    map.appendChild(addMarkerBtn);
-    map.appendChild(chatBtn);
-    map.appendChild(backBtn);
-  }
-
-  /**
-   * @Private
-   * Returns a button that will prevent clients from adding markers
-   */
-  makeViewBtn_() {
-    let viewBtnWrapper = document.createElement("div");
-    viewBtnWrapper.id = "viewBtnWrapper";
-    viewBtnWrapper.classList.add("btnWrapper");
-    viewBtnWrapper.classList.add(ChapMap.SELECTED_CLASS);
-
-    let viewBtn = document.createElement("button");
-    viewBtn.id = "viewBtn";
-    viewBtn.classList.add("btnIcon");
-
-    viewBtnWrapper.appendChild(viewBtn);
-
-    return viewBtnWrapper;
-  }
-
-  /**
-   * @Private
-   * Returns a button that will be used to allow clients to add markers
-   */
-  makeAddMarkerBtn_() {
-    let addMarkerBtnWrapper = document.createElement("div");
-    addMarkerBtnWrapper.id = "addMarkerBtnWrapper";
-    addMarkerBtnWrapper.classList.add("btnWrapper");
-
-    let addMarkerBtn = document.createElement("button");
-    addMarkerBtn.id = "addMarkerBtn";
-    addMarkerBtn.classList.add("btnIcon");
-
-    addMarkerBtnWrapper.appendChild(addMarkerBtn);
-
-    return addMarkerBtnWrapper;
-  }
-
-
-  /**
-   * @Private
-   * Returns a button that will be used to toggle the chat
-   */
-  makeChatBtn_() {
-    let chatBtnWrapper = document.createElement("div");
-    chatBtnWrapper.id = "chatBtnWrapper";
-    chatBtnWrapper.classList.add("btnWrapper");
-    chatBtnWrapper.classList.add("textBtnWrapper");
-
-    let btn = document.createElement("button");
-    btn.classList.add("textBtn");
-    btn.id = "chatButton";
-    btn.innerHTML = "Chat";
-
-    chatBtnWrapper.appendChild(btn);
-
-    return chatBtnWrapper;
-  }
-
-
-  /**
-   * @Private
-   * Returns a button that will be used to go back to the home page
-   */
-  makeBackBtn_() {
-    let backBtnWrapper = document.createElement("div");
-    backBtnWrapper.id = "backBtnWrapper";
-    backBtnWrapper.classList.add("btnWrapper");
-    backBtnWrapper.classList.add("textBtnWrapper");
-
-    let backBtn = document.createElement("input");
-    backBtn.classList.add("textBtn");
-    backBtn.id = "backButton";
-    backBtn.type = "submit";
-    backBtn.value = "Back";
-
-    backBtnWrapper.appendChild(backBtn);
-
-    return backBtnWrapper;
   }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PERM MARKER HANDLERS
