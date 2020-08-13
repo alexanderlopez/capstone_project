@@ -48,6 +48,7 @@ let firebasePromise = new Promise(function(resolve) {
     });
 
 let connection = null;
+let userId = null;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -58,10 +59,14 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
         location.href = "/";
       }
 
+      userId = firebase.auth().currentUser.uid;
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        myMap = new ChapMap();
+        // set lat and lng
+        
+
+        myMap = new ChapMap(getCoords());
         initChat();
       });
     });
@@ -140,4 +145,26 @@ function initChat() {
     document.getElementById("submitBtn").click();
     }
   });
+}
+
+function getCoords(){
+  var latitude;
+  var longitude;
+
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition((position) => {
+      latitude = position.coords.latitude,
+      longitude = position.coords.longitude;
+    }, handle_error);
+  } else {
+    latitude = -34.397;
+    longitude = 150.644;
+  }
+
+  return [latitude, longitude];
+
+}
+
+function handle_error(err) {
+  console.log(err.code);
 }

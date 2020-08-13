@@ -35,11 +35,15 @@ class ChapMap {
 
   static SELECTED_CLASS = "selected";
 
-  constructor() {
+  
+  constructor(coords) {
+    var lat = coords[0];
+    var lng = coords[1];
+
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8
-      });
+      center: { lat: lat, lng: lng },
+      zoom: 8
+    });
 
     this.addBtnListeners_();
     this.addMapClickListener_();
@@ -52,7 +56,10 @@ class ChapMap {
 
     this.permMarkers_ = {};
     this.loadMarkers_();
+
   }
+    
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
 
@@ -75,7 +82,7 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_() {
+   addBtnListeners_() {
     let addMarkerBtn = this.getEl_("addMarkerBtnWrapper");
     let backBtn = this.getEl_("backBtnWrapper");
     let viewBtn = this.getEl_("viewBtnWrapper");
