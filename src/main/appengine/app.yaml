@@ -1,0 +1,17 @@
+runtime:    java
+env:        flex
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 8
+  memory_gb: 15.6
+  disk_size_gb: 10
+
+handlers:
+- url: /.*
+  script: this field is required, but ignored
+  secure: always
+
+env_variables:
+  JETTY_MODULES_ENABLE: websocket
+# [END appyaml]

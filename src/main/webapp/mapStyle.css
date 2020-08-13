@@ -1,0 +1,277 @@
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+#mapOverlay {
+  height: 100%;
+  width: calc(100% - 400px);
+  transition: width 0.5s;
+  position: relative;
+}
+
+#mapOverlay.expanded {
+  width: 100%;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* INFO WINDOWS */
+
+.contentWrapper {
+  width: 20em;
+}
+
+.leftColumn {
+  float: left;
+  width: 2em;
+  margin-right: 1em;
+}
+
+.rightColumn {
+  float: left;
+  width: calc(100% - 4em);
+}
+
+#markerDelete, #markerEdit {
+  height: 1.5em;
+  width: 2em;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  padding: 0;
+  background-color: white;
+}
+
+#markerDelete {
+  background-image: url("icons/delete.svg");
+  margin: 1.5em 0 .5em 0 !important;
+}
+
+#markerEdit {
+  background-image: url("icons/edit.svg");
+  margin: .5em 0 1.5em 0 !important;
+}
+
+#markerDelete:hover, #markerEdit:hover {
+  cursor: pointer;
+}
+
+#markerDelete:focus, #markerEdit:focus {
+  outline: 0;
+}
+
+.markerTitle {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 0;
+}
+
+#titleInput {
+  width: 60%;
+  margin-bottom: 5px;
+  height: 1.7em;
+  resize: none;
+}
+
+#bodyInput {
+  resize: none;
+  height: 6em;
+  width: 100%;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* MAP BUTTONS */
+
+.btnWrapper {
+  position: absolute;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  cursor: pointer;
+  border-radius: 2px;
+  z-index: 2;
+}
+
+#viewBtnWrapper {
+  bottom: 270px;
+}
+
+#addMarkerBtnWrapper {
+  bottom: 210px;
+}
+
+.btnIcon, .btnIcon:focus, .btnIcon:hover {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 30px;
+  width: 30px;
+  border: none;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+  outline: 0
+}
+
+.selected .btnIcon {
+  top: 2px;
+  left: 2px;
+  height: 36px;
+  width: 36px;
+}
+
+.selected {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 7px 7px -1px;
+}
+
+#addMarkerBtn {
+  background-image: url(icons/add.svg);
+}
+
+#viewBtn {
+  background-image: url(icons/pointer.png);
+}
+
+#shareBtn {
+  background-image: url(icons/share.png);
+}
+
+.textBtn, .textBtn:focus {
+  background-color: rgb(255, 255, 255);
+  color: #423f3f;
+  padding: 5px;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  outline: 0;
+}
+
+.textBtnWrapper {
+  top: 10px;
+  width: 80px;
+  height: 40px;
+  border-radius: 2px;
+}
+
+#chatBtnWrapper {
+  right: 100px;
+}
+
+#backBtnWrapper {
+  right: 210px;
+}
+
+#shareBtnWrapper {
+  right: 320px;
+  top: 10px;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* SHARE POPUP */
+
+#share-popup {
+  background-color: #80808040;
+  z-index: 3;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: none;
+}
+
+#share-popup.cover {
+  display:block;
+}
+
+#popup-window {
+  z-index: 4;
+  background: white;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 500px;
+  width: 500px;
+  position: relative;
+  border-radius: 4px;
+  padding: 50px;
+  overflow: scroll;
+  cursor: default;
+}
+
+#close, #close:focus {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+#popup-window label {
+  display: block;
+  text-align: center;
+  font-size: 3em;
+}
+
+#email {
+  width: calc(100% - 140px);
+  margin-right: 30px;
+  height: 28px;
+}
+
+#addEmail {
+  font-size: 1.2em;
+}
+
+#email-bank {
+  height: 200px;
+  margin-top: 20px;
+  border: 1px solid black;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+#share {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.emailWrapper {
+  overflow: visible;
+  position: relative;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.emailWrapper p {
+  display: inline;
+  margin-right: 0;
+}
+
+.emailWrapper button {
+  border: 0;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  margin: 5px;
+}
