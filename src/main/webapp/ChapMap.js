@@ -30,14 +30,20 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
+  /** Id Token of the current user*/
+  idToken_;
+
+  static SELECTED_CLASS = "selected";
+
   constructor() {
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
         center: { lat: -34.397, lng: 150.644 },
         zoom: 8
       });
 
-    this.makeMapButtons_();
+    this.addBtnListeners_();
     this.addMapClickListener_();
+    this.setMapShareEvents_();
 
     PermMarker.permInfoWindow = new PermInfoWindow();
     this.tempMarker_ = new TempMarker();
@@ -69,11 +75,12 @@ class ChapMap {
    * Adds click listeners to the map customization buttons.
    * A client can only add markers when the "adding markers" mode is on
    */
-  addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn) {
-    addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
-    viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
-    chatBtn.addEventListener('click', () => toggleChat());
-    backBtn.addEventListener('click', () => window.location='/');
+  addBtnListeners_() {
+    this.addClickEvent_("addMarkerBtnWrapper",
+                      () => this.enableAddingMarkers_());
+    this.addClickEvent_("backBtnWrapper", () => window.location='/');
+    this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
+    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
   }
 
   /**
@@ -102,8 +109,8 @@ class ChapMap {
    * @param {Boolean} enable whether this mode should be enabled or disabled
    */
   toggleAddingMarkers_(enable) {
-    let addMarkerBtn = this.getAddMarkerBtn_();
-    let viewBtn = this.getViewBtn_();
+    let viewBtn = document.getElementById("viewBtnWrapper");
+    let addMarkerBtn = document.getElementById("addMarkerBtnWrapper");
 
     let enableBtn = enable? addMarkerBtn: viewBtn;
     let disableBtn = enable? viewBtn: addMarkerBtn;
@@ -115,125 +122,6 @@ class ChapMap {
     disableBtn.classList.remove(ChapMap.SELECTED_CLASS);
   }
 
-  /**
-   * @Private
-   * Retrieves the button disabling marker-adding from the DOM
-   */
-  getViewBtn_() {
-    return document.getElementById("viewBtnWrapper");
-  }
-
-  /**
-   * @Private
-   * Retrieves the button enabling marker-adding from the DOM
-   */
-  getAddMarkerBtn_() {
-    return document.getElementById("addMarkerBtnWrapper");
-  }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// BUILD MAP BUTTONS
-
-  static SELECTED_CLASS = "selected";
-
-  /**
-   * @Private
-   * Overlays add-marker state toggler buttons on the map
-   */
-  makeMapButtons_() {
-    let map = document.getElementById("map");
-    let viewBtn = this.makeViewBtn_();
-    let addMarkerBtn = this.makeAddMarkerBtn_();
-    let chatBtn = this.makeChatBtn_();
-    let backBtn = this.makeBackBtn_();
-
-    this.addBtnListeners_(viewBtn, addMarkerBtn, chatBtn, backBtn);
-
-    map.appendChild(viewBtn);
-    map.appendChild(addMarkerBtn);
-    map.appendChild(chatBtn);
-    map.appendChild(backBtn);
-  }
-
-  /**
-   * @Private
-   * Returns a button that will prevent clients from adding markers
-   */
-  makeViewBtn_() {
-    let viewBtnWrapper = document.createElement("div");
-    viewBtnWrapper.id = "viewBtnWrapper";
-    viewBtnWrapper.classList.add("btnWrapper");
-    viewBtnWrapper.classList.add(ChapMap.SELECTED_CLASS);
-
-    let viewBtn = document.createElement("button");
-    viewBtn.id = "viewBtn";
-    viewBtn.classList.add("btnIcon");
-
-    viewBtnWrapper.appendChild(viewBtn);
-
-    return viewBtnWrapper;
-  }
-
-  /**
-   * @Private
-   * Returns a button that will be used to allow clients to add markers
-   */
-  makeAddMarkerBtn_() {
-    let addMarkerBtnWrapper = document.createElement("div");
-    addMarkerBtnWrapper.id = "addMarkerBtnWrapper";
-    addMarkerBtnWrapper.classList.add("btnWrapper");
-
-    let addMarkerBtn = document.createElement("button");
-    addMarkerBtn.id = "addMarkerBtn";
-    addMarkerBtn.classList.add("btnIcon");
-
-    addMarkerBtnWrapper.appendChild(addMarkerBtn);
-
-    return addMarkerBtnWrapper;
-  }
-
-
-  /**
-   * @Private
-   * Returns a button that will be used to toggle the chat
-   */
-  makeChatBtn_() {
-    let chatBtnWrapper = document.createElement("div");
-    chatBtnWrapper.id = "chatBtnWrapper";
-    chatBtnWrapper.classList.add("btnWrapper");
-    chatBtnWrapper.classList.add("textBtnWrapper");
-
-    let btn = document.createElement("button");
-    btn.classList.add("textBtn");
-    btn.id = "chatButton";
-    btn.innerHTML = "Chat";
-
-    chatBtnWrapper.appendChild(btn);
-
-    return chatBtnWrapper;
-  }
-
-
-  /**
-   * @Private
-   * Returns a button that will be used to go back to the home page
-   */
-  makeBackBtn_() {
-    let backBtnWrapper = document.createElement("div");
-    backBtnWrapper.id = "backBtnWrapper";
-    backBtnWrapper.classList.add("btnWrapper");
-    backBtnWrapper.classList.add("textBtnWrapper");
-
-    let backBtn = document.createElement("input");
-    backBtn.classList.add("textBtn");
-    backBtn.id = "backButton";
-    backBtn.type = "submit";
-    backBtn.value = "Back";
-
-    backBtnWrapper.appendChild(backBtn);
-
-    return backBtnWrapper;
-  }
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PERM MARKER HANDLERS
 
@@ -324,8 +212,9 @@ class ChapMap {
    * Retrieves markers from the server and adds them to the map
    * @param {firebase.idToken} idToken the current user's getIdToken
    */
-  getMarkers(idToken) {
-    fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
+  getMarkers(userIdToken) {
+    this.idToken = userIdToken;
+    fetch(`/map-server?idToken=${userIdToken}&idRoom=${roomId}`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }
@@ -343,7 +232,7 @@ class ChapMap {
 
   /**
    * Modifies or creates a new PermMarker with the given details
-   * @param {JSON} markerJson json containing marker details
+   * @param {Object} markerJson json containing marker details
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
@@ -404,7 +293,7 @@ class ChapMap {
 
   /**
    * Execute marker delete based on the json given by the server
-   * @param {JSON} markerJson json object with the id of the deleted marker
+   * @param {Object} markerJson json object with the id of the deleted marker
    */
   deleteMarker(markerJson) {
     let id = markerJson.id;
@@ -474,5 +363,138 @@ class ChapMap {
     };
 
     connection.send(JSON.stringify(jsonObject));
+  }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// MAP SHARING
+
+  /**
+   * @Private
+   * Sets the events related to sharing the map with another user
+   */
+  setMapShareEvents_() {
+    this.addClickEvent_("shareBtnWrapper", () => this.openSharePopup_());
+    this.addClickEvent_("addEmail", () => this.addEmail_());
+    this.addClickEvent_("share", () => this.submitSharing_());
+    this.addClickEvent_("close", () => this.closeSharePopup_());
+  }
+
+
+  /**
+   * Sets a click-trigger event to the DOM element with the given id and
+   * sets the callback function to the one given
+   * @param {String} id the id of the element to be added
+   * @param {} fn the anonymous function to be called on click
+   */
+  addClickEvent_(id, fn) {
+    let btn = document.getElementById(id);
+    btn.addEventListener('click', fn);
+  }
+
+  /**
+   * @Private
+   * Opens the sharing popup and prevents the client from clicking on the map
+   */
+  openSharePopup_() {
+    let overlay = document.getElementById("share-popup");
+    overlay.classList.add("cover");
+  }
+
+  /**
+   * @Private
+   * Closes the pop and allows clients to click on the map again
+   */
+  closeSharePopup_() {
+    let overlay = document.getElementById("share-popup");
+    overlay.classList.remove("cover");
+    this.clearPopupInput_();
+  }
+
+  /**
+   * @Private
+   * Adds the given email to the email bank
+   */
+  addEmail_() {
+    let input = document.getElementById("email");
+    let emailDiv = this.createEmailDiv_(input.value);
+    input.value="";
+    let emailBank = document.getElementById("email-bank");
+    emailBank.appendChild(emailDiv);
+  }
+
+  /**
+   * @Private
+   * Creates a DOM element with the email and a delete button and adds it
+   * to the email bank
+   */
+  createEmailDiv_(email) {
+    let emailWrapper = document.createElement("div");
+    emailWrapper.classList.add("emailWrapper");
+    emailWrapper.setAttribute("data-email", email);
+
+    let emailText = document.createElement("p");
+    emailText.innerHTML = email;
+
+    let deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "x";
+    deleteBtn.addEventListener('click', () => emailWrapper.remove());
+
+    emailWrapper.appendChild(emailText);
+    emailWrapper.appendChild(deleteBtn);
+
+    return(emailWrapper);
+  }
+
+  /**
+   * @Private
+   * Clears the email input and email bank in the sharing popup
+   */
+  clearPopupInput_() {
+    let emailInput = document.getElementById("email");
+    emailInput.value = "";
+
+    let emailBank = document.getElementById("email-bank");
+    emailBank.innerHTML = "";
+  }
+
+  /**
+   * @Private
+   * Shares the map with all the emails in the email bank
+   */
+  submitSharing_() {
+    let shareEmails = this.getEmailsFromBank_();
+    let currRoomId = roomId;
+    let params = {
+      emails: shareEmails,
+      roomId: currRoomId,
+      id: this.idToken
+    };
+
+    fetch("/share-server", {
+      method:'POST',
+      headers: { 'Content-Type': 'text/html' },
+      body: JSON.stringify(params)
+    }).then((response) => response.text())
+      .then((worked) => {
+       if (worked == 'true') {
+         myMap.clearPopupInput_();
+       }
+       else {
+         alert("Submit failed, please try again");
+       }
+     });
+  }
+
+  /**
+   * @Private
+   * Retrieves all the emails the email bank in the sharing popup
+   */
+  getEmailsFromBank_() {
+    let emailBank = document.getElementById("email-bank");
+    var emailWrappers = emailBank.childNodes;
+    let emails = [];
+    emailWrappers.forEach(function(node) {
+      emails.push(node.getAttribute("data-email"));
+    });
+    return emails;
   }
 }

@@ -11,6 +11,7 @@ public class WebSocketHandler {
 
     private static WebSocketHandler instance;
 
+    // Map (long)roomId -> List<Session> list of sessions active in this room.
     private HashMap<Long, List<Session>> chatRoomMap;
 
     private WebSocketHandler() {

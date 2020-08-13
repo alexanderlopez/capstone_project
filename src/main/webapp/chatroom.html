@@ -9,8 +9,6 @@
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js">
     </script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-         https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js">
     </script>
 
@@ -26,8 +24,37 @@
   </head>
   <body>
 
-    <div id="map" class="expanded"></div>
+    <div id="mapOverlay" class="expanded">
+      <div id="viewBtnWrapper" class="btnWrapper selected">
+        <button id="viewBtn" class="btnIcon"></button>
+      </div>
+      <div id="addMarkerBtnWrapper" class="btnWrapper">
+        <button id="addMarkerBtn" class="btnIcon"></button>
+      </div>
+      <div id="chatBtnWrapper" class="btnWrapper textBtnWrapper">
+        <button id="chatButton" class="textBtn">Chat</button>
+      </div>
+      <div id="backBtnWrapper" class="btnWrapper textBtnWrapper">
+        <input type="submit" id="backButton" class="textBtn"
+          value="Back"></input>
+      </div>
+      <div id="shareBtnWrapper" class="btnWrapper">
+        <button id="shareBtn" class="btnIcon"></button>
+      </div>
 
+      <div id="share-popup">
+        <div id="popup-window">
+          <button id="close">x</button>
+          <label for="email">Share with:</label>
+          <input type="email" id="email" name="email">
+          <input id="addEmail" type="button" value="Add email">
+          <div id="email-bank"></div>
+          <input id="share" type="button" value="Share">
+        </div>
+      </div>
+
+      <div id="map"></div>
+    </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
           <h1>Your Chat</h1>
