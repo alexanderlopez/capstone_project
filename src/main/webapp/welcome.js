@@ -173,7 +173,7 @@ function showUserDetails_(email, username) {
     var usernameBlock = makeDetailsGroup_("username", "");
   }
 
-  let displayDiv = document.getElementById('user-details');
+  let displayDiv = getUserDetails_();
   displayDiv.appendChild(emailBlock);
   displayDiv.appendChild(usernameBlock);
   showEl_(displayDiv);

@@ -76,24 +76,11 @@ class ChapMap {
    * A client can only add markers when the "adding markers" mode is on
    */
   addBtnListeners_() {
-    let addMarkerBtn = this.getEl_("addMarkerBtnWrapper");
-    let backBtn = this.getEl_("backBtnWrapper");
-    let viewBtn = this.getEl_("viewBtnWrapper");
-    let chatBtn = this.getEl_("chatBtnWrapper");
-
-    addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
-    viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
-    chatBtn.addEventListener('click', () => toggleChat());
-    backBtn.addEventListener('click', () => window.location='/');
-  }
-
-  /**
-   * @Private
-   * Returns the element with the given id.
-   * @param {String} id the id of the DOM element
-   */
-  getEl_(id) {
-    return document.getElementById(id);
+    this.addClickEvent_("addMarkerBtnWrapper",
+                      () => this.enableAddingMarkers_());
+    this.addClickEvent_("backBtnWrapper", () => window.location='/');
+    this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
+    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
   }
 
   /**
@@ -122,8 +109,8 @@ class ChapMap {
    * @param {Boolean} enable whether this mode should be enabled or disabled
    */
   toggleAddingMarkers_(enable) {
-    let viewBtn = this.getEl_("viewBtnWrapper");
-    let addMarkerBtn = this.getEl_("addMarkerBtnWrapper");
+    let viewBtn = document.getElementById("viewBtnWrapper");
+    let addMarkerBtn = document.getElementById("addMarkerBtnWrapper");
 
     let enableBtn = enable? addMarkerBtn: viewBtn;
     let disableBtn = enable? viewBtn: addMarkerBtn;
@@ -385,29 +372,21 @@ class ChapMap {
    * Sets the events related to sharing the map with another user
    */
   setMapShareEvents_() {
-    let shareFn = () => this.openSharePopup_();
-    this.addClickEvent_("shareBtnWrapper", shareFn);
-
-    let addEmailFn = () => this.addEmail_();
-    this.addClickEvent_("addEmail", addEmailFn);
-
-    let submitFn = () => this.submitSharing_();
-    this.addClickEvent_("share", submitFn);
-
-    let closeFn = () => this.closeSharePopup_();
-    this.addClickEvent_("close", closeFn);
+    this.addClickEvent_("shareBtnWrapper", () => this.openSharePopup_());
+    this.addClickEvent_("addEmail", () => this.addEmail_());
+    this.addClickEvent_("share", () => this.submitSharing_());
+    this.addClickEvent_("close", () => this.closeSharePopup_());
   }
 
 
   /**
-   * @Private
    * Sets a click-trigger event to the DOM element with the given id and
    * sets the callback function to the one given
    * @param {String} id the id of the element to be added
    * @param {} fn the anonymous function to be called on click
    */
   addClickEvent_(id, fn) {
-    let btn = this.getEl_(id);
+    let btn = document.getElementById(id);
     btn.addEventListener('click', fn);
   }
 
@@ -416,11 +395,8 @@ class ChapMap {
    * Opens the sharing popup and prevents the client from clicking on the map
    */
   openSharePopup_() {
-    let overlay = this.getEl_("share-popup");
+    let overlay = document.getElementById("share-popup");
     overlay.classList.add("cover");
-
-    // let popup = this.getEl_("popup-window");
-    // popup.style.display="block";
   }
 
   /**
@@ -428,12 +404,8 @@ class ChapMap {
    * Closes the pop and allows clients to click on the map again
    */
   closeSharePopup_() {
-    let overlay = this.getEl_("share-popup");
+    let overlay = document.getElementById("share-popup");
     overlay.classList.remove("cover");
-
-    // let popup = this.getEl_("popup-window");
-    // popup.style.display="none";
-
     this.clearPopupInput_();
   }
 
@@ -442,10 +414,10 @@ class ChapMap {
    * Adds the given email to the email bank
    */
   addEmail_() {
-    let input = this.getEl_("email");
+    let input = document.getElementById("email");
     let emailDiv = this.createEmailDiv_(input.value);
     input.value="";
-    let emailBank = this.getEl_("email-bank");
+    let emailBank = document.getElementById("email-bank");
     emailBank.appendChild(emailDiv);
   }
 
@@ -472,14 +444,22 @@ class ChapMap {
     return(emailWrapper);
   }
 
+  /**
+   * @Private
+   * Clears the email input and email bank in the sharing popup
+   */
   clearPopupInput_() {
-    let emailInput = this.getEl_("email");
+    let emailInput = document.getElementById("email");
     emailInput.value = "";
 
-    let emailBank = this.getEl_("email-bank");
+    let emailBank = document.getElementById("email-bank");
     emailBank.innerHTML = "";
   }
 
+  /**
+   * @Private
+   * Shares the map with all the emails in the email bank
+   */
   submitSharing_() {
     let shareEmails = this.getEmailsFromBank_();
     let currRoomId = roomId;
@@ -504,8 +484,12 @@ class ChapMap {
      });
   }
 
+  /**
+   * @Private
+   * Retrieves all the emails the email bank in the sharing popup
+   */
   getEmailsFromBank_() {
-    let emailBank = this.getEl_("email-bank");
+    let emailBank = document.getElementById("email-bank");
     var emailWrappers = emailBank.childNodes;
     let emails = [];
     emailWrappers.forEach(function(node) {
