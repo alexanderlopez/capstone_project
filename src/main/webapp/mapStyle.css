@@ -18,7 +18,14 @@ body, html {
   height: 100%;
   width: 100%;
   z-index: -1;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  right: 0;
 }
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* INFO WINDOWS */
 
 .contentWrapper {
   width: 20em;
@@ -82,6 +89,8 @@ body, html {
   height: 6em;
   width: 100%;
 }
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* MAP BUTTONS */
 
 .btnWrapper {
   position: absolute;
@@ -102,7 +111,7 @@ body, html {
   bottom: 210px;
 }
 
-.btnIcon {
+.btnIcon, .btnIcon:focus, .btnIcon:hover {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -114,10 +123,7 @@ body, html {
   left: 5px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
-}
-
-.btnIcon:focus, .btnIcon:hover {
-  outline: 0;
+  outline: 0
 }
 
 .selected .btnIcon {
@@ -137,6 +143,10 @@ body, html {
 
 #viewBtn {
   background-image: url(icons/pointer.png);
+}
+
+#shareBtn {
+  background-image: url(icons/share.png);
 }
 
 .textBtn, .textBtn:focus {
@@ -165,4 +175,103 @@ body, html {
 
 #backBtnWrapper {
   right: 210px;
+}
+
+#shareBtnWrapper {
+  right: 320px;
+  top: 10px;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* SHARE POPUP */
+
+#share-popup {
+  background-color: #80808040;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: none;
+}
+
+#share-popup.cover {
+  display:block;
+}
+
+#popup-window {
+  z-index: 2;
+  background: white;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 500px;
+  width: 500px;
+  position: relative;
+  border-radius: 4px;
+  padding: 50px;
+  overflow: scroll;
+  cursor: default;
+}
+
+#close, #close:focus {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: transparent;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+#popup-window label {
+  display: block;
+  text-align: center;
+  font-size: 3em;
+}
+
+#email {
+  width: calc(100% - 140px);
+  margin-right: 30px;
+  height: 28px;
+}
+
+#addEmail {
+  font-size: 1.2em;
+}
+
+#email-bank {
+  height: 200px;
+  margin-top: 20px;
+  border: 1px solid black;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+#share {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.emailWrapper {
+  overflow: visible;
+  position: relative;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.emailWrapper p {
+  display: inline;
+  margin-right: 0;
+}
+
+.emailWrapper button {
+  border: 0;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  margin: 5px;
 }
