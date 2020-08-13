@@ -52,8 +52,8 @@ let connection = null;
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
  */
-Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
-      let user = firebase.auth().currentUser;
+Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
+      let user = values[2];
       if (!user) {
         location.href = "/";
       }
