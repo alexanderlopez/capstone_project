@@ -2,65 +2,60 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ page import="com.google.sps.HelloAppEngine" %>
-
-<!-- [START_EXCLUDE] -->
-
-<!-- [END_EXCLUDE] -->
-
 <html>
     <head>
         <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
         <!-- The core Firebase JS SDK is always required and must be listed first -->
-        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script> 
+        <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
         <!-- TODO: Add SDKs for Firebase products that you want to use
             https://firebase.google.com/docs/web/setup#available-libraries -->
 
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
-        <script src="authentication.js"></script>
-  
+        <script src="welcome.js"></script>
+
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
-        <title>Hello App Engine Flexible</title>
+        <link rel='stylesheet' type='text/css' href='welcomeStyle.css'>
+        <title>CHAP</title>
 
     </head>
     <body>
-        
+        <div id="header">
+          <h1>CHAP</h1>
+          <h4 id="welcome-message"></h4>
+        </div>
+        <div id="pageContent">
+          <div id="loading">Loading...</div>
+          
+          <div id="user-details" class="panel">
+            <h2 id="profile" class="panel-header">Profile</h2>
+          </div>
 
-        <ul id="past-comments"></ul>
+          <div id="firebaseui-auth-container"></div>
 
-        <ul id="chat"></ul>
+          <div id="username-form" class="panel form">
+            <label for="input-username" class="panel-header">My Username:
+              </label>
+            <textarea id="input-username" placeholder="Enter name..."></textarea>
+            <input type="button" value="Submit" onclick="submitUsername()">
+          </div>
 
-        <form>
-            <textarea rows="8" cols="80" id="message"></textarea>
-            <br>
-            <button type="submit">Send</button>
-        </form>
+          <div id="new-map-form" class="panel form">
+            <label for="map-name" class="panel-header">New Map:</label>
+            <textarea id="map-name" placeholder="Enter name..."></textarea>
+            <input type="button" value="Submit" onclick="submitMap()">
+          </div>
 
-        <h1>Hello App Engine -- Flexible!!!</h1>
+          <div id="maps-wrapper" class="panel">
+            <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <div id="user-maps"></div>
+          </div>
+        </div>
 
-        <p>Click <a href='mapSelection.html'>here</a> for map selection page</p>
-
-        <p>This is <%= HelloAppEngine.getInfo() %>.</p>
-        <table>
-            <tr>
-                <td colspan="2" style="font-weight:bold;">Available Servlets:</td>
-            </tr>
-            <tr>
-                <td><a href='chatroom.html'>The servlet</a></td>
-            </tr>
-        </table>
-        <div id="firebaseui-auth-container"></div>
-        
-        <div id="loader">Loading...</div>
-
-        <button id="send-auth" onclick="sendAuth()">SendAuth</button>
-        <button id="sign-out" onclick="logOut()">Sign Out</button>
-
+        <button id="sign-out" onclick="logOut()">Sign Out
+            </button>
     </body>
 </html>
-
-

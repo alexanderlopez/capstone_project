@@ -1,8 +1,11 @@
 runtime:    java
 env:        flex
-threadsafe: true
 manual_scaling:
   instances: 1
+resources:
+  cpu: 8
+  memory_gb: 15.6
+  disk_size_gb: 10
 
 handlers:
 - url: /.*

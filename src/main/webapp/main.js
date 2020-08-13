@@ -12,78 +12,105 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** map visible on the website */
+// Your web app's Firebase configuration
+var firebaseConfig = {
+  apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
+  authDomain: "chap-2020-capstone.firebaseapp.com",
+  databaseURL: "https://chap-2020-capstone.firebaseio.com",
+  projectId: "chap-2020-capstone",
+  storageBucket: "chap-2020-capstone.appspot.com",
+  messagingSenderId: "155287718044",
+  appId: "1:155287718044:web:e7daa339ab8dffe2c98559"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// MAP
 
 let myMap;
-let chatRoomID = (new URLSearchParams(location.search)).get('roomId');
+let roomId = (new URLSearchParams(location.search)).get('roomId');
 
-let connection = new WebSocket(getServerUrl());
-
+/** Waits for the page HTML to load */
 let domPromise = new Promise(function(resolve) {
       document.addEventListener("DOMContentLoaded", resolve);
     });
 
+/** Waits for the google Maps API to load */
 let mapPromise = new Promise(function(resolve) {
       document.getElementById("mapAPI").addEventListener("load", resolve);
     });
 
-Promise.all([mapPromise, domPromise]).then(() => {
-      initMap();
-      initChat();
+/** Waits for the firebase authenticator to initialize */
+let firebasePromise = new Promise(function(resolve) {
+      firebase.auth().onAuthStateChanged(resolve)
     });
 
-function initMap() {
-  myMap = new ChapMap();
+let connection = null;
+
+/** Waits until all promises are fullfilled before opening the websocket and
+ * setting up the map and chat
+ */
+Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
+      let user = values[2];
+      if (!user) {
+        location.href = "/";
+      }
+
+      getServerUrl().then(result => {
+        connection = new WebSocket(result);
+        initWebsocket();
+        myMap = new ChapMap();
+        initChat();
+      });
+    });
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// WEBSOCKET
+
+/** Sets up all websocket listeners */
+function initWebsocket() {
+  connection.onopen = () => {
+  };
+
+  connection.onclose = () => {
+    getServerUrl().then(result => {
+      connection = new WebSocket(result);
+    });
+  };
+
+  connection.onerror = (error) => {
+    throw 'Error'
+  };
+
+  connection.onmessage = (event) => {
+
+    var obj = JSON.parse(event.data);
+
+    switch(obj.type) {
+        case 'MSG_RECV':
+            handleChatMessage(obj);
+            break;
+        case 'MAP_RECV':
+            myMap.handleMarker(obj);
+            break;
+        case 'MAP_DEL':
+            myMap.deleteMarker(obj);
+            break;
+        default:
+            throw 'Type not found';
+    }
+  };
 }
 
-function initChat() {
-  document.getElementById('submitBtn').addEventListener('click', (event) => {
-      event.preventDefault();
-      let message = document.querySelector('#message').value;
-      connection.send(message);
-      document.querySelector('#message').value = '';
-  });
-}
-
-
-connection.onopen = () => {
-};
-
-connection.onclose = () => {
-};
-
-connection.onerror = (error) => {
-  throw 'Error'
-};
-
-connection.onmessage = (event) => {
-
-  var obj = JSON.parse(event.data);
-
-  switch(obj.type) {
-      case 'MSG_RECV':
-          let li = document.createElement('li');
-          li.innerText = obj.uid + ": " + obj.message;
-          document.querySelector('#chat').append(li);
-          break;
-      case 'MAP_RECV':
-          // TODO(alicevlasov): Handle MAP_RECV
-          break;
-      case 'MAP_DEL':
-          // TODO(alicevlasov): Handle MAP_DEL
-          break;
-      default:
-          throw 'Type not found';
-  }
-};
 
 /**
  * Returns the server's URL, forcing it to HTTPS, if necessary
- * @return {string} The server's URL.
+ * @return {String} The server's URL.
   */
-function getServerUrl() {
+async function getServerUrl() {
     var protoSpec;
-    var defaultIDToken = 12;
 
     if (location.protocol !== 'https:' && location.host != 'localhost:8080') {
         location.replace(`https:${location.href.substring(location.protocol.length)}`);
@@ -95,5 +122,22 @@ function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    return protoSpec + "//" + location.host + "/chat/" + chatRoomID + "?idToken=" + defaultIDToken;
+    let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
+
+    return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
+}
+
+/**
+ * Sets up chat listeners
+ */
+function initChat() {
+  loadChatHistory();
+
+  var input = document.getElementById("comment-container");
+  input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("submitBtn").click();
+    }
+  });
 }

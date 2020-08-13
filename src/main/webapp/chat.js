@@ -12,34 +12,110 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Loads chat history and adds it to the index page
-  */
-function loadChatHistory() {
-  // TODO(astepin): Fetch from history URL when it is created
-
-  let quote = "Test quote"
-  document.getElementById('past-comments').innerText = quote;
-}
-
 let chatOpen = false;
 
+/**
+ * Changes the status of the chat's open-ness
+ */
 function toggleChat() {
   if (chatOpen) {
-    closeChat();
+    closeChat_();
   } else {
-    openChat();
+    openChat_();
   }
 }
 
-function openChat() {
+/**
+ * @Private
+ * Opens the chat
+ */
+function openChat_() {
   document.getElementById("myForm").classList.add("chatOpen");
   document.getElementById("map").classList.remove("expanded");
   chatOpen =  true;
 }
 
-function closeChat() {
+/**
+ * @Private
+ * Closes the chat
+ */
+function closeChat_() {
   document.getElementById("myForm").classList.remove("chatOpen");
   document.getElementById("map").classList.add("expanded");
   chatOpen = false;
 }
+
+/**
+ * Loads chat
+ * @throws Will throw an error if cannot get chat history associated with current user
+ */
+function loadChatHistory() {
+  firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+      .then(idToken => getChatHistory_(idToken))
+      .catch(error => {
+        throw "Problem getting chat history";
+      });
+}
+
+/**
+ * @Private
+ * Retrieves chat history from the server and adds them to the page
+ * @param{number} idToken The ID associated with the current user
+ */
+function getChatHistory_(idToken) {
+  fetch(`/chat-server?idToken=${idToken}&idRoom=${roomId}`)
+        .then(response => response.json())
+        .then((comments) => {
+          for (const index in comments) {
+            let comment = comments[index];
+            handleChatMessage(comment);
+          }
+        });
+}
+
+
+/**
+ * Sends nonempty chat comment from text area to server
+*/
+function addChatComment() {
+    var commentContent = document.getElementById('comment-container').value;
+
+    if(commentContent.indexOf("\n")==0 || commentContent===""){
+      document.getElementById('comment-container').value = "";
+    } else {
+      var commentObj = {
+        type : "MSG_SEND",
+        message : commentContent
+      };
+
+      document.getElementById('comment-container').value = "";
+
+      if (connection) {
+          connection.send(JSON.stringify(commentObj));
+      }
+    }
+}
+
+/**
+ * @param{!Object} obj A JSON Object that represents the comment to be added
+ * Adds comment to page
+ */
+function handleChatMessage(obj) {
+  //TODO(astepin): Include timestamp in the message
+
+  var node = document.createElement("div");
+  var textnode = document.createTextNode(obj.name + ": " + obj.message);
+
+  let userId = firebase.auth().currentUser.uid;
+  if(obj.uid === userId) {
+    node.classList.add("myMessage");
+  } else {
+    node.classList.add("otherMessage");
+  }
+  node.classList.add("message");
+
+  node.appendChild(textnode);
+  document.getElementById("past-comments").appendChild(node);
+}
+
+

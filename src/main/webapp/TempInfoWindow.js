@@ -49,7 +49,7 @@ class TempInfoWindow extends InfoWindowTemplate {
     let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT);
     let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT);
 
-    this.myMarker_.sendPermMarkerInfo(inputTitle.value, inputBody.value);
+    this.myMarker_.setPermMarkerInfo(inputTitle.value, inputBody.value);
 
     inputTitle.value = "";
     inputBody.value = "";
