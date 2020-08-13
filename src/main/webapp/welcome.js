@@ -250,6 +250,7 @@ function displayLoginInfo_() {
   hideEl_(getUserDetails_());
   hideEl_(getNewMapForm_());
   hideEl_(getUsernameForm_());
+  hideEl_(getWelcomeMsg_());
   showEl_(getLoginDiv_());
   ui.start('#firebaseui-auth-container', uiConfig);
 }
@@ -347,4 +348,12 @@ function getMapsWrapper_() {
  */
 function getUserDetails_() {
   return document.getElementById('user-details');
+}
+
+/**
+ * @Private
+ * Retrieves the welcome message DOM element from the page
+ */
+function getWelcomeMsg_() {
+  return document.getElementById('welcome-message');
 }
