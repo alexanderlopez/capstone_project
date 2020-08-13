@@ -53,6 +53,15 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 var idToken;
 
+const LOGIN_EL = 'firebaseui-auth-container';
+const LOADING_EL ='loading';
+const WELCOME_EL ='welcome-message';
+const DETAILS_EL = 'user-details';
+const MAPS_WRAPPER = 'maps-wrapper';
+const MAP_FORM = 'new-map-form';
+const USERNAME_FORM = 'username-form';
+const SIGNOUT_BTN ='sign-out';
+
 /**
  * @Private
  * Retrieves the current user's information from the server
@@ -74,22 +83,23 @@ function getUserInfo_(user, userIdToken) {
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {
-  hideLoading_();
+  document.getElementById(LOADING_EL).style.display = 'none';
+
   let isNewUser = Object.keys(userJson).length === 0;
 
   if (isNewUser) {
     setWelcomeMessage_();
     showUserMaps_({});
-    showEl_(getUsernameForm_());
+    showEl_(document.getElementById(USERNAME_FORM));
   } else {
     setWelcomeMessage_(userJson.name);
     showUserMaps_(userJson.rooms);
-    showEl_(getNewMapForm_());
+    showEl_(document.getElementById(MAP_FORM));
   }
 
   showUserDetails_(email, userJson.name);
 
-  showEl_(getSignOutBtn_());
+  showEl_(document.getElementById(SIGNOUT_BTN));
 }
 
 
@@ -98,8 +108,9 @@ function displayUserInfo_(userJson, email) {
  * Displays a welcome message with the client's username when applicable
  */
 function setWelcomeMessage_(userName) {
-  let messageDiv = document.getElementById('welcome-message');
+  let messageDiv = document.getElementById(WELCOME_EL);
   showEl_(messageDiv);
+
   let message = "";
 
   if (userName) {
@@ -173,7 +184,7 @@ function showUserDetails_(email, username) {
     var usernameBlock = makeDetailsGroup_("username", "");
   }
 
-  let displayDiv = getUserDetails_();
+  let displayDiv = document.getElementById(DETAILS_EL);
   displayDiv.appendChild(emailBlock);
   displayDiv.appendChild(usernameBlock);
   showEl_(displayDiv);
@@ -211,7 +222,8 @@ function makeDetailsGroup_(name, val) {
  */
 function showUserMaps_(mapsJson) {
   let rooms = document.getElementById('user-maps');
-  showEl_(getMapsWrapper_());
+  let roomWrapper = document.getElementById(MAPS_WRAPPER);
+  showEl_(roomWrapper);
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -245,14 +257,12 @@ function makeRoomButton_(id, name) {
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  hideLoading_();
-  hideEl_(getMapsWrapper_());
-  hideEl_(getUserDetails_());
-  hideEl_(getNewMapForm_());
-  hideEl_(getUsernameForm_());
-  hideEl_(getWelcomeMsg_());
-  showEl_(getLoginDiv_());
-  ui.start('#firebaseui-auth-container', uiConfig);
+  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, MAP_FORM, USERNAME_FORM,
+                WELCOME_EL];
+  toHide.forEach((id) => document.getElementById(id).style.display = 'none');
+
+  showEl_(document.getElementById(LOGIN_EL));
+  ui.start('#'+LOGIN_EL, uiConfig);
 }
 
 /**
@@ -267,93 +277,9 @@ function logOut() {
 
 /**
  * @Private
- * Hides the loading element
- */
-function hideLoading_() {
-  el = document.getElementById("loading");
-  setDisplay_(el, 'none');
-}
-
-/**
- * @Private
- * Changes the display style of the DOM element to none
- * @param {Element} el DOM element of object to be modified
- */
-function hideEl_(el) {
-  setDisplay_(el, 'none');
-}
-
-/**
- * @Private
  * Changes the display style of the DOM element to block
  * @param {Element} el DOM element of object to be modified
  */
 function showEl_(el) {
-  setDisplay_(el, 'block');
-}
-
-/**
- * @Private
- * Changes the display style of the DOM element
- * @param {Element} el DOM element of object to be modified
- * @param {String} type what value the display type should be
- */
-function setDisplay_(el, type) {
-  el.style.display = type;
-}
-
-/**
- * @Private
- * Retrieves the login DOM element from the page
- */
-function getLoginDiv_() {
-  return document.getElementById('firebaseui-auth-container');
-}
-
-/**
- * @Private
- * Retrieves the sign out DOM element from the page
- */
-function getSignOutBtn_() {
-  return document.getElementById('sign-out');
-}
-
-/**
- * @Private
- * Retrieves the username form DOM element from the page
- */
-function getUsernameForm_() {
-  return document.getElementById('username-form');
-}
-
-/**
- * @Private
- * Retrieves the new map form DOM element from the page
- */
-function getNewMapForm_() {
-  return document.getElementById('new-map-form');
-}
-
-/**
- * @Private
- * Retrieves the map display panel DOM element from the page
- */
-function getMapsWrapper_() {
-  return document.getElementById('maps-wrapper');
-}
-
-/**
- * @Private
- * Retrieves the details wrapper DOM element from the page
- */
-function getUserDetails_() {
-  return document.getElementById('user-details');
-}
-
-/**
- * @Private
- * Retrieves the welcome message DOM element from the page
- */
-function getWelcomeMsg_() {
-  return document.getElementById('welcome-message');
+  el.style.display = 'block';
 }
