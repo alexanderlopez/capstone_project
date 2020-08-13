@@ -429,7 +429,7 @@ class ChapMap {
   createEmailDiv_(email) {
     let emailWrapper = document.createElement("div");
     emailWrapper.classList.add("emailWrapper");
-    emailWrapper.id = email;
+    emailWrapper.setAttribute("data-email", email);
 
     let emailText = document.createElement("p");
     emailText.innerHTML = email;
@@ -493,7 +493,7 @@ class ChapMap {
     var emailWrappers = emailBank.childNodes;
     let emails = [];
     emailWrappers.forEach(function(node) {
-      emails.push(node.id);
+      emails.push(node.getAttribute("data-email"));
     });
     return emails;
   }
