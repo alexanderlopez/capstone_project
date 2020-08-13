@@ -482,9 +482,10 @@ class ChapMap {
 
   submitSharing_() {
     let shareEmails = this.getEmailsFromBank_();
+    let currRoomId = roomId;
     let params = {
       emails: shareEmails,
-      room: roomId,
+      roomId: currRoomId,
       id: this.idToken
     };
 

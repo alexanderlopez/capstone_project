@@ -203,6 +203,9 @@ public class DatastoreManager {
             messageObject.put(ChatWebSocket.JSON_USER_NAME,
                            getUserName(messageEntity.getString(
                                 ChatWebSocket.JSON_USER_ID)))
+                         .put(ChatWebSocket.JSON_USER_ID,
+                                messageEntity.getString(
+                                    ChatWebSocket.JSON_USER_ID))
                          .put(ChatWebSocket.JSON_MESSAGE,
                            messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 

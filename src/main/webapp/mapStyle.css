@@ -17,7 +17,6 @@ body, html {
 #map {
   height: 100%;
   width: 100%;
-  z-index: -1;
   position: absolute;
   overflow: hidden;
   top: 0;
@@ -101,6 +100,7 @@ body, html {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   cursor: pointer;
   border-radius: 2px;
+  z-index: 2;
 }
 
 #viewBtnWrapper {
@@ -187,7 +187,7 @@ body, html {
 
 #share-popup {
   background-color: #80808040;
-  z-index: 1;
+  z-index: 3;
   height: 100%;
   width: 100%;
   position: absolute;
@@ -199,7 +199,7 @@ body, html {
 }
 
 #popup-window {
-  z-index: 2;
+  z-index: 4;
   background: white;
   margin: auto;
   top: 50%;

@@ -26,17 +26,6 @@ function toggleChat() {
 }
 
 /**
- * @param {*} e KeyBoardInput
- * On 'Enter' adds nonempty comments to server
- */
-function inputKeyUp(e) {
-  e.which = e.which || e.keyCode;
-  if(e.which == 13) {
-      addChatComment();
-  }
-}
-
-/**
  * @Private
  * Opens the chat
  */
