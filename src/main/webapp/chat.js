@@ -83,16 +83,35 @@ function addChatComment() {
     if(commentContent.indexOf("\n")==0 || commentContent===""){
       document.getElementById('comment-container').value = "";
     } else {
-      var commentObj = {
-        type : "MSG_SEND",
-        message : commentContent
-      };
-
-      document.getElementById('comment-container').value = "";
-
-      if (connection) {
-          connection.send(JSON.stringify(commentObj));
+      var commentContentArr = commentContent.split(" ");
+      var commentContentSize = commentContentArr.length;
+      if(commentContentArr[0] === "/MAP") {
+        if(commentContentSize === 6 && commentContentArr[1]==="ADD") {
+          // add the marker / do something with the marker 
+          position = new google.maps.LatLng(commentContentArr[4], commentContentArr[5]);
+          myMap.sendPermMarkerInfo(position, commentContentArr[2], commentContentArr[3]);
+          myMap.panTo(position);
+          document.getElementById('comment-container').value = "";
+        } else if (commentContentSize > 1 && commentContentArr[1] === "HELP"){
+          // help the user 
+          console.log("Help is on the way!");
+        } else {
+          // command not understood, pull up help
+          console.log("Command not understood, help is on the way");
+        }
+      } else {
+        var commentObj = {
+          type : "MSG_SEND",
+          message : commentContent
+        };
+  
+        document.getElementById('comment-container').value = "";
+  
+        if (connection) {
+            connection.send(JSON.stringify(commentObj));
+        }
       }
+      
     }
 }
 
