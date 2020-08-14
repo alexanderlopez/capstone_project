@@ -82,8 +82,8 @@
 
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.19</version>
+      <artifactId>mockito-core</artifactId>
+      <version>2.18.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -93,10 +93,10 @@
       <version>${powermock.version}</version>
       <scope>test</scope>
    </dependency>
-   
+
    <dependency>
       <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
+      <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
    </dependency>
