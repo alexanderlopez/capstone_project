@@ -150,21 +150,51 @@ function initChat() {
 function getCoords(){
   var latitude;
   var longitude;
+// use watch  positioon, try too break   out of the function
 
+const watchID = navigator.geolocation.watchPosition((position) => {
+    console.log("this is position" + position);
+    console.log(position.coords.latitude + " sdf " + position.coords.longitude);
+    if(position.coords.latitude !== undefined){
+      console.log("changing coordinnates");
+      latitude = -34.397;
+      longitude = 150.644;
+    } else {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+    }
+    navigator.geolocation.clearWatch(watchID);
+    console.log([latitude, longitude]);
+    return [latitude, longitude];
+  }, handle_error);
+
+
+/*
   if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.watchPosition(function(position){
+      console.log(JSON.stringify(position));
       latitude = position.coords.latitude,
       longitude = position.coords.longitude;
+      if(latitude === undefined){
+        latitude = -34.397;
+    longitude = 150.644;
+      }
     }, handle_error);
   } else {
     latitude = -34.397;
     longitude = 150.644;
   }
+  console.log("this is lat and lng: " + latitude + " " + longitude);
 
-  return [latitude, longitude];
+
+    navigator.geolocation.clearWatch(id);
+    return [latitude, longitude];
+  */
 
 }
 
 function handle_error(err) {
+  latitude = -34.397;
+  longitude = 150.644;
   console.log(err.code);
 }
