@@ -1,0 +1,23 @@
+{
+  "name": "capstone_project",
+  "version": "1.0.0",
+  "description": "appengine-flexible-archetype ============================",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive ./src/main/webapp/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexanderlopez/capstone_project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexanderlopez/capstone_project/issues"
+  },
+  "homepage": "https://github.com/alexanderlopez/capstone_project#readme",
+  "dependencies": {
+    "mocha": "^8.1.1"
+  }
+}
