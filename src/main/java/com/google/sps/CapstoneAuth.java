@@ -20,7 +20,7 @@ import com.google.cloud.datastore.Value;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
-public final class CapstoneAuth {
+public class CapstoneAuth {
 
     public static final long TEST_ROOM_ID = 1;
     private static final String ALLOWED_USERS = "allowed_users";
