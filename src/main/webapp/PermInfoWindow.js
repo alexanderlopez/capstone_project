@@ -48,11 +48,13 @@ class PermInfoWindow extends InfoWindowTemplate {
       let rightCol = myMap.makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
 
       let title = myMap.makeEl("h1", PermInfoWindow.TITLE_CLASS);
-      title.innerHTML = this.myMarker_.getTitle();
+      let currTitle = this.myMarker_.getTitle();
+      title.innerHTML = currTitle? currTitle: "";
       rightCol.appendChild(title);
 
       let body  = myMap.makeEl("p", PermInfoWindow.BODY_CLASS);
-      body.innerHTML = this.myMarker_.getBody();
+      let currBody = this.myMarker_.getBody();
+      body.innerHTML = currBody? currBody: "";
       rightCol.appendChild(body);
 
       return rightCol;
