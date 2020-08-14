@@ -193,6 +193,23 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Returns a DOM element of the given type with a certain id and class
+   * @param {String} type the type of DOM element to be created
+   * @param {String} elClass the classname to be given to the element
+   * @param {String} elId the id the element should be given
+   */
+  makeEl(type, elClass, elId) {
+    let el = document.createElement(type);
+    if (elId) {
+      el.id = elId;
+    }
+    if (elClass) {
+      el.classList.add(elClass);
+    }
+    return el;
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
@@ -427,8 +444,7 @@ class ChapMap {
    * to the email bank
    */
   createEmailDiv_(email) {
-    let emailWrapper = document.createElement("div");
-    emailWrapper.classList.add("emailWrapper");
+    let emailWrapper = this.makeEl("div", "emailWrapper");
     emailWrapper.setAttribute("data-email", email);
 
     let emailText = document.createElement("p");
