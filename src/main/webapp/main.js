@@ -50,6 +50,9 @@ let firebasePromise = new Promise(function(resolve) {
 let connection = null;
 let userId = null;
 
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
+
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
  */
@@ -63,13 +66,38 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        // set lat and lng
         
-
-        myMap = new ChapMap(getCoords());
+        getCoords().then(coords => {
+          myMap = new ChapMap(coords);
+        }).catch(() => {
+          myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+        })
+       
         initChat();
       });
     });
+
+/**
+ * Returns the user's coordinates, if possible
+ * @returns{!Object} Tuple representing the user's latitude and longitude
+ */
+function getCoords(){
+
+  return new Promise(function(resolve, reject){
+    
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(position){
+        if(position.coords.latitude !== undefined){
+          resolve([position.coords.latitude, position.coords.longitude]);
+        } else {
+          reject();
+        }
+      }, reject);
+    } else {
+      reject();
+    }    
+  })
+}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
@@ -145,56 +173,4 @@ function initChat() {
     document.getElementById("submitBtn").click();
     }
   });
-}
-
-function getCoords(){
-  var latitude;
-  var longitude;
-// use watch  positioon, try too break   out of the function
-
-const watchID = navigator.geolocation.watchPosition((position) => {
-    console.log("this is position" + position);
-    console.log(position.coords.latitude + " sdf " + position.coords.longitude);
-    if(position.coords.latitude !== undefined){
-      console.log("changing coordinnates");
-      latitude = -34.397;
-      longitude = 150.644;
-    } else {
-      latitude = position.coords.latitude;
-      longitude = position.coords.longitude;
-    }
-    navigator.geolocation.clearWatch(watchID);
-    console.log([latitude, longitude]);
-    return [latitude, longitude];
-  }, handle_error);
-
-
-/*
-  if(navigator.geolocation){
-    navigator.geolocation.watchPosition(function(position){
-      console.log(JSON.stringify(position));
-      latitude = position.coords.latitude,
-      longitude = position.coords.longitude;
-      if(latitude === undefined){
-        latitude = -34.397;
-    longitude = 150.644;
-      }
-    }, handle_error);
-  } else {
-    latitude = -34.397;
-    longitude = 150.644;
-  }
-  console.log("this is lat and lng: " + latitude + " " + longitude);
-
-
-    navigator.geolocation.clearWatch(id);
-    return [latitude, longitude];
-  */
-
-}
-
-function handle_error(err) {
-  latitude = -34.397;
-  longitude = 150.644;
-  console.log(err.code);
 }
