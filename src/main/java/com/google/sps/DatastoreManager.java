@@ -44,7 +44,21 @@ public class DatastoreManager {
     private HashMap<String, String> idToName;
 
     private DatastoreManager() {
-        datastore = DatastoreOptions.getDefaultInstance().getService();
+        this(false);
+    }
+
+    private DatastoreManager(boolean testing) {
+        if (testing) {
+            datastore = DatastoreOptions.newBuilder()
+                                        .setProjectId("chap-2020-capstone")
+                                        .setHost("localhost:8081")
+                                        .build()
+                                        .getService();
+        }
+        else {
+            datastore = DatastoreOptions.getDefaultInstance().getService();
+        }
+
         roomFactory = datastore.newKeyFactory().setKind(KIND_CHATROOM);
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
 
@@ -301,8 +315,11 @@ public class DatastoreManager {
         datastore.put(userEntity);
     }
 
+    /**
+     * Gets the user name, the email and the chatrooms that the
+     * user is logged in to.
+     */
     public String getUserData(String uid, boolean getDetails) {
-        // Gets the user name, the and the chatrooms that the user is logged in to.
         JSONObject userData = new JSONObject();
 
         Key userKey = userFactory.newKey(uid);
@@ -342,29 +359,6 @@ public class DatastoreManager {
         return userData.toString();
     }
 
-    //TODO(lopezalexander) Remove on deploy
-    public void createTestRoom(String roomName, String allowedUserId,
-        String userName) {
-        createUser(allowedUserId, userName);
-
-        Key chatRoomKey = roomFactory.newKey(CapstoneAuth.TEST_ROOM_ID);
-        Key childChatRoomKey = datastore.newKeyFactory()
-                                        .setKind(KIND_CHATROOM)
-                                        .addAncestor(PathElement.of(
-                                            KIND_USERS, allowedUserId))
-                                        .newKey(chatRoomKey.getId());
-
-        Entity chatRoom = Entity.newBuilder(chatRoomKey)
-                                .set(ROOM_ATTRIBUTE_NAME, roomName)
-                                .build();
-        Entity childChatRoom = Entity.newBuilder(childChatRoomKey)
-                                     .set(ROOM_ATTRIBUTE_NAME, roomName)
-                                     .build();
-
-        datastore.put(chatRoom);
-        datastore.put(childChatRoom);
-    }
-
     /**
      * Verifies using datastore if the @param uid is allowed in the chatroom
      * @param chatRoomId .
@@ -386,6 +380,14 @@ public class DatastoreManager {
     public static DatastoreManager getInstance() {
         if (currentInstance == null) {
             currentInstance = new DatastoreManager();
+        }
+
+        return currentInstance;
+    }
+
+    public static DatastoreManager getInstance(boolean testing) {
+        if (currentInstance == null) {
+            currentInstance = new DatastoreManager(testing);
         }
 
         return currentInstance;
