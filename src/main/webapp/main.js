@@ -79,7 +79,8 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then(() => {
 
 /**
  * Returns the user's coordinates, if possible
- * @returns{!Object} Tuple representing the user's latitude and longitude
+ * @returns{!Promise<Array<Number>>} Promise for a tuple representing
+ * the user's latitude and longitude.
  */
 function getCoords(){
 
