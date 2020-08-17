@@ -62,8 +62,7 @@ class InfoWindowTemplate {
    * Returns the html string to be displayed in this info window
    */
   makeContent_() {
-    let contentWrapper = document.createElement("div");
-    contentWrapper.classList.add(InfoWindowTemplate.CONTENT_WRAPPER);
+    let contentWrapper = myMap.makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
 
@@ -78,31 +77,17 @@ class InfoWindowTemplate {
    * Puts together info window buttons
    */
   makeLeftColumn_() {
-    let leftCol = document.createElement("div");
-    leftCol.classList.add(InfoWindowTemplate.LEFT_COLUMN);
-    leftCol.appendChild(this.makeDeleteButton_());
-    leftCol.appendChild(this.makeEditButton_());
+    let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+
+    let deleteBtn = myMap.makeEl("button", /* class= */ null,
+        InfoWindowTemplate.DELETE_ID);
+
+    let editBtn = myMap.makeEl("button", /* class= */ null,
+        InfoWindowTemplate.EDIT_ID);
+
+    leftCol.appendChild(deleteBtn);
+    leftCol.appendChild(editBtn);
     return leftCol;
-  }
-
-  /**
-   * @Private
-   * Returns the delete button for this marker
-   */
-  makeDeleteButton_() {
-    let btn = document.createElement("button");
-    btn.id = InfoWindowTemplate.DELETE_ID;
-    return btn;
-  }
-
-  /**
-   * @Private
-   * Returns the edit button for this marker
-   */
-  makeEditButton_() {
-    let btn = document.createElement("button");
-    btn.id = InfoWindowTemplate.EDIT_ID;
-    return btn;
   }
 
   /**

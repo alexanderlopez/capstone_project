@@ -60,72 +60,38 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Returns the HTML of the right section of the information window
    */
   makeRightColumn_() {
-    let rightCol = document.createElement("div");
-    rightCol.classList.add(InfoWindowTemplate.RIGHT_COLUMN);
-    rightCol.appendChild(this.makeContentForm_());
+    let rightCol = myMap.makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+
+    let editedMarker = myMap.editingPermMarker();
+    let titleText = editedMarker? editedMarker.getTitle(): null;
+    let bodyText = editedMarker? editedMarker.getBody(): null;
+
+    let titleInput = this.makeForm_(TempInfoWindow.TITLE_INPUT,
+        TempInfoWindow.DEFAULT_TITLE, titleText);
+    rightCol.appendChild(titleInput);
+
+    let bodyInput = this.makeForm_(TempInfoWindow.BODY_INPUT,
+        TempInfoWindow.DEFAULT_BODY, bodyText);
+    rightCol.appendChild(bodyInput);
+
+    let submitBtn = myMap.makeEl("button", /* class= */ null,
+        TempInfoWindow.SUBMIT_BTN);
+    submitBtn.innerHTML = "Enter";
+    rightCol.appendChild(submitBtn);
+
     return rightCol;
   }
 
   /**
-   * @Private
-   * Returns the HTML for the input form for the marker description
+   * Returns a textarea DOM element with given ID, placeholder, and value
+   * @param {String} elId the id of the element
+   * @param {String} elPlaceholder the placeholder text of the input
+   * @param {String} elInnerHTML the innerHTML text of the textarea
    */
-  makeContentForm_() {
-    let form = document.createElement("div");
-
-    //get the marker that is currently being edited to populate the form
-    let editedMarker = myMap.editingPermMarker();
-
-    form.appendChild(this.makeTitleInput_(editedMarker));
-    form.appendChild(this.makeBodyInput_(editedMarker));
-    form.appendChild(this.makeSubmitBtn_());
-    return form;
-  }
-
-  /**
-   * @Private
-   * Builds the HTML for the textarea to input the title for the marker
-   * @param {PermMarker} editedMarker perm marker that is being edited
-   */
-  makeTitleInput_(editedMarker) {
-    let titleInput = document.createElement("textarea");
-    titleInput.id = TempInfoWindow.TITLE_INPUT;
-    titleInput.placeholder = TempInfoWindow.DEFAULT_TITLE;
-
-    if (editedMarker) {
-      let title = editedMarker.getTitle();
-      titleInput.innerHTML = title? title: "";
-    }
-
-    return titleInput;
-  }
-
-  /**
-   * @Private
-   * Returns the HTML for the body input textarea for the marker
-   * @param {PermMarker} editedMarker perm marker that is being edited
-   */
-  makeBodyInput_(editedMarker) {
-    let bodyInput = document.createElement("textarea");
-    bodyInput.id = TempInfoWindow.BODY_INPUT;
-    bodyInput.placeholder = TempInfoWindow.DEFAULT_BODY;
-
-    if (editedMarker) {
-      let body = editedMarker.getBody();
-      bodyInput.innerHTML = body? body: "";
-    }
-
-    return bodyInput;
-  }
-
-  /**
-   * @Private
-   * Returns the HTML for the submit button for the form for the markers
-   */
-  makeSubmitBtn_() {
-    let submitBtn = document.createElement("button");
-    submitBtn.id = TempInfoWindow.SUBMIT_BTN;
-    submitBtn.innerHTML = "Enter";
-    return submitBtn;
+  makeForm_(elId, elPlaceholder, elInnerHTML) {
+    let el = myMap.makeEl("textarea", /* class= */ null, elId);
+    el.placeholder = elPlaceholder;
+    el.innerHTML = elInnerHTML? elInnerHTML: "";
+    return el;
   }
 }

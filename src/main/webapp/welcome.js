@@ -173,7 +173,7 @@ function submitUsername() {
  * @Private
  * Displays the logged-in user's customized details
  * @param {String} email the user's email address
- * @param {String} username the user's chosen username
+ * @param {?String} username the user's chosen username
  */
 function showUserDetails_(email, username) {
   var emailBlock = makeDetailsGroup_("email", email);
