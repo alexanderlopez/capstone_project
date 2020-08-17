@@ -53,6 +53,7 @@ class PermMarker extends MarkerTemplate{
    */
   setTitle(title) {
     this.title_ = title;
+    this.googleMarker_.setTitle(title);
   }
 
   /** Returns the title describing this marker */
