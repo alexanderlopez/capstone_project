@@ -87,7 +87,7 @@ function getCoords(){
     
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(position){
-        if(position.coords.latitude !== undefined){
+        if(position.coords.latitude && position.coords.longitude){
           resolve([position.coords.latitude, position.coords.longitude]);
         } else {
           reject();
