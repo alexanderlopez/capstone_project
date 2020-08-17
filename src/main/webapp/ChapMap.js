@@ -196,8 +196,8 @@ class ChapMap {
   /**
    * Returns a DOM element of the given type with a certain id and class
    * @param {String} type the type of DOM element to be created
-   * @param {String} elClass the classname to be given to the element
-   * @param {String} elId the id the element should be given
+   * @param {?String} elClass the classname to be given to the element
+   * @param {?String} elId the id the element should be given
    */
   makeEl(type, elClass, elId) {
     let el = document.createElement(type);
@@ -287,9 +287,9 @@ class ChapMap {
    * @Private
    * Updates an existing perm marker's details with the info from the server
    * @param {PermMarker} permMarker marker that needs to be modified
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
-   * @param {google.maps.LatLng} coords the coordinates of the marker
+   * @param {?String} title the title of the marker
+   * @param {?String} body the body of the marker description
+   * @param {?google.maps.LatLng} coords the coordinates of the marker
    */
   updatePermMarker_(permMarker, coords, title, body) {
     if (coords) {
@@ -351,7 +351,7 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} markerTitle the title of the marker
    * @param {String} markerBody the body of the marker description
-   * @param {String} markerId the datastore id of this marker
+   * @param {?String} markerId the datastore id of this marker
    */
   makeJson_(coords, markerTitle, markerBody, markerId) {
     var jsonObject = {
