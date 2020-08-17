@@ -49,6 +49,14 @@ body {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* Forms */
 
+#middle-panel {
+  display: none;
+  margin: 0 5% 0 5%;
+  width: 30%;
+  height: auto;
+  overflow: scroll;
+}
+
 #username-form {
   display: none;
 }
@@ -59,10 +67,8 @@ body {
 
 .form {
   display: block;
-  margin: 0 5% 0 5%;
-  width: 30%;
-  height: auto;
-  overflow: scroll;
+  width: 100%;
+  height: 100%;
 }
 
 .form textarea {
@@ -78,7 +84,7 @@ body {
 
 .form input {
   font-size: 1em;
-  width: 90%;
+  width: 40%;
   margin-left: 5%;
   margin-right: 5%;
   border-radius: 8px;
@@ -89,10 +95,15 @@ body {
   outline: 0;
   overflow-x: scroll;
   cursor: pointer;
+  float: left;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Details */
+
+#edit-details {
+  background-image: url("icons/edit.svg");
+}
 
 #user-details {
   overflow-y: scroll;
@@ -114,6 +125,10 @@ body {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
+
+#add-map {
+  background-image: url("icons/add.svg");
+}
 
 #maps-wrapper {
   display: none;
@@ -171,6 +186,7 @@ body {
   width: 25%;
   border-style: double;
   border-color: gray;
+  position: relative;
 }
 
 .panel-header {
@@ -183,4 +199,21 @@ body {
   font-weight: bold;
   margin-bottom: 20px;
   padding: 0 20px 0 20px;
+}
+
+.panel-icon, .panel-icon:focus {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 2vw;
+  width: 2vw;
+  margin: .5vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  padding: 0;
 }

@@ -61,6 +61,7 @@ const MAPS_WRAPPER = 'maps-wrapper';
 const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
 const SIGNOUT_BTN ='sign-out';
+const MIDDLE_PANEL = 'middle-panel';
 
 /**
  * @Private
@@ -94,11 +95,10 @@ function displayUserInfo_(userJson, email) {
   } else {
     setWelcomeMessage_(userJson.name);
     showUserMaps_(userJson.rooms);
-    showEl_(document.getElementById(MAP_FORM));
   }
 
   showUserDetails_(email, userJson.name);
-
+  showEl_(document.getElementById(MIDDLE_PANEL));
   showEl_(document.getElementById(SIGNOUT_BTN));
 }
 
@@ -125,11 +125,24 @@ function setWelcomeMessage_(userName) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE MAP OR USER
 
+function hideForm(formChild) {
+  hideEl_(formChild.parentNode);
+}
+
+function showUsernameForm() {
+  showEl_(document.getElementById(USERNAME_FORM));
+}
+
+function showMapForm() {
+  showEl_(document.getElementById(MAP_FORM));
+}
+
 /**
  * Sends the submitted map name to the server
  */
 function submitMap() {
   let input = document.getElementById("map-name");
+  hideForm(input);
   submitNewItem_("room-server", input);
 }
 
@@ -138,6 +151,7 @@ function submitMap() {
  */
 function submitUsername() {
   let input = document.getElementById("input-username");
+  hideForm(input);
   submitNewItem_("user-server", input);
 }
 
@@ -282,4 +296,13 @@ function logOut() {
  */
 function showEl_(el) {
   el.style.display = 'block';
+}
+
+/**
+ * @Private
+ * Changes the display style of the DOM element to none
+ * @param {Element} el DOM element of object to be modified
+ */
+function hideEl_(el) {
+  el.style.display = 'none';
 }

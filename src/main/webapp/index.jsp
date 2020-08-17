@@ -29,28 +29,34 @@
         </div>
         <div id="pageContent">
           <div id="loading">Loading...</div>
-          
-          <div id="user-details" class="panel">
-            <h2 id="profile" class="panel-header">Profile</h2>
-          </div>
-
           <div id="firebaseui-auth-container"></div>
 
-          <div id="username-form" class="panel form">
-            <label for="input-username" class="panel-header">My Username:
-              </label>
-            <textarea id="input-username" placeholder="Enter name..."></textarea>
-            <input type="button" value="Submit" onclick="submitUsername()">
+          <div id="user-details" class="panel">
+            <h2 id="profile" class="panel-header">Profile</h2>
+            <button id="edit-details" class="panel-icon" onclick="showUsernameForm()"></button>
           </div>
 
-          <div id="new-map-form" class="panel form">
-            <label for="map-name" class="panel-header">New Map:</label>
-            <textarea id="map-name" placeholder="Enter name..."></textarea>
-            <input type="button" value="Submit" onclick="submitMap()">
+          <div id="middle-panel" class="panel">
+            <div id="username-form" class="form">
+              <label for="input-username" class="panel-header">My Username:
+                </label>
+              <textarea id="input-username" placeholder="Enter name..."></textarea>
+              <input type="button" value="Submit" onclick="submitUsername(this)">
+              <input type="button" value="Cancel"
+                  onclick="hideForm(this)">
+            </div>
+
+            <div id="new-map-form" class="form">
+              <label for="map-name" class="panel-header">New Map:</label>
+              <textarea id="map-name" placeholder="Enter name..."></textarea>
+              <input type="button" value="Submit" onclick="submitMap(this)">
+              <input type="button" value="Cancel" onclick="hideForm(this)">
+            </div>
           </div>
 
           <div id="maps-wrapper" class="panel">
             <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <button id="add-map" class="panel-icon" onclick="showMapForm(this)"></button>
             <div id="user-maps"></div>
           </div>
         </div>
