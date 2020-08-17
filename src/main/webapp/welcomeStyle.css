@@ -11,11 +11,12 @@ body {
   margin: 8vh 10vw 5vh 10vw;
   height: 90%;
   cursor: default;
+  font-size: 3vh;
 }
 
 #pageContent {
   display: flex;
-  height: calc(90% - 24em);
+  height: calc(90% - 32vh);
 }
 
 #loading {
@@ -34,13 +35,13 @@ body {
 #header h1 {
   text-align: center;
   width: 100%;
-  font-size: 15em;
+  font-size: 20vh;
   margin: 0;
 }
 
 #welcome-message {
   text-align: center;
-  font-size: 3em;
+  font-size: 6vh;
   margin: 0;
   display: none;
 }
@@ -60,7 +61,8 @@ body {
   display: block;
   margin: 0 5% 0 5%;
   width: 30%;
-  height: auto
+  height: auto;
+  overflow: scroll;
 }
 
 .form textarea {
@@ -69,13 +71,13 @@ body {
   margin-bottom: 30px;
   padding: 5px;
   resize: none;
-  font-size: 1.5em;
+  font-size: 1em;
   height: 1.5em;
   border-radius: 2px;
 }
 
 .form input {
-  font-size: 2em;
+  font-size: 1em;
   width: 90%;
   margin-left: 5%;
   margin-right: 5%;
@@ -98,16 +100,16 @@ body {
 }
 
 .detailsGroup {
-  margin-bottom: 40px;
+  margin-bottom: 5vh;
 }
 
 .detailsGroup .groupLabel {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+  font-size: 1.3em;
+  margin: 10px 0 10px 0;
 }
 
 .detailsGroup .groupContent {
-  font-size: 1.2em;
+  margin: 0;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -125,12 +127,12 @@ body {
 
 .roomBtn, .roomBtn:focus {
   display: block;
-  width: 100%;
-  margin-bottom: 10px;
+  width: calc(100% - 30px);
+  margin: 15px;
   overflow: auto;
   white-space: normal;
   padding: 10px;
-  font-size: 2em;
+  font-size: 1em;
   outline: 0;
   border-radius: 5px;
   border-style: outset;
@@ -173,7 +175,7 @@ body {
 
 .panel-header {
   text-align: center;
-  font-size: 2.5em;
+  font-size: 3vw;
   margin: 0;
   display: block;
   margin-inline-start: 0;
