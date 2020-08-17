@@ -48,6 +48,10 @@ let firebasePromise = new Promise(function(resolve) {
     });
 
 let connection = null;
+let userId = null;
+
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -58,13 +62,43 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
         location.href = "/";
       }
 
+      userId = firebase.auth().currentUser.uid;
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        myMap = new ChapMap();
+        
+        getCoords().then(coords => {
+          myMap = new ChapMap(coords);
+        }).catch(() => {
+          myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+        })
+       
         initChat();
       });
     });
+
+/**
+ * Returns the user's coordinates, if possible
+ * @returns{!Promise<Array<Number>>} Promise for a tuple representing
+ * the user's latitude and longitude.
+ */
+function getCoords(){
+
+  return new Promise(function(resolve, reject){
+    
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(position){
+        if(position.coords.latitude && position.coords.longitude){
+          resolve([position.coords.latitude, position.coords.longitude]);
+        } else {
+          reject();
+        }
+      }, reject);
+    } else {
+      reject();
+    }    
+  })
+}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
