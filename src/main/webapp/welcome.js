@@ -125,16 +125,32 @@ function setWelcomeMessage_(userName) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE MAP OR USER
 
-function hideForm(formChild) {
-  hideEl_(formChild.parentNode);
+/**
+ * Hides the parent node the given element is in
+ * @param {Element} nodeChild the child node of the element to be hidden
+ */
+function hideNode(nodeChild) {
+  hideEl_(nodeChild.parentNode);
 }
 
+/**
+ * @Private
+ * Displays the form where users can enter their username and hides the
+ * new map form if it is visible
+ */
 function showUsernameForm() {
   showEl_(document.getElementById(USERNAME_FORM));
+  hideEl_(document.getElementById(MAP_FORM));
 }
 
+/**
+ * @Private
+ * Displays the form where users can create a new map and hides the
+ * username form if it is visible
+ */
 function showMapForm() {
   showEl_(document.getElementById(MAP_FORM));
+  hideEl_(document.getElementById(USERNAME_FORM));
 }
 
 /**
