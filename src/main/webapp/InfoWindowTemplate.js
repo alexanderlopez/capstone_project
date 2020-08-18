@@ -17,6 +17,7 @@ class InfoWindowTemplate {
 
   static DELETE_ID = "markerDelete";
   static EDIT_ID = "markerEdit";
+  static COLOR_ID = "markerColor";
   static CONTENT_WRAPPER = "contentWrapper";
   static LEFT_COLUMN = "leftColumn";
   static RIGHT_COLUMN = "rightColumn";
@@ -85,8 +86,12 @@ class InfoWindowTemplate {
     let editBtn = myMap.makeEl("button", /* class= */ null,
         InfoWindowTemplate.EDIT_ID);
 
+    let colorBtn = myMap.makeEl("button", /* class= */ null,
+        InfoWindowTemplate.COLOR_ID);
+
     leftCol.appendChild(deleteBtn);
     leftCol.appendChild(editBtn);
+    leftCol.appendChild(colorBtn);
     return leftCol;
   }
 
