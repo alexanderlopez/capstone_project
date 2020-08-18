@@ -38,18 +38,17 @@
           </div>
 
           <div id="middle-panel" class="panel">
-            <div id="new-map-form" class="form">
-              <label for="map-name" class="panel-header">New Map:</label>
-              <textarea id="map-name" placeholder="Enter name..."></textarea>
-              <input type="button" value="Submit" onclick="submitMap(this)">
-              <input type="button" value="Cancel" onclick="hideForm(this)">
-            </div>
           </div>
 
           <div id="maps-wrapper" class="panel">
             <h2 id="my-maps" class="panel-header">My Maps</h2>
-            <button id="add-map" class="panel-icon" onclick="showMapForm(this)"></button>
-            <div id="user-maps"></div>
+            <input id="add-map" class="panel-icon" onclick="showMapForm()">
+            <input type="submit" id="submit-map" class="panel-icon" onclick="submitMap()" value="">
+            <div id="user-maps">
+              <button id="map-form-wrapper" class="roomBtn">
+                <textarea id="new-map-form" placeholder="Name..."></textarea>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -57,6 +57,11 @@ body {
   overflow: scroll;
 }
 
+#save-details, #submit-map {
+  background-image: url("icons/save.svg");
+  display: none;
+}
+
 #username-form {
   display: none;
   resize: none;
@@ -68,7 +73,18 @@ body {
 }
 
 #new-map-form {
+  width: 80%;
+  height: calc(3vw - 20px);
+  margin: 0;
+  resize: none;
+  overflow: scroll;
+  font-size: 1vw;
+}
+
+#map-form-wrapper {
   display: none;
+  border-width: 2px;
+  height: 5vw;
 }
 
 .form {
@@ -111,11 +127,6 @@ body {
   background-image: url("icons/edit.svg");
 }
 
-#save-details {
-  background-image: url("icons/save.svg");
-  display: none;
-}
-
 #user-details {
   overflow-y: scroll;
   display: none;
@@ -148,7 +159,7 @@ body {
 
 #user-maps {
   margin-top: 30px;
-  height: calc(100% - 5em - 30px);
+  height: calc(100% - 50px - 3vw);
   overflow-y: scroll;
 }
 

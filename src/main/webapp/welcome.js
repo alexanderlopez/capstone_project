@@ -62,8 +62,10 @@ const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
 const SIGNOUT_BTN ='sign-out';
 const MIDDLE_PANEL = 'middle-panel';
-const SAVE_BTN = 'save-details';
-const EDIT_BTN = 'edit-details';
+const PROFILE_SAVE_BTN = 'save-details';
+const PROFILE_EDIT_BTN = 'edit-details';
+const MAP_SUBMIT_BTN = 'submit-map';
+const MAP_ADD_BTN = 'add-map';
 
 /**
  * @Private
@@ -129,14 +131,6 @@ function setWelcomeMessage_(userName) {
 // CREATE MAP OR USER
 
 /**
- * Hides the parent node the given element is in
- * @param {Element} nodeChild the child node of the element to be hidden
- */
-function hideNode(nodeChild) {
-  hideEl_(nodeChild.parentNode);
-}
-
-/**
  * @Private
  * Displays the form where users can enter their username and hides the
  * new map form if it is visible
@@ -147,8 +141,8 @@ function showUsernameForm() {
   let prevUsername = usernameGroup
       .getElementsByClassName("groupContent")[0];
 
-  hideEl_(document.getElementById(EDIT_BTN));
-  showEl_(document.getElementById(SAVE_BTN));
+  hideEl_(document.getElementById(PROFILE_EDIT_BTN));
+  showEl_(document.getElementById(PROFILE_SAVE_BTN));
 
   hideEl_(prevUsername);
   usernameForm.innerHTML = prevUsername.innerHTML;
@@ -161,7 +155,9 @@ function showUsernameForm() {
  * username form if it is visible
  */
 function showMapForm() {
-  showEl_(document.getElementById(MAP_FORM));
+  showEl_(document.getElementById("map-form-wrapper"));
+  hideEl_(document.getElementById(MAP_ADD_BTN));
+  showEl_(document.getElementById(MAP_SUBMIT_BTN));
 }
 
 /**
@@ -169,7 +165,6 @@ function showMapForm() {
  */
 function submitMap() {
   let input = document.getElementById(MAP_FORM);
-  hideForm(input);
   submitNewItem("room-server", input);
 }
 
@@ -283,12 +278,11 @@ function showUserMaps_(mapsJson) {
  * @param {String} name the given name of the map
  */
 function makeRoomButton_(id, name) {
-  let roomBtn = document.createElement("button");
+  let roomBtn = makeEl("button", "roomBtn");
   roomBtn.innerHTML = name;
   roomBtn.addEventListener('click', () => {
      location.href=`/chatroom.html?roomId=${id}`;
   });
-  roomBtn.classList.add("roomBtn");
   return roomBtn;
 }
 
@@ -300,8 +294,7 @@ function makeRoomButton_(id, name) {
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, MAP_FORM,
-                WELCOME_EL, MIDDLE_PANEL];
+  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, WELCOME_EL, MIDDLE_PANEL];
   toHide.forEach((id) => document.getElementById(id).style.display = 'none');
 
   showEl_(document.getElementById(LOGIN_EL));
