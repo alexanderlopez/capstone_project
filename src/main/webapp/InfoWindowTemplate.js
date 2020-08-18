@@ -36,6 +36,7 @@ class InfoWindowTemplate {
   static COLOR_PICKER = "colorPicker";
   static COLOR_BTN = "colorBtn";
   static WIDE = "wide";
+  static PICKED_COLOR = "picked";
 
   /** google.maps.Marker object this info window is anchored to */
   myMarker_;
@@ -52,6 +53,7 @@ class InfoWindowTemplate {
     this.googleInfoWindow_.addListener('domready', () => {
         this.setDeleteEvent_();
         this.setToggleColorPickerEvent_();
+        this.setColorChangeEvent_();
       });
   }
 
@@ -96,17 +98,58 @@ class InfoWindowTemplate {
                           InfoWindowTemplate.RIGHT_COLUMN,
                           InfoWindowTemplate.COLOR_PICKER];
 
+    let wideClass = InfoWindowTemplate.WIDE
+
     for (const id of toggledContent) {
       let el = document.getElementById(id);
       if (this.windowIsExpanded_) {
-        el.classList.remove(InfoWindowTemplate.WIDE);
+        el.classList.remove(wideClass);
       } else {
-        el.classList.add(InfoWindowTemplate.WIDE);
+        el.classList.add(wideClass);
       }
     }
 
     this.windowIsExpanded_ = !this.windowIsExpanded_;
   }
+
+  /**
+   * @Private
+   * Adds click events to all the color picker options
+   */
+  setColorChangeEvent_() {
+      let colorBtns =
+          document.getElementsByClassName(InfoWindowTemplate.COLOR_BTN);
+      for (const btn of colorBtns) {
+        btn.addEventListener('click', () => this.switchSelectedColor_(btn));
+      }
+  }
+
+  /**
+   * @Private
+   * Change which color is currently selected
+   * @param {Element} clickedBtn the color btn that was just clicked
+   */
+   switchSelectedColor_(clickedBtn) {
+     let pickedClass = InfoWindowTemplate.PICKED_COLOR;
+     let prevSelectedBtn = document.getElementsByClassName(pickedClass)[0];
+     prevSelectedBtn.classList.remove(pickedClass);
+     clickedBtn.classList.add(pickedClass);
+
+     this.setPreviewColor_(clickedBtn.id);
+
+   }
+
+
+   /**
+    * @Private
+    * Changes the previewed color to the one given
+    * @param {String} newColorName the name of the color to be shown
+    */
+   setPreviewColor_(newColorName) {
+     let newColorCode = InfoWindowTemplate.markerColors_[newColorName];
+     let previewBtn = document.getElementById(InfoWindowTemplate.COLOR_ID);
+     previewBtn.style.backgroundColor = newColorCode;
+   }
 
   /**
    * @Private
@@ -139,6 +182,10 @@ class InfoWindowTemplate {
        let colorBtn = myMap.makeEl("button", InfoWindowTemplate.COLOR_BTN,
             colorName);
        colorBtn.style.backgroundColor = colorCode;
+
+       if (colorName === "red") {
+         colorBtn.classList.add(InfoWindowTemplate.PICKED_COLOR);
+       }
 
        pickerWrapper.appendChild(colorBtn);
      });

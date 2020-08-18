@@ -124,6 +124,10 @@ body, html {
   outline: 0;
   cursor: pointer;
 }
+
+.colorBtn.picked {
+  border: 2px solid black;
+}
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* MAP BUTTONS */
 
