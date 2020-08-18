@@ -10,9 +10,6 @@
         <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
-        <!-- TODO: Add SDKs for Firebase products that you want to use
-            https://firebase.google.com/docs/web/setup#available-libraries -->
-
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
         <script src="welcome.js"></script>
@@ -31,7 +28,7 @@
 
           <div id="maps-wrapper" class="panel-content">
             <h2 id="my-maps" class="panel-header">My Maps</h2>
-            <input id="add-map" class="panel-icon" onclick="showMapForm()">
+            <input type="button" id="add-map" class="panel-icon" onclick="showMapForm()">
             <input type="submit" id="submit-map" class="panel-icon" onclick="submitMap()" value="">
             <div id="user-maps">
               <button id="map-form-wrapper" class="roomBtn">

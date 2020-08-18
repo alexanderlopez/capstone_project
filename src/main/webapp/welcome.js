@@ -322,7 +322,7 @@ function makeRoomButton_(id, name) {
  * Prevents the user from creating a new map
  */
 function disableMapCreating_() {
-  let btn = document.getElementById(ADD_MAP_BTN);
+  let btn = document.getElementById("add-map");
   btn.onclick = "";
 }
 
