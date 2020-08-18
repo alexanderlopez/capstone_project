@@ -85,7 +85,9 @@ function addChatComment() {
     } else {
       var commentContentArr = commentContent.split(" ");
       var commentContentSize = commentContentArr.length;
-      if(commentContentArr[0] === "/MAP") {
+      if(commentContent.split(" ")[0] === "/MAP") {
+        handleMapCommand(commentContent);
+        /*
         if(commentContentSize === 6 && commentContentArr[1]==="ADD") {
           // add the marker / do something with the marker 
           position = new google.maps.LatLng(commentContentArr[4], commentContentArr[5]);
@@ -98,7 +100,7 @@ function addChatComment() {
         } else {
           // command not understood, pull up help
           console.log("Command not understood, help is on the way");
-        }
+        } */
       } else {
         var commentObj = {
           type : "MSG_SEND",
@@ -135,6 +137,26 @@ function handleChatMessage(obj) {
 
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
+}
+
+
+function handleMapCommand(commentContent){
+  var commentContentArr = commentContent.split(" ");
+  var commentContentSize = commentContentArr.length;
+
+  if(commentContentSize === 6 && commentContentArr[1]==="ADD") {
+    // add the marker / do something with the marker 
+    position = new google.maps.LatLng(commentContentArr[4], commentContentArr[5]);
+    myMap.sendPermMarkerInfo(position, commentContentArr[2], commentContentArr[3]);
+    myMap.panTo(position);
+    document.getElementById('comment-container').value = "";
+  } else if (commentContentSize > 1 && commentContentArr[1] === "HELP"){
+    // help the user 
+    console.log("Help is on the way!");
+  } else {
+    // command not understood, pull up help
+    console.log("Command not understood, help is on the way");
+  }
 }
 
 
