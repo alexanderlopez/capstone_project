@@ -27,7 +27,7 @@ body, html {
 /* INFO WINDOWS */
 
 .contentWrapper {
-  width: 20em;
+  width: 25em;
 }
 
 .leftColumn {
@@ -38,7 +38,7 @@ body, html {
 
 .rightColumn {
   float: left;
-  width: calc(100% - 4em);
+  width: calc(100% - 9em);
 }
 
 #markerDelete, #markerEdit, #markerColor {
@@ -91,6 +91,26 @@ body, html {
   resize: none;
   height: 6em;
   width: 100%;
+}
+
+#colorPicker {
+  width: 50px;
+  height: 100%;
+  float: left;
+  display: grid;
+  grid-template-columns: 2em 2em;
+  margin-right: 0.5em;
+  display: grid;
+}
+
+.colorBtn, .colorBtn:focus {
+  height: 1.5em;
+  width: 1.5em;
+  margin: .25em;
+  border-radius: 50%;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
 }
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* MAP BUTTONS */

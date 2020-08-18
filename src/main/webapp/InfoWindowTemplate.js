@@ -15,12 +15,25 @@
 /** Defines the basic functions that all infoWindows must have */
 class InfoWindowTemplate {
 
+  static markerColors_ = {
+      yellow: "#FDF569",
+      red: "#EA4335",
+      purple: "#8E67FD",
+      pink: "#E661AC",
+      orange: "#FF9900",
+      blue: "#6991FD",
+      green: "#00E64D",
+      ltblue: "#67DDDD"
+  }
+
   static DELETE_ID = "markerDelete";
   static EDIT_ID = "markerEdit";
   static COLOR_ID = "markerColor";
   static CONTENT_WRAPPER = "contentWrapper";
   static LEFT_COLUMN = "leftColumn";
   static RIGHT_COLUMN = "rightColumn";
+  static COLOR_PICKER = "colorPicker";
+  static COLOR_BTN = "colorBtn";
 
   /** google.maps.Marker object this info window is anchored to */
   myMarker_;
@@ -64,6 +77,7 @@ class InfoWindowTemplate {
    */
   makeContent_() {
     let contentWrapper = myMap.makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
+    contentWrapper.appendChild(this.makeColorPicker_());
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
 
@@ -72,6 +86,28 @@ class InfoWindowTemplate {
 
     return result;
   }
+
+  /**
+   * @Private
+   * Builds the color picker for the marker
+   */
+   makeColorPicker_() {
+     let pickerWrapper = myMap.makeEl("div", /* class= */ null, InfoWindowTemplate.COLOR_PICKER);
+
+     let colorNames = Object.keys(InfoWindowTemplate.markerColors_);
+
+     colorNames.forEach(colorName => {
+       let colorCode = InfoWindowTemplate.markerColors_[colorName];
+
+       let colorBtn = myMap.makeEl("button", InfoWindowTemplate.COLOR_BTN,
+            colorName);
+       colorBtn.style.backgroundColor = colorCode;
+
+       pickerWrapper.appendChild(colorBtn);
+     });
+
+     return pickerWrapper;
+   }
 
   /**
    * @Private
