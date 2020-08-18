@@ -61,11 +61,11 @@ const MAPS_WRAPPER = 'maps-wrapper';
 const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
 const SIGNOUT_BTN ='sign-out';
-const MIDDLE_PANEL = 'middle-panel';
 const PROFILE_SAVE_BTN = 'save-details';
 const PROFILE_EDIT_BTN = 'edit-details';
 const MAP_SUBMIT_BTN = 'submit-map';
 const MAP_ADD_BTN = 'add-map';
+const PANEL = "panel";
 
 /**
  * @Private
@@ -89,21 +89,21 @@ function getUserInfo_(user, userIdToken) {
  */
 function displayUserInfo_(userJson, email) {
   document.getElementById(LOADING_EL).style.display = 'none';
-
+  document.getElementById("header").classList.add("logged-in");
+  showEl_(document.getElementById(PANEL));
   let isNewUser = Object.keys(userJson).length === 0;
 
-  showUserDetails_(email, userJson.name);
+  loadUserDetails_(email, userJson.name);
 
   if (isNewUser) {
     setWelcomeMessage_();
-    showUserMaps_({});
+    disableMapCreating_();
     showUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
-    showUserMaps_(userJson.rooms);
+    loadUserMaps_(userJson.rooms);
   }
 
-  showEl_(document.getElementById(MIDDLE_PANEL));
   showEl_(document.getElementById(SIGNOUT_BTN));
 }
 
@@ -209,7 +209,7 @@ function submitUsername() {
  * @param {String} email the user's email address
  * @param {?String} username the user's chosen username
  */
-function showUserDetails_(email, username) {
+function loadUserDetails_(email, username) {
   var emailBlock = makeDetailsGroup_("email", email, /* editable= */ false);
 
   if (username) {
@@ -222,6 +222,28 @@ function showUserDetails_(email, username) {
   displayDiv.appendChild(emailBlock);
   displayDiv.appendChild(usernameBlock);
   showEl_(displayDiv);
+}
+
+function showUserDetails() {
+  showEl_(document.getElementById(DETAILS_EL));
+  hideEl_(document.getElementById(MAPS_WRAPPER));
+
+  let profileBtn = document.getElementById("profile-btn");
+  let mapsBtn = document.getElementById("maps-btn");
+
+  profileBtn.classList.add("show");
+  mapsBtn.classList.remove("show");
+}
+
+function showUserMaps() {
+  showEl_(document.getElementById(MAPS_WRAPPER));
+  hideEl_(document.getElementById(DETAILS_EL));
+
+  let profileBtn = document.getElementById("profile-btn");
+  let mapsBtn = document.getElementById("maps-btn");
+
+  profileBtn.classList.remove("show");
+  mapsBtn.classList.add("show");
 }
 
 /**
@@ -258,10 +280,9 @@ function makeDetailsGroup_(name, val, editable) {
  * Creates buttons to navigate the user to the given maps
  * @param {JSON} mapsJson json array containing map ids and names
  */
-function showUserMaps_(mapsJson) {
+function loadUserMaps_(mapsJson) {
   let rooms = document.getElementById('user-maps');
   let roomWrapper = document.getElementById(MAPS_WRAPPER);
-  showEl_(roomWrapper);
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -289,13 +310,20 @@ function makeRoomButton_(id, name) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LOGIN/LOGOUT
 
+function disableMapCreating_() {
+  let btn = document.getElementById("add-map");
+  btn.onclick = "";
+}
+
 /**
  * @Private
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, WELCOME_EL, MIDDLE_PANEL];
+  let toHide = [LOADING_EL, PANEL, WELCOME_EL];
   toHide.forEach((id) => document.getElementById(id).style.display = 'none');
+
+  document.getElementById("header").classList.remove("logged-in");
 
   showEl_(document.getElementById(LOGIN_EL));
   ui.start('#'+LOGIN_EL, uiConfig);
