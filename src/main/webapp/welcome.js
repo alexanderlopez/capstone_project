@@ -58,14 +58,10 @@ const LOADING_EL ='loading';
 const WELCOME_EL ='welcome-message';
 const DETAILS_EL = 'user-details';
 const MAPS_WRAPPER = 'maps-wrapper';
-const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
-const SIGNOUT_BTN ='sign-out';
-const PROFILE_SAVE_BTN = 'save-details';
-const PROFILE_EDIT_BTN = 'edit-details';
-const MAP_SUBMIT_BTN = 'submit-map';
-const MAP_ADD_BTN = 'add-map';
 const PANEL = "panel";
+const HEADER = "header";
+const LOGGED_IN = "logged-in";
 
 /**
  * @Private
@@ -88,10 +84,12 @@ function getUserInfo_(user, userIdToken) {
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {
-  document.getElementById(LOADING_EL).style.display = 'none';
-  document.getElementById("header").classList.add("logged-in");
-  showEl_(document.getElementById(PANEL));
+  // no information is given if this is a new user
   let isNewUser = Object.keys(userJson).length === 0;
+
+  hideEl_(document.getElementById(LOADING_EL));
+  showEl_(document.getElementById('sign-out'));
+  document.getElementById(HEADER).classList.add(LOGGED_IN);
 
   loadUserDetails_(email, userJson.name);
 
@@ -103,8 +101,6 @@ function displayUserInfo_(userJson, email) {
     setWelcomeMessage_(userJson.name);
     loadUserMaps_(userJson.rooms);
   }
-
-  showEl_(document.getElementById(SIGNOUT_BTN));
 }
 
 
@@ -141,8 +137,8 @@ function showUsernameForm() {
   let prevUsername = usernameGroup
       .getElementsByClassName("groupContent")[0];
 
-  hideEl_(document.getElementById(PROFILE_EDIT_BTN));
-  showEl_(document.getElementById(PROFILE_SAVE_BTN));
+  hideEl_(document.getElementById('edit-details'));
+  showEl_(document.getElementById('save-details'));
 
   hideEl_(prevUsername);
   usernameForm.innerHTML = prevUsername.innerHTML;
@@ -156,15 +152,15 @@ function showUsernameForm() {
  */
 function showMapForm() {
   showEl_(document.getElementById("map-form-wrapper"));
-  hideEl_(document.getElementById(MAP_ADD_BTN));
-  showEl_(document.getElementById(MAP_SUBMIT_BTN));
+  hideEl_(document.getElementById('add-map'));
+  showEl_(document.getElementById('submit-map'));
 }
 
 /**
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById(MAP_FORM);
+  let input = document.getElementById('new-map-form');
   submitNewItem("room-server", input);
 }
 
@@ -210,62 +206,74 @@ function submitUsername() {
  * @param {?String} username the user's chosen username
  */
 function loadUserDetails_(email, username) {
-  var emailBlock = makeDetailsGroup_("email", email, /* editable= */ false);
-
-  if (username) {
-    var usernameBlock = makeDetailsGroup_("username", username, true);
-  } else {
-    var usernameBlock = makeDetailsGroup_("username", "", true);
-  }
-
+  showEl_(document.getElementById(PANEL));
   let displayDiv = document.getElementById(DETAILS_EL);
+
+  var emailBlock = makeDetailsGroup_
+      ("email", email, /* isUsernameGroup= */ false);
   displayDiv.appendChild(emailBlock);
+
+  let usernameValue = username? username: "";
+  let usernameBlock =
+      makeDetailsGroup_("username", usernameValue, /* isUsernameGroup= */ true);
   displayDiv.appendChild(usernameBlock);
+
   showEl_(displayDiv);
 }
 
-function showUserDetails() {
-  showEl_(document.getElementById(DETAILS_EL));
-  hideEl_(document.getElementById(MAPS_WRAPPER));
+/**
+ * @Private
+ * Changes which tab is visible in the main panel
+ * @param {String} showDivId id of the content to be shown
+ * @param {String} showBtnId id of the tab button to be selected
+ * @param {String} hideDivId id of the content to be hidden
+ * @param {String} hideBtnId id of the tab button to be deselected
+ */
+function togglePanel_(showDivId, showBtnId, hideDivId, hideBtnId) {
+  showEl_(document.getElementById(showDivId));
+  hideEl_(document.getElementById(hideDivId));
 
-  let profileBtn = document.getElementById("profile-btn");
-  let mapsBtn = document.getElementById("maps-btn");
+  let showBtn = document.getElementById(showBtnId);
+  showBtn.classList.add("show");
 
-  profileBtn.classList.add("show");
-  mapsBtn.classList.remove("show");
+  let hideBtn = document.getElementById(hideBtnId);
+  hideBtn.classList.remove("show");
 }
 
+/**
+ * Hides the user's maps tab and shows the profile tab instead
+ */
+function showUserDetails() {
+  togglePanel_(/* showDivId= */ DETAILS_EL, /* showBtnId= */ "profile-btn", /* hideDivId= */ MAPS_WRAPPER, /* hideBtnId= */ "maps-btn");
+}
+
+/**
+ * Hides the user's profile tab and shows the map tab instead
+ */
 function showUserMaps() {
-  showEl_(document.getElementById(MAPS_WRAPPER));
-  hideEl_(document.getElementById(DETAILS_EL));
-
-  let profileBtn = document.getElementById("profile-btn");
-  let mapsBtn = document.getElementById("maps-btn");
-
-  profileBtn.classList.remove("show");
-  mapsBtn.classList.add("show");
+  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* showBtnId= */ "maps-btn", /* hideDivId= */ DETAILS_EL, /* hideBtnId= */ "profile-btn");
 }
 
 /**
  * @Private
  * Returns div containing a piece of user information determined by
- * the group name and value
+ * the group name and value and an editable component if applicable
  * @param {String} name the name of this group of information
  * @param {String} val the value of the group of information
+ * @param {boolean} isUsernameGroup whether this is the username group
  */
-function makeDetailsGroup_(name, val, editable) {
+function makeDetailsGroup_(name, val, isUsernameGroup) {
   let wrapper = makeEl("div", "detailsGroup", name);
 
   let label = makeEl("h4", "groupLabel");
   label.innerHTML = name;
+  wrapper.appendChild(label);
 
   let content = makeEl("p", "groupContent");
   content.innerHTML = val;
-
-  wrapper.appendChild(label);
   wrapper.appendChild(content);
 
-  if (editable) {
+  if (isUsernameGroup) {
     let editForm = makeEl("textarea", /* class= */ null, USERNAME_FORM);
     editForm.style.display = 'none';
     editForm.placeholder = "Username...";
@@ -310,8 +318,11 @@ function makeRoomButton_(id, name) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LOGIN/LOGOUT
 
+/**
+ * Prevents the user from creating a new map
+ */
 function disableMapCreating_() {
-  let btn = document.getElementById("add-map");
+  let btn = document.getElementById(ADD_MAP_BTN);
   btn.onclick = "";
 }
 
@@ -321,11 +332,14 @@ function disableMapCreating_() {
  */
 function displayLoginInfo_() {
   let toHide = [LOADING_EL, PANEL, WELCOME_EL];
-  toHide.forEach((id) => document.getElementById(id).style.display = 'none');
+  toHide.forEach((id) => hideEl_(document.getElementById(id)));
 
-  document.getElementById("header").classList.remove("logged-in");
+  // change header styling to default
+  let header = document.getElementById(HEADER)
+  header.classList.remove(LOGGED_IN);
 
   showEl_(document.getElementById(LOGIN_EL));
+
   ui.start('#'+LOGIN_EL, uiConfig);
 }
 
