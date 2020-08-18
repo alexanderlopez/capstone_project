@@ -32,9 +32,12 @@ class ChapMap {
 
   constructor() {
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8
-      });
+      center: { lat: -34.397, lng: 150.644 },
+      zoom: 8
+    });
+
+    const geocoder = new google.maps.Geocoder();
+    const infowindow = new google.maps.InfoWindow();
 
     this.makeMapButtons_();
     this.addMapClickListener_();
@@ -47,8 +50,8 @@ class ChapMap {
     this.permMarkers_ = {};
     this.loadMarkers_();
   }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// LISTENERS
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // LISTENERS
 
   /**
    * @Private
@@ -60,6 +63,11 @@ class ChapMap {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
         this.closePermInfoWindow();
+
+        
+        const geocoder = new google.maps.Geocoder();
+        const infowindow = new google.maps.InfoWindow();
+        geocodeLatLng(geocoder, map, infowindow, e.latLng);
       }
     });
   }
@@ -73,7 +81,7 @@ class ChapMap {
     addMarkerBtn.addEventListener('click', () => this.enableAddingMarkers_());
     viewBtn.addEventListener('click', () => this.disableAddingMarkers_());
     chatBtn.addEventListener('click', () => toggleChat());
-    backBtn.addEventListener('click', () => window.location='/');
+    backBtn.addEventListener('click', () => window.location = '/');
   }
 
   /**
@@ -105,8 +113,8 @@ class ChapMap {
     let addMarkerBtn = this.getAddMarkerBtn_();
     let viewBtn = this.getViewBtn_();
 
-    let enableBtn = enable? addMarkerBtn: viewBtn;
-    let disableBtn = enable? viewBtn: addMarkerBtn;
+    let enableBtn = enable ? addMarkerBtn : viewBtn;
+    let disableBtn = enable ? viewBtn : addMarkerBtn;
 
     this.addingMarkers_ = !this.addingMarkers_;
     this.removeTempMarker();
@@ -131,8 +139,8 @@ class ChapMap {
     return document.getElementById("addMarkerBtnWrapper");
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// BUILD MAP BUTTONS
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // BUILD MAP BUTTONS
 
   static SELECTED_CLASS = "selected";
 
@@ -234,8 +242,8 @@ class ChapMap {
 
     return backBtnWrapper;
   }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// PERM MARKER HANDLERS
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // PERM MARKER HANDLERS
 
   /**
    * Turns the permanent marker to a temporary marker with the same
@@ -258,8 +266,8 @@ class ChapMap {
     return this.editedPermMarker_;
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TEMP MARKER HANDLERS
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // TEMP MARKER HANDLERS
 
   /**
    * Makes the temporary marker visible at the given coordinates
@@ -276,8 +284,8 @@ class ChapMap {
     this.tempMarker_.hide();
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// INFO WINDOW HANDLERS
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // INFO WINDOW HANDLERS
 
   /** Closes the map's information window */
   closePermInfoWindow() {
@@ -289,8 +297,8 @@ class ChapMap {
     this.tempMarker_.closeInfoWindow();
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// OTHER
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // OTHER
 
   /** Returns the google.maps.Map visible on the page */
   getGoogleMap() {
@@ -305,8 +313,8 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// RECEIVE MARKERS FROM THE SERVER
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // RECEIVE MARKERS FROM THE SERVER
 
   /**
    * @Private
@@ -314,10 +322,10 @@ class ChapMap {
    */
   loadMarkers_() {
     firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-        .then(idToken => myMap.getMarkers(idToken))
-        .catch(error => {
-          throw "Problem getting markers";
-        });
+      .then(idToken => myMap.getMarkers(idToken))
+      .catch(error => {
+        throw "Problem getting markers";
+      });
   }
 
   /**
@@ -347,10 +355,10 @@ class ChapMap {
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
-    let title    = markerJson.title;
-    let body     = markerJson.body;
-    let lat      = markerJson.lat;
-    let lng      = markerJson.lng;
+    let title = markerJson.title;
+    let body = markerJson.body;
+    let lat = markerJson.lat;
+    let lng = markerJson.lng;
 
     let coords = new google.maps.LatLng(lat, lng);
 
@@ -416,8 +424,8 @@ class ChapMap {
     }
   }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// SEND MARKERS TO THE SERVER
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // SEND MARKERS TO THE SERVER
 
   static typeValue = "MAP_SEND";
 
@@ -449,11 +457,11 @@ class ChapMap {
    */
   makeJson_(coords, markerTitle, markerBody, markerId) {
     var jsonObject = {
-        type : ChapMap.typeValue,
-        title : markerTitle,
-        body : markerBody,
-        lat : coords.lat(),
-        lng : coords.lng()
+      type: ChapMap.typeValue,
+      title: markerTitle,
+      body: markerBody,
+      lat: coords.lat(),
+      lng: coords.lng()
     };
 
     if (markerId) {
@@ -469,10 +477,41 @@ class ChapMap {
    */
   sendDeleteRequest(permMarker) {
     var jsonObject = {
-        type : "MAP_DEL",
-        id: permMarker.getId()
+      type: "MAP_DEL",
+      id: permMarker.getId()
     };
 
     connection.send(JSON.stringify(jsonObject));
   }
+}
+
+function geocodeLatLng(geocoder, map, infowindow, coords) {
+ /* const latlngStr = coords.split(",", 2);
+  const latlng = {
+    lat: parseFloat(latlngStr[0]),
+    lng: parseFloat(latlngStr[1])
+  }; */
+  geocoder.geocode({ location: coords }, (results, status) => {
+    if (status === "OK") {
+      if (results[0]) {
+        //map.setZoom(11);
+        /*
+        const marker = new google.maps.Marker({
+          position: coords,
+          map: map
+        });
+        */
+        /*
+        infowindow.setContent(results[0].formatted_address);
+        infowindow.open(map, marker);
+        */
+        console.log(results[0].formatted_address);
+        return results[0].formatted_address;
+      } else {
+        window.alert("No results found");
+      }
+    } else {
+      window.alert("Geocoder failed due to: " + status);
+    }
+  });
 }
