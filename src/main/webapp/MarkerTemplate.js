@@ -15,11 +15,33 @@
 /** Defines the basic functions that all markers must have */
 class MarkerTemplate {
 
+  /** All the possible colors a marker can take */
+  static markerColors_ = {
+      yellow: "#FDF569",
+      red: "#EA4335",
+      purple: "#8E67FD",
+      pink: "#E661AC",
+      orange: "#FF9900",
+      blue: "#6991FD",
+      green: "#00E64D",
+      ltblue: "#67DDDD"
+  }
+
+  static DEFAULT_COLOR = "red";
+
+  /** the prefix of the url to access marker icons */
+  static markerIconUrl = "http://maps.google.com/mapfiles/ms/micons/";
+
   /** The google.maps.Marker object visible on the map */
   googleMarker_;
 
+  /** The color of the marker */
+  markerColor_;
+
   constructor() {
     this.googleMarker_ = new google.maps.Marker();
+    this.markerColor_ = MarkerTemplate.DEFAULT_COLOR;
+    this.setColor(this.markerColor_);
     this.setMarkerListeners_();
   }
 
@@ -40,6 +62,32 @@ class MarkerTemplate {
    * @abstract
    */
   remove() {}
+
+  /**
+   * Sets the color of the marker icon
+   * @param {String} color the color of the marker
+   */
+  setColor(color) {
+    this.markerColor_ = color;
+    this.changeIcon_(color);
+  }
+
+  /** Returns the marker's current color */
+  getColorName() {
+    return this.markerColor_;
+  }
+
+  /** Returns the marker's current color code*/
+  getColorCode() {
+    return MarkerTemplate.markerColors_[this.markerColor_];
+  }
+
+  /**
+   * @Private
+   * Changes the icon of this marker
+   * @abstract
+   */
+  changeIcon_(color) {}
 
   /**
    * @Private
@@ -77,4 +125,8 @@ class MarkerTemplate {
     marker.setMap(myMap.getGoogleMap());
   }
 
+  /** Returns the list of all colors and color codes a marker could have */
+  getMarkerColors() {
+    return MarkerTemplate.markerColors_;
+  }
 }

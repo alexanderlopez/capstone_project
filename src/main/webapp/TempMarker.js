@@ -44,6 +44,13 @@ class TempMarker extends MarkerTemplate{
   }
 
   /**
+   * Changes the icon of this marker
+   */
+  changeIcon_(color) {
+    this.googleMarker_.setIcon(MarkerTemplate.markerIconUrl+color+".png");
+  }
+
+  /**
    * @Private
    * Sets click and drag events to the marker
    */

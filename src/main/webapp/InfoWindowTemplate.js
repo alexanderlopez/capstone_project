@@ -15,18 +15,6 @@
 /** Defines the basic functions that all infoWindows must have */
 class InfoWindowTemplate {
 
-  /** All the possible colors a marker can take */
-  static markerColors_ = {
-      yellow: "#FDF569",
-      red: "#EA4335",
-      purple: "#8E67FD",
-      pink: "#E661AC",
-      orange: "#FF9900",
-      blue: "#6991FD",
-      green: "#00E64D",
-      ltblue: "#67DDDD"
-  }
-
   static DELETE_ID = "markerDelete";
   static EDIT_ID = "markerEdit";
   static COLOR_ID = "markerColor";
@@ -135,8 +123,9 @@ class InfoWindowTemplate {
      prevSelectedBtn.classList.remove(pickedClass);
      clickedBtn.classList.add(pickedClass);
 
-     this.setPreviewColor_(clickedBtn.id);
-
+     let newColor = clickedBtn.id;
+     this.setPreviewColor_(newColor);
+     this.myMarker_.setColor(newColor);
    }
 
 
@@ -146,7 +135,7 @@ class InfoWindowTemplate {
     * @param {String} newColorName the name of the color to be shown
     */
    setPreviewColor_(newColorName) {
-     let newColorCode = InfoWindowTemplate.markerColors_[newColorName];
+     let newColorCode = this.myMarker_.getMarkerColors()[newColorName];
      let previewBtn = document.getElementById(InfoWindowTemplate.COLOR_ID);
      previewBtn.style.backgroundColor = newColorCode;
    }
@@ -174,16 +163,17 @@ class InfoWindowTemplate {
    makeColorPicker_() {
      let pickerWrapper = myMap.makeEl("div", /* class= */ null, InfoWindowTemplate.COLOR_PICKER);
 
-     let colorNames = Object.keys(InfoWindowTemplate.markerColors_);
+     let markerColors = this.myMarker_.getMarkerColors();
+     let colorNames = Object.keys(markerColors);
 
      colorNames.forEach(colorName => {
-       let colorCode = InfoWindowTemplate.markerColors_[colorName];
+       let colorCode = markerColors[colorName];
 
        let colorBtn = myMap.makeEl("button", InfoWindowTemplate.COLOR_BTN,
             colorName);
        colorBtn.style.backgroundColor = colorCode;
 
-       if (colorName === "red") {
+       if (colorName === this.myMarker_.getColorName()) {
          colorBtn.classList.add(InfoWindowTemplate.PICKED_COLOR);
        }
 
@@ -209,6 +199,7 @@ class InfoWindowTemplate {
 
     let colorBtn = myMap.makeEl("button", /* class= */ null,
         InfoWindowTemplate.COLOR_ID);
+    colorBtn.style.backgroundColor = this.myMarker_.getColorCode();
 
     leftCol.appendChild(deleteBtn);
     leftCol.appendChild(editBtn);
