@@ -59,6 +59,12 @@ body {
 
 #username-form {
   display: none;
+  resize: none;
+  overflow: scroll;
+  font-size: 1em;
+  width: calc(100% - 4px);
+  height: 1em;
+  border-radius: 2px;
 }
 
 #new-map-form {
@@ -105,6 +111,11 @@ body {
   background-image: url("icons/edit.svg");
 }
 
+#save-details {
+  background-image: url("icons/save.svg");
+  display: none;
+}
+
 #user-details {
   overflow-y: scroll;
   display: none;
@@ -121,6 +132,7 @@ body {
 
 .detailsGroup .groupContent {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

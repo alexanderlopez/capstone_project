@@ -33,19 +33,11 @@
 
           <div id="user-details" class="panel">
             <h2 id="profile" class="panel-header">Profile</h2>
-            <button id="edit-details" class="panel-icon" onclick="showUsernameForm()"></button>
+            <input type="button" id="edit-details" class="panel-icon" onclick="showUsernameForm()" value="">
+            <input type="submit" id="save-details" class="panel-icon" onclick="submitUsername()" value="">
           </div>
 
           <div id="middle-panel" class="panel">
-            <div id="username-form" class="form">
-              <label for="input-username" class="panel-header">My Username:
-                </label>
-              <textarea id="input-username" placeholder="Enter name..."></textarea>
-              <input type="button" value="Submit" onclick="submitUsername(this)">
-              <input type="button" value="Cancel"
-                  onclick="hideForm(this)">
-            </div>
-
             <div id="new-map-form" class="form">
               <label for="map-name" class="panel-header">New Map:</label>
               <textarea id="map-name" placeholder="Enter name..."></textarea>

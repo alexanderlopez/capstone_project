@@ -62,6 +62,8 @@ const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
 const SIGNOUT_BTN ='sign-out';
 const MIDDLE_PANEL = 'middle-panel';
+const SAVE_BTN = 'save-details';
+const EDIT_BTN = 'edit-details';
 
 /**
  * @Private
@@ -88,16 +90,17 @@ function displayUserInfo_(userJson, email) {
 
   let isNewUser = Object.keys(userJson).length === 0;
 
+  showUserDetails_(email, userJson.name);
+
   if (isNewUser) {
     setWelcomeMessage_();
     showUserMaps_({});
-    showEl_(document.getElementById(USERNAME_FORM));
+    showUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
     showUserMaps_(userJson.rooms);
   }
 
-  showUserDetails_(email, userJson.name);
   showEl_(document.getElementById(MIDDLE_PANEL));
   showEl_(document.getElementById(SIGNOUT_BTN));
 }
@@ -139,8 +142,17 @@ function hideNode(nodeChild) {
  * new map form if it is visible
  */
 function showUsernameForm() {
-  showEl_(document.getElementById(USERNAME_FORM));
-  hideEl_(document.getElementById(MAP_FORM));
+  let usernameForm = document.getElementById(USERNAME_FORM);
+  let usernameGroup = usernameForm.parentNode;
+  let prevUsername = usernameGroup
+      .getElementsByClassName("groupContent")[0];
+
+  hideEl_(document.getElementById(EDIT_BTN));
+  showEl_(document.getElementById(SAVE_BTN));
+
+  hideEl_(prevUsername);
+  usernameForm.innerHTML = prevUsername.innerHTML;
+  showEl_(usernameForm);
 }
 
 /**
@@ -150,32 +162,29 @@ function showUsernameForm() {
  */
 function showMapForm() {
   showEl_(document.getElementById(MAP_FORM));
-  hideEl_(document.getElementById(USERNAME_FORM));
 }
 
 /**
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById("map-name");
+  let input = document.getElementById(MAP_FORM);
   hideForm(input);
-  submitNewItem_("room-server", input);
+  submitNewItem("room-server", input);
 }
 
 /**
  * Sends the submitted username to the server
  */
 function submitUsername() {
-  let input = document.getElementById("input-username");
-  hideForm(input);
-  submitNewItem_("user-server", input);
+  let input = document.getElementById(USERNAME_FORM);
+  submitNewItem("user-server", input);
 }
 
 /**
- * @Private
  * Retrieves input value, sends to the given server, and handles server response
  */
- function submitNewItem_(server, input) {
+ function submitNewItem(server, input) {
    var params = {
        name: input.value,
        id: idToken
@@ -206,12 +215,12 @@ function submitUsername() {
  * @param {?String} username the user's chosen username
  */
 function showUserDetails_(email, username) {
-  var emailBlock = makeDetailsGroup_("email", email);
+  var emailBlock = makeDetailsGroup_("email", email, /* editable= */ false);
 
   if (username) {
-    var usernameBlock = makeDetailsGroup_("username", username);
+    var usernameBlock = makeDetailsGroup_("username", username, true);
   } else {
-    var usernameBlock = makeDetailsGroup_("username", "");
+    var usernameBlock = makeDetailsGroup_("username", "", true);
   }
 
   let displayDiv = document.getElementById(DETAILS_EL);
@@ -227,21 +236,25 @@ function showUserDetails_(email, username) {
  * @param {String} name the name of this group of information
  * @param {String} val the value of the group of information
  */
-function makeDetailsGroup_(name, val) {
-  let wrapper = document.createElement("div");
-  wrapper.id = name;
-  wrapper.classList.add("detailsGroup");
+function makeDetailsGroup_(name, val, editable) {
+  let wrapper = makeEl("div", "detailsGroup", name);
 
-  let label = document.createElement("h4");
-  label.classList.add("groupLabel");
+  let label = makeEl("h4", "groupLabel");
   label.innerHTML = name;
 
-  let content = document.createElement("p");
-  content.classList.add("groupContent");
+  let content = makeEl("p", "groupContent");
   content.innerHTML = val;
 
   wrapper.appendChild(label);
   wrapper.appendChild(content);
+
+  if (editable) {
+    let editForm = makeEl("textarea", /* class= */ null, USERNAME_FORM);
+    editForm.style.display = 'none';
+    editForm.placeholder = "Username...";
+    wrapper.appendChild(editForm);
+  }
+
   return wrapper;
 }
 
@@ -287,8 +300,8 @@ function makeRoomButton_(id, name) {
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, MAP_FORM, USERNAME_FORM,
-                WELCOME_EL];
+  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, MAP_FORM,
+                WELCOME_EL, MIDDLE_PANEL];
   toHide.forEach((id) => document.getElementById(id).style.display = 'none');
 
   showEl_(document.getElementById(LOGIN_EL));
@@ -321,4 +334,21 @@ function showEl_(el) {
  */
 function hideEl_(el) {
   el.style.display = 'none';
+}
+
+/**
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
+ */
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
 }
