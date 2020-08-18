@@ -26,18 +26,26 @@ body, html {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* INFO WINDOWS */
 
-.contentWrapper {
+#contentWrapper {
+  width: 20em;
+}
+
+#contentWrapper.wide {
   width: 25em;
 }
 
-.leftColumn {
+#leftColumn {
   float: left;
   width: 2em;
   margin-right: 1em;
 }
 
-.rightColumn {
+#rightColumn {
   float: left;
+  width: calc(100% - 4em);
+}
+
+#rightColumn.wide {
   width: calc(100% - 9em);
 }
 
@@ -100,6 +108,10 @@ body, html {
   display: grid;
   grid-template-columns: 2em 2em;
   margin-right: 0.5em;
+  display: none;
+}
+
+#colorPicker.wide {
   display: grid;
 }
 

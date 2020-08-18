@@ -15,6 +15,7 @@
 /** Defines the basic functions that all infoWindows must have */
 class InfoWindowTemplate {
 
+  /** All the possible colors a marker can take */
   static markerColors_ = {
       yellow: "#FDF569",
       red: "#EA4335",
@@ -34,6 +35,7 @@ class InfoWindowTemplate {
   static RIGHT_COLUMN = "rightColumn";
   static COLOR_PICKER = "colorPicker";
   static COLOR_BTN = "colorBtn";
+  static WIDE = "wide";
 
   /** google.maps.Marker object this info window is anchored to */
   myMarker_;
@@ -41,10 +43,15 @@ class InfoWindowTemplate {
   /** The google.maps.InfoWindow object visible on the map */
   googleInfoWindow_;
 
+  /** Keeps track of whether the color picker is visible or not */
+  windowIsExpanded_;
+
   constructor() {
     this.googleInfoWindow_ = new google.maps.InfoWindow();
+    this.windowIsExpanded_ = false;
     this.googleInfoWindow_.addListener('domready', () => {
         this.setDeleteEvent_();
+        this.setToggleColorPickerEvent_();
       });
   }
 
@@ -73,10 +80,40 @@ class InfoWindowTemplate {
 
   /**
    * @Private
+   * When the color picker button is clicked on, toggle the color picker
+   */
+  setToggleColorPickerEvent_() {
+    let colorBtn = document.getElementById(InfoWindowTemplate.COLOR_ID);
+    colorBtn.addEventListener('click', () => this.toggleColorPicker_());
+  }
+
+  /**
+   * @Private
+   * Displays or hides the color picker menu
+   */
+  toggleColorPicker_() {
+    let toggledContent = [InfoWindowTemplate.CONTENT_WRAPPER,
+                          InfoWindowTemplate.RIGHT_COLUMN,
+                          InfoWindowTemplate.COLOR_PICKER];
+
+    for (const id of toggledContent) {
+      let el = document.getElementById(id);
+      if (this.windowIsExpanded_) {
+        el.classList.remove(InfoWindowTemplate.WIDE);
+      } else {
+        el.classList.add(InfoWindowTemplate.WIDE);
+      }
+    }
+
+    this.windowIsExpanded_ = !this.windowIsExpanded_;
+  }
+
+  /**
+   * @Private
    * Returns the html string to be displayed in this info window
    */
   makeContent_() {
-    let contentWrapper = myMap.makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
+    let contentWrapper = myMap.makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeColorPicker_());
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
@@ -114,7 +151,8 @@ class InfoWindowTemplate {
    * Puts together info window buttons
    */
   makeLeftColumn_() {
-    let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+    let leftCol = myMap.makeEl("div", /* class= */null,
+        InfoWindowTemplate.LEFT_COLUMN);
 
     let deleteBtn = myMap.makeEl("button", /* class= */ null,
         InfoWindowTemplate.DELETE_ID);

@@ -60,7 +60,8 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Returns the HTML of the right section of the information window
    */
   makeRightColumn_() {
-    let rightCol = myMap.makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+    let rightCol = myMap.makeEl("div", /* class= */ null,
+          InfoWindowTemplate.RIGHT_COLUMN);
 
     let editedMarker = myMap.editingPermMarker();
     let titleText = editedMarker? editedMarker.getTitle(): null;
