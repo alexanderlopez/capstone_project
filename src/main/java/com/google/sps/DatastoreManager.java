@@ -137,15 +137,16 @@ public class DatastoreManager {
     /**
      * Adds a message with the given @param roomId to the datastore.
      */
-    public void addMessage(long roomId, JSONObject messageData) {
+    public Key addMessage(long roomId, JSONObject messageData) {
         KeyFactory chatHistoryFactory =
             datastore.newKeyFactory()
                      .setKind(KIND_CHATROOM_HISTORY)
                      .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
 
+        Key messageKey = datastore.allocateId(chatHistoryFactory.newKey());
+
         Entity messageEntity =
-            Entity.newBuilder(datastore.allocateId(
-                     chatHistoryFactory.newKey()))
+            Entity.newBuilder(messageKey)
                   .set(ChatWebSocket.JSON_USER_ID,
                         messageData.getString(ChatWebSocket.JSON_USER_ID))
                   .set(ChatWebSocket.JSON_MESSAGE,
@@ -155,6 +156,8 @@ public class DatastoreManager {
                   .build();
 
         datastore.put(messageEntity);
+
+        return messageKey;
     }
 
     /**
@@ -386,9 +389,7 @@ public class DatastoreManager {
     }
 
     public static DatastoreManager getInstance(boolean testing) {
-        if (currentInstance == null) {
-            currentInstance = new DatastoreManager(testing);
-        }
+        currentInstance = new DatastoreManager(testing);
 
         return currentInstance;
     }

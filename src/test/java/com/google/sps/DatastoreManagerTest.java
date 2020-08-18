@@ -13,17 +13,20 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.api.mockito.PowerMockito;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.KeyFactory;
 import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.PathElement;
+import com.google.cloud.datastore.TimestampValue;
 import com.google.cloud.datastore.testing.LocalDatastoreHelper;
 
 import com.google.sps.DatastoreManager;
@@ -31,7 +34,7 @@ import static com.google.sps.DatastoreManager.*;
 import static com.google.sps.ChatWebSocket.*;
 import com.google.sps.CapstoneAuth;
 
-@PrepareForTest(CapstoneAuth.class)
+@PrepareForTest({CapstoneAuth.class, Timestamp.class})
 @RunWith(PowerMockRunner.class)
 public class DatastoreManagerTest {
 
@@ -78,6 +81,140 @@ public class DatastoreManagerTest {
     @Before
     public void setUp() throws IOException {
         datastoreHelper.reset();
+    }
+
+    @Test
+    public void checkLoadChatHistory() {
+        String[] copyItems = {JSON_USER_ID, JSON_MESSAGE, JSON_USER_NAME};
+
+        datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
+        datastore.put(createUserEntity(TEST_UID, TEST_NAME, TEST_EMAIL));
+        datastore.put(createChildRoomEntity(1, TEST_UID, TEST_ROOM_NAME));
+
+        JSONArray expectedArray = new JSONArray();
+
+        JSONObject messageData = getStandardChatNew();
+        messageData.put(JSON_USER_NAME, TEST_NAME);
+        Key currentKey;
+
+        for (int i = 0; i < 3; i++) {
+            messageData = new JSONObject(messageData, copyItems);
+            messageData.put(JSON_MESSAGE, "Test " + i);
+            currentKey = createMessageKey(1);
+
+            datastore.put(createMessageEntity(messageData, currentKey,
+                TimestampValue.of(Timestamp.now())));
+
+            expectedArray.put(messageData);
+        }
+
+        JSONArray messageHistory =
+            new JSONArray(getInstance().loadChatHistory(1));
+
+        assertEquals(true, messageHistory.similar(expectedArray));
+    }
+
+    @Test
+    public void checkLoadMarkerData() {
+        String[] copyItems = {JSON_TITLE, JSON_BODY, JSON_LONGITUDE,
+                JSON_LATITUDE};
+
+        datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
+
+        JSONArray expectedArray = new JSONArray();
+
+        JSONObject markerData = getStandardMarkerNew();
+        Key currentKey = createMarkerKey(1);
+
+        datastore.put(createMarkerEntity(currentKey, markerData));
+        markerData.put(JSON_ID, currentKey.getId());
+        expectedArray.put(markerData);
+
+        markerData = new JSONObject(markerData, copyItems);
+        currentKey = createMarkerKey(1);
+        markerData.put(JSON_TITLE, "Title2");
+        markerData.put(JSON_LATITUDE, 2.5);
+        datastore.put(createMarkerEntity(currentKey, markerData));
+        markerData.put(JSON_ID, currentKey.getId());
+        expectedArray.put(markerData);
+
+        markerData = new JSONObject(markerData, copyItems);
+        currentKey = createMarkerKey(1);
+        markerData.put(JSON_TITLE, "Title3");
+        markerData.put(JSON_LATITUDE, 3.5);
+        datastore.put(createMarkerEntity(currentKey, markerData));
+        markerData.put(JSON_ID, currentKey.getId());
+        expectedArray.put(markerData);
+
+        JSONArray markerHistory =
+            new JSONArray(getInstance().loadMarkerData(1));
+
+        boolean arraysEqual = true;
+
+        for (int i = 0; i < markerHistory.length(); i++) {
+            boolean overlap = false;
+            JSONObject currentObject = markerHistory.getJSONObject(i);
+
+            for (int j = 0; j < expectedArray.length(); j++) {
+                if (currentObject.similar(expectedArray.getJSONObject(j))) {
+                    overlap = true;
+                    break;
+                }
+            }
+
+            if (!overlap) {
+                arraysEqual = false;
+                break;
+            }
+        }
+
+        assertEquals(true, arraysEqual);
+    }
+
+    @Test
+    public void checkAddMessage() {
+        Timestamp currentTime = Timestamp.now();
+
+        PowerMockito.spy(Timestamp.class);
+        when(Timestamp.now()).thenReturn(currentTime);
+
+        datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
+
+        JSONObject messageData = getStandardChatNew();
+        Key messageKey = getInstance().addMessage(1, messageData);
+
+        Entity testEntity = createMessageEntity(messageData, messageKey,
+            TimestampValue.of(currentTime));
+
+        assertEquals(testEntity, datastore.get(messageKey));
+    }
+
+    @Test
+    public void checkDeleteMarker() {
+        datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
+
+        Key markerKey = createMarkerKey(1);
+        datastore.put(createMarkerEntity(markerKey, getStandardMarkerNew()));
+
+        getInstance().deleteMarker(1, markerKey.getId());
+
+        assertEquals(null, datastore.get(markerKey));
+    }
+
+    @Test
+    public void checkUpdateMarker() {
+        datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
+
+        JSONObject markerJson = getStandardMarkerNew();
+        Key setMarkerKey = createMarkerKey(1);
+        datastore.put(createMarkerEntity(setMarkerKey, markerJson));
+
+        markerJson.put(JSON_TITLE, "Hello!");
+        markerJson.put(JSON_ID, setMarkerKey.getId());
+        getInstance().updateMarker(1, markerJson);
+
+        assertEquals(createMarkerEntity(setMarkerKey, markerJson),
+            datastore.get(setMarkerKey));
     }
 
     @Test
@@ -180,6 +317,29 @@ public class DatastoreManagerTest {
                                  .put(JSON_BODY, "Body")
                                  .put(JSON_LATITUDE, 1.5)
                                  .put(JSON_LONGITUDE, -0.3);
+    }
+
+    private static JSONObject getStandardChatNew() {
+        return (new JSONObject()).put(JSON_USER_ID, TEST_UID)
+                                 .put(JSON_MESSAGE, "Test");
+    }
+
+    private Entity createMessageEntity(JSONObject messageData,
+            Key messageKey, TimestampValue timeStamp) {
+        return Entity.newBuilder(messageKey)
+                     .set(JSON_USER_ID, messageData.getString(JSON_USER_ID))
+                     .set(JSON_MESSAGE, messageData.getString(JSON_MESSAGE))
+                     .set(JSON_TIMESTAMP, timeStamp)
+                     .build();
+    }
+
+    private Key createMessageKey(long roomId) {
+        KeyFactory chatHistoryFactory =
+            datastore.newKeyFactory()
+                     .setKind(KIND_CHATROOM_HISTORY)
+                     .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
+
+        return datastore.allocateId(chatHistoryFactory.newKey());
     }
 
     private Key createMarkerKey(long roomId) {
