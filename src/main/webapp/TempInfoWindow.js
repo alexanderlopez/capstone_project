@@ -20,15 +20,20 @@ class TempInfoWindow extends InfoWindowTemplate {
   static SUBMIT_BTN = "mySubmitBtn";
   static DEFAULT_TITLE = "Title";
   static DEFAULT_BODY = "Body";
+  static COLOR_PICKER = "colorPicker";
+  static COLOR_BTN = "colorBtn";
+  static PICKED_COLOR = "picked";
+  static WIDE = "wide";
 
   /**
-   * @param {TempMarker} tempmarker temp marker linked to this TempInfoWindow
    */
   constructor(tempMarker) {
     super();
     this.myMarker_ = tempMarker;
     this.googleInfoWindow_.addListener('domready', () => {
+        this.setColorChangeEvent_();
         this.setSubmitEvent_();
+        this.adjustWindow_();
       });
   }
 
@@ -44,15 +49,47 @@ class TempInfoWindow extends InfoWindowTemplate {
       });
   }
 
+  /**
+   * @Private
+   * Adds click events to all the color picker options
+   */
+  setColorChangeEvent_() {
+      let colorBtns =
+          document.getElementsByClassName(TempInfoWindow.COLOR_BTN);
+      for (const btn of colorBtns) {
+        btn.addEventListener('click', () => this.switchSelectedColor_(btn));
+      }
+  }
+
+  /**
+   * @Private
+   * Change which color is currently selected
+   * @param {Element} clickedBtn the color btn that was just clicked
+   */
+   switchSelectedColor_(clickedBtn) {
+     let pickedClass = TempInfoWindow.PICKED_COLOR;
+     let prevSelectedBtn = this.getSelectedColor_();
+
+     prevSelectedBtn.classList.remove(pickedClass);
+     clickedBtn.classList.add(pickedClass);
+
+     let newColor = clickedBtn.id;
+     this.myMarker_.setColor(newColor);
+   }
+
+   /** Returns the color button currently selected */
+   getSelectedColor_() {
+     return document.getElementsByClassName(TempInfoWindow.PICKED_COLOR)[0];
+   }
+
   /** Sends form input to the temporary marker */
   sendFormInfo() {
-    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT);
-    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT);
+    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT).value;
+    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT).value;
+
+    this.myMarker_.setColor(MarkerTemplate.DEFAULT_COLOR);
 
     this.myMarker_.setPermMarkerInfo(inputTitle.value, inputBody.value);
-
-    inputTitle.value = "";
-    inputBody.value = "";
   }
 
   /**
@@ -95,4 +132,60 @@ class TempInfoWindow extends InfoWindowTemplate {
     el.innerHTML = elInnerHTML? elInnerHTML: "";
     return el;
   }
+
+  /**
+   * @Private
+   * Builds the color picker for the marker
+   */
+   makeLeftColumn_() {
+     let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+
+     let pickerWrapper = myMap.makeEl("div", /* class= */ null, TempInfoWindow.COLOR_PICKER);
+     let markerColors = this.myMarker_.getMarkerColors();
+     let markerColor = this.myMarker_.getColorName();
+     let colorNames = Object.keys(markerColors);
+
+     colorNames.forEach(colorName => {
+       let colorBtn = this.makeColorBtn_(colorName, markerColors, markerColor)
+       pickerWrapper.appendChild(colorBtn);
+     });
+
+     leftCol.appendChild(pickerWrapper);
+
+     return leftCol;
+   }
+
+   /**
+    * @Private
+    * Returns a color button that displays a certain color and checks if this
+    * color should be pre-selected
+    * @param {String} colorName the name of the color for this button
+    * @param {Object} colorMap an object of color names mapped to color codes
+    * @param {String} markerColor the color of this info window's marker
+    */
+   makeColorBtn_(colorName, colorMap, markerColor) {
+     let colorCode = colorMap[colorName];
+     let colorBtn = myMap.makeEl("button", TempInfoWindow.COLOR_BTN,
+          colorName);
+
+     colorBtn.style.backgroundColor = colorCode;
+
+     if (colorName === markerColor) {
+       colorBtn.classList.add(TempInfoWindow.PICKED_COLOR);
+     }
+
+     return colorBtn;
+   }
+
+   /**
+    * @Private
+    * Changes the dimensions and alignment of the info window components
+    */
+   adjustWindow_() {
+     let components = [InfoWindowTemplate.CONTENT_WRAPPER, InfoWindowTemplate.MIDDLE_COLUMN,  InfoWindowTemplate.RIGHT_COLUMN];
+
+     for (const id of components) {
+       document.getElementById(id).classList.add(TempInfoWindow.WIDE);
+     }
+   }
 }

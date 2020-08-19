@@ -36,8 +36,16 @@ body, html {
 
 #leftColumn {
   float: left;
+}
+
+#middleColumn {
+  float: left;
   width: 2em;
   margin-right: 1em;
+}
+
+#middleColumn.wide {
+  margin-top: 1.25em;
 }
 
 #rightColumn {
@@ -63,19 +71,12 @@ body, html {
 
 #markerDelete {
   background-image: url("icons/delete.svg");
-  margin: .5em 0 .25em 0 !important;
+  margin: 1.5em 0 .5em 0 !important;
 }
 
 #markerEdit {
   background-image: url("icons/edit.svg");
-  margin: .25em 0 .25em 0 !important;
-}
-
-#markerColor {
-  margin: .25em 0 .25em .25em !important;
-  border-radius: 50%;
-  background-color: #EA4335;
-  width: 1.5em;
+  margin: .5em 0 1.5em 0 !important;
 }
 
 #markerDelete:focus, #markerEdit:focus, #markerColor {
@@ -107,18 +108,14 @@ body, html {
   float: left;
   display: grid;
   grid-template-columns: 2em 2em;
-  margin-right: 0.5em;
-  display: none;
-}
-
-#colorPicker.wide {
+  margin-right: .5em;
   display: grid;
 }
 
 .colorBtn, .colorBtn:focus {
   height: 1.5em;
   width: 1.5em;
-  margin: .25em;
+  margin: .5em;
   border-radius: 50%;
   border: 0;
   outline: 0;

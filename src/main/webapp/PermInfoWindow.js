@@ -60,4 +60,9 @@ class PermInfoWindow extends InfoWindowTemplate {
 
       return rightCol;
     }
+
+    /** No left column visible for perm info windows */
+    makeLeftColumn_() {
+      return myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+    }
 }
