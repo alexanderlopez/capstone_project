@@ -84,7 +84,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkLoadChatHistory() {
+    public void checkLoadChatHistory_returnsStringWithAllContent() {
         String[] copyItems = {JSON_USER_ID, JSON_MESSAGE, JSON_USER_NAME};
 
         datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
@@ -115,7 +115,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkLoadMarkerData() {
+    public void checkLoadMarkerData_returnsStringWithAllContent() {
         String[] copyItems = {JSON_TITLE, JSON_BODY, JSON_LONGITUDE,
                 JSON_LATITUDE};
 
@@ -172,9 +172,8 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkAddMessage() {
+    public void checkAddMessage_placesMessageEntityInDatastore() {
         Timestamp currentTime = Timestamp.now();
-
         PowerMockito.spy(Timestamp.class);
         when(Timestamp.now()).thenReturn(currentTime);
 
@@ -182,27 +181,24 @@ public class DatastoreManagerTest {
 
         JSONObject messageData = getStandardChatNew();
         Key messageKey = getInstance().addMessage(1, messageData);
-
         Entity testEntity = createMessageEntity(messageData, messageKey,
             TimestampValue.of(currentTime));
-
         assertEquals(testEntity, datastore.get(messageKey));
     }
 
     @Test
-    public void checkDeleteMarker() {
+    public void checkDeleteMarker_markerEntityIsDeletedFromDatastore() {
         datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
 
         Key markerKey = createMarkerKey(1);
         datastore.put(createMarkerEntity(markerKey, getStandardMarkerNew()));
-
         getInstance().deleteMarker(1, markerKey.getId());
 
         assertEquals(null, datastore.get(markerKey));
     }
 
     @Test
-    public void checkUpdateMarker() {
+    public void checkUpdateMarker_correctMarkerEntityInDatastore() {
         datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
 
         JSONObject markerJson = getStandardMarkerNew();
@@ -218,7 +214,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkAddMarker() {
+    public void checkAddMarker_placesMarkerEntityInDatastore() {
         long roomId = 1;
         Entity roomEntity = createRoomEntity(TEST_ROOM_NAME, roomId);
         datastore.put(roomEntity);
@@ -233,14 +229,14 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkGetUserName() {
+    public void checkGetUserName_returnsCorrectUserName() {
         datastore.put(createUserEntity(TEST_UID, TEST_NAME, TEST_EMAIL));
 
         assertEquals(TEST_NAME, getInstance().getUserName(TEST_UID));
     }
 
     @Test
-    public void checkCreateChatRoom() {
+    public void checkCreateChatRoom_roomEntitiesAddedToDatastore() {
         datastore.put(createUserEntity(TEST_UID, TEST_NAME, TEST_EMAIL));
         long roomId = getInstance().createChatRoom(TEST_ROOM_NAME, TEST_UID);
 
@@ -253,7 +249,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkUserAllowedChatroom() {
+    public void checkUserAllowedChatroom_returnsTrue() {
         long roomId = 1;
 
         datastore.put(createRoomEntity(TEST_ROOM_NAME, roomId),
@@ -265,7 +261,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkAddUserToChatRoom() {
+    public void checkAddUserToChatRoom_keyIndicatorExistsInDatastore() {
         String addUid = "testuidadd";
         String addName = "Add User";
         String addEmail = "add@example.com";
@@ -289,7 +285,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkCreateUser() {
+    public void checkCreateUser_properUserEntityExistsInDatastore() {
         PowerMockito.mockStatic(CapstoneAuth.class);
         when(CapstoneAuth.getUserEmail(TEST_UID)).thenReturn(TEST_EMAIL);
 
@@ -306,7 +302,7 @@ public class DatastoreManagerTest {
     }
 
     @Test
-    public void checkGetInstance() {
+    public void checkGetInstance_isNotNull() {
         boolean isNull = (getInstance() == null);
 
         assertEquals(false, isNull);

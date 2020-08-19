@@ -66,7 +66,7 @@ public class ChatWebSocketTest {
     }
 
     @Test
-    public void checkOnOpen() throws IOException {
+    public void checkOnOpen_addsSession() throws IOException {
         Map<String, String> pathParam =
             Collections.singletonMap(SOCKET_PARAMETER_ROOM, "1");
         when(testSession.getPathParameters())
@@ -91,8 +91,9 @@ public class ChatWebSocketTest {
     }
 
     @Test
-    public void checkOnTextMessageChat() throws IOException,
-            InterruptedException {
+    public void checkOnTextMessageChat_jsonObjectBroadcastedCorrect()
+            throws IOException, InterruptedException {
+        // Arrange
         RemoteEndpoint.Basic basicEndpoint = mock(RemoteEndpoint.Basic.class);
         when(testSession.getBasicRemote()).thenReturn(basicEndpoint);
 
@@ -103,9 +104,11 @@ public class ChatWebSocketTest {
         jsonData.put(JSON_TYPE, MESSAGE_SEND);
         jsonData.put(JSON_MESSAGE, TEST_MESSAGE);
 
+        // Act
         ChatWebSocket instance = new ChatWebSocket(1, true, TEST_UID);
         instance.onTextMessage(testSession, jsonData.toString());
 
+        // Assert
         JSONObject expectedBroadcast = new JSONObject();
         expectedBroadcast.put(JSON_TYPE, MESSAGE_RECEIVE);
         expectedBroadcast.put(JSON_MESSAGE, TEST_MESSAGE);
@@ -131,8 +134,9 @@ public class ChatWebSocketTest {
     }
 
     @Test
-    public void checkOnTextMessageMap() throws IOException,
-            InterruptedException {
+    public void checkOnTextMessageMap_jsonObjectBroadcastedCorrect()
+            throws IOException, InterruptedException {
+        // Arrange
         RemoteEndpoint.Basic basicEndpoint = mock(RemoteEndpoint.Basic.class);
         when(testSession.getBasicRemote()).thenReturn(basicEndpoint);
 
@@ -150,9 +154,11 @@ public class ChatWebSocketTest {
         jsonData.put(JSON_LATITUDE, 1.5);
         jsonData.put(JSON_LONGITUDE, -2.5);
 
+        // Act
         ChatWebSocket instance = new ChatWebSocket(1, true, TEST_UID);
         instance.onTextMessage(testSession, jsonData.toString());
 
+        // Assert
         JSONObject expectedBroadcast = new JSONObject();
         expectedBroadcast.put(JSON_ID, 10);
         expectedBroadcast.put(JSON_TYPE, MAP_RECEIVE);
@@ -188,7 +194,9 @@ public class ChatWebSocketTest {
     }
 
     @Test
-    public void checkOnTextMessageDelete() throws IOException {
+    public void checkOnTextMessageDelete_jsonObjectBroadcastedCorrect()
+            throws IOException {
+        // Arrange
         RemoteEndpoint.Basic basicEndpoint = mock(RemoteEndpoint.Basic.class);
         when(testSession.getBasicRemote()).thenReturn(basicEndpoint);
 
@@ -198,9 +206,11 @@ public class ChatWebSocketTest {
         jsonData.put(JSON_TYPE, MAP_DELETE);
         jsonData.put(JSON_ID, 10L);
 
+        // Act
         ChatWebSocket instance = new ChatWebSocket(1, true, TEST_UID);
         instance.onTextMessage(testSession, jsonData.toString());
 
+        // Assert
         verify(mockManager, times(1)).deleteMarker(1L, 10L);
 
         ArgumentCaptor<String> stringArgument
