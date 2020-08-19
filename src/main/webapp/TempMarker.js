@@ -42,9 +42,21 @@ class TempMarker extends MarkerTemplate{
     super.hide();
   }
 
-  /** Changes the icon of this marker */
+  /**
+   * Changes the icon of this marker
+   * @param {String} color the name of the new color of the icon
+   */
   changeIcon_(color) {
     this.googleMarker_.setIcon(ColorPicker.getTempMarkerIcon(color));
+  }
+
+  /**
+   * Changes this marker's color
+   * @param {String} color the name of the new color
+   */
+  setColor(color) {
+    this.markerColor_ = color;
+    this.changeIcon_(color);
   }
 
   /**

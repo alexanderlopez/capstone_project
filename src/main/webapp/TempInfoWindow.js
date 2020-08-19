@@ -27,6 +27,7 @@ class TempInfoWindow extends InfoWindowTemplate {
     this.myMarker_ = tempMarker;
     this.googleInfoWindow_.addListener('domready', () => {
         ColorPicker.setColorChangeEvent((color) => this.setColor_(color));
+        this.setSelectedColor_((color) => this.setColor_(color));
         this.setSubmitEvent_();
         this.adjustWindow_();
       });
@@ -47,6 +48,12 @@ class TempInfoWindow extends InfoWindowTemplate {
   /** Changes the marker color to the given color */
   setColor_(newColor) {
     this.myMarker_.setColor(newColor);
+  }
+
+  /** Sets the selected color picker color to the current marker's color */
+  setSelectedColor_(colorChangeFn) {
+     let color = this.myMarker_.getColorName();
+     ColorPicker.setSelectedColor(color, colorChangeFn);
   }
 
   /** Sends form input to the temporary marker */

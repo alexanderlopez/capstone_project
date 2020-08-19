@@ -145,6 +145,7 @@ class ChapMap {
     this.disableAddingMarkers_();
 
     this.setTempMarker(permMarker.getPosition());
+    this.tempMarker_.setColor(permMarker.getColorName());
     this.tempMarker_.openInfoWindow();
   }
 
@@ -412,7 +413,7 @@ class ChapMap {
    * Sets a click-trigger event to the DOM element with the given id and
    * sets the callback function to the one given
    * @param {String} id the id of the element to be added
-   * @param {} fn the anonymous function to be called on click
+   * @param {*} fn the anonymous function to be called on click
    */
   addClickEvent_(id, fn) {
     let btn = document.getElementById(id);

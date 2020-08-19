@@ -58,7 +58,7 @@ class ColorPicker {
    * @Private
    * Change which color is currently selected
    * @param {Element} clickedBtn the color btn that was just clicked
-   * @param {*} callback function that the new color string should be applied to
+   * @param {*} callback function to call on the new color string
    */
    static switchSelectedColor_(clickedBtn, callback) {
      let pickedClass = ColorPicker.PICKED_COLOR;
@@ -120,5 +120,15 @@ class ColorPicker {
      }
 
      return colorBtn;
+   }
+
+   /**
+    * Sets the currently selected color to the given color name
+    * @param {String} colorName the name of the color to be selected
+    * @param {?*} callback function to call on the new color string
+    */
+   static setSelectedColor(colorName, callback) {
+     let colorBtn = document.getElementById(colorName);
+     ColorPicker.switchSelectedColor_(colorBtn, callback);
    }
 }
