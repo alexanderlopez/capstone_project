@@ -129,7 +129,7 @@ function setWelcomeMessage_(userName) {
  * Hides the parent node the given element is in
  * @param {Element} nodeChild the child node of the element to be hidden
  */
-function hideNode(nodeChild) {
+function hideParentNode(nodeChild) {
   hideEl_(nodeChild.parentNode);
 }
 
