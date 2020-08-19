@@ -14,11 +14,6 @@ body {
   font-size: 3vh;
 }
 
-#pageContent {
-  display: flex;
-  height: calc(90% - 32vh);
-}
-
 #loading {
   width: 100%;
   height: 100%;
@@ -30,18 +25,25 @@ body {
 /* Header */
 #header {
   margin-bottom: 5%;
+  font-size: calc(5vw + 5vh);
+}
+
+#header.logged-in {
+  width: calc(78vw - 350px - 4%);
+  float: left;
+  font-size: calc(5vw + 5vh);
 }
 
 #header h1 {
   text-align: center;
   width: 100%;
-  font-size: 20vh;
+  font-size: inherit;
   margin: 0;
 }
 
 #welcome-message {
   text-align: center;
-  font-size: 6vh;
+  font-size: .2em;
   margin: 0;
   display: none;
 }
@@ -57,12 +59,34 @@ body {
   overflow: scroll;
 }
 
-#username-form {
+#save-details, #submit-map {
+  background-image: url("icons/save.svg");
   display: none;
 }
 
-#new-map-form {
+#username-form {
   display: none;
+  resize: none;
+  overflow: scroll;
+  font-size: 1em;
+  width: calc(100% - 4px);
+  height: 1em;
+  border-radius: 2px;
+}
+
+#new-map-form {
+  width: 80%;
+  height: 1.5em;
+  margin: 0;
+  resize: none;
+  overflow: scroll;
+  font-size: 1vw;
+}
+
+#map-form-wrapper {
+  display: none;
+  border-width: 2px;
+  height: 2em;
 }
 
 .form {
@@ -101,6 +125,10 @@ body {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Details */
 
+#profile-btn {
+  background-image: url("icons/profile.svg");
+}
+
 #edit-details {
   background-image: url("icons/edit.svg");
 }
@@ -115,16 +143,20 @@ body {
 }
 
 .detailsGroup .groupLabel {
-  font-size: 1.3em;
   margin: 10px 0 10px 0;
 }
 
 .detailsGroup .groupContent {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
+
+#maps-btn {
+  background-image: url("icons/map.svg");
+}
 
 #add-map {
   background-image: url("icons/add.svg");
@@ -136,7 +168,7 @@ body {
 
 #user-maps {
   margin-top: 30px;
-  height: calc(100% - 5em - 30px);
+  height: calc(100% - 50px - 3vw);
   overflow-y: scroll;
 }
 
@@ -179,34 +211,60 @@ body {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* General */
 
-.panel {
+#panel {
   border-radius: 10px;
   padding: 2%;
   background-color: #e4e7ebb3;
+  min-width: 8em;
   width: 25%;
-  border-style: double;
+  max-width: 350px;
   border-color: gray;
+  float: left;
+  height: 80vh;
+  display: none;
+  font-size: calc(25px + .5vw);
+}
+
+#nav {
+  height: 6vh;
+  margin: 1vh;
+}
+
+.nav-btn, .nav-btn:focus {
+  height: 4vh;
+  width: 7vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  float: left;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.panel-content {
   position: relative;
+  height: calc(100% - 2em);
 }
 
 .panel-header {
-  text-align: center;
-  font-size: 3vw;
   margin: 0;
   display: block;
   margin-inline-start: 0;
   margin-inline-end: 0;
   font-weight: bold;
   margin-bottom: 20px;
-  padding: 0 20px 0 20px;
+  width: calc(100% - 4vw);
 }
 
 .panel-icon, .panel-icon:focus {
   position: absolute;
   top: 5px;
   right: 5px;
-  height: 2vw;
-  width: 2vw;
+  height: calc(25px + 1vw);
+  width: calc(25px + 1vw);
   margin: .5vh;
   background-position: center;
   background-repeat: no-repeat;
@@ -216,4 +274,10 @@ body {
   outline: 0;
   background-color: transparent;
   padding: 0;
+}
+
+.nav-btn.show {
+  border: 1px solid black;
+  border-bottom: 0;
+  border-radius: 5px 5px 0 0;
 }

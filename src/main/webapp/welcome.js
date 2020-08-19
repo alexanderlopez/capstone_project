@@ -58,10 +58,10 @@ const LOADING_EL ='loading';
 const WELCOME_EL ='welcome-message';
 const DETAILS_EL = 'user-details';
 const MAPS_WRAPPER = 'maps-wrapper';
-const MAP_FORM = 'new-map-form';
 const USERNAME_FORM = 'username-form';
-const SIGNOUT_BTN ='sign-out';
-const MIDDLE_PANEL = 'middle-panel';
+const PANEL = "panel";
+const HEADER = "header";
+const LOGGED_IN = "logged-in";
 
 /**
  * @Private
@@ -84,22 +84,23 @@ function getUserInfo_(user, userIdToken) {
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {
-  document.getElementById(LOADING_EL).style.display = 'none';
-
+  // no information is given if this is a new user
   let isNewUser = Object.keys(userJson).length === 0;
+
+  hideEl_(document.getElementById(LOADING_EL));
+  showEl_(document.getElementById('sign-out'));
+  document.getElementById(HEADER).classList.add(LOGGED_IN);
+
+  loadUserDetails_(email, userJson.name);
 
   if (isNewUser) {
     setWelcomeMessage_();
-    showUserMaps_({});
-    showEl_(document.getElementById(USERNAME_FORM));
+    disableMapCreating_();
+    showUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
-    showUserMaps_(userJson.rooms);
+    loadUserMaps_(userJson.rooms);
   }
-
-  showUserDetails_(email, userJson.name);
-  showEl_(document.getElementById(MIDDLE_PANEL));
-  showEl_(document.getElementById(SIGNOUT_BTN));
 }
 
 
@@ -126,21 +127,22 @@ function setWelcomeMessage_(userName) {
 // CREATE MAP OR USER
 
 /**
- * Hides the parent node the given element is in
- * @param {Element} nodeChild the child node of the element to be hidden
- */
-function hideParentNode(nodeChild) {
-  hideEl_(nodeChild.parentNode);
-}
-
-/**
  * @Private
  * Displays the form where users can enter their username and hides the
  * new map form if it is visible
  */
 function showUsernameForm() {
-  showEl_(document.getElementById(USERNAME_FORM));
-  hideEl_(document.getElementById(MAP_FORM));
+  let usernameForm = document.getElementById(USERNAME_FORM);
+  let usernameGroup = usernameForm.parentNode;
+  let prevUsername = usernameGroup
+      .getElementsByClassName("groupContent")[0];
+
+  hideEl_(document.getElementById('edit-details'));
+  showEl_(document.getElementById('save-details'));
+
+  hideEl_(prevUsername);
+  usernameForm.innerHTML = prevUsername.innerHTML;
+  showEl_(usernameForm);
 }
 
 /**
@@ -149,33 +151,31 @@ function showUsernameForm() {
  * username form if it is visible
  */
 function showMapForm() {
-  showEl_(document.getElementById(MAP_FORM));
-  hideEl_(document.getElementById(USERNAME_FORM));
+  showEl_(document.getElementById("map-form-wrapper"));
+  hideEl_(document.getElementById('add-map'));
+  showEl_(document.getElementById('submit-map'));
 }
 
 /**
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById("map-name");
-  hideForm(input);
-  submitNewItem_("room-server", input);
+  let input = document.getElementById('new-map-form');
+  submitNewItem("room-server", input);
 }
 
 /**
  * Sends the submitted username to the server
  */
 function submitUsername() {
-  let input = document.getElementById("input-username");
-  hideForm(input);
-  submitNewItem_("user-server", input);
+  let input = document.getElementById(USERNAME_FORM);
+  submitNewItem("user-server", input);
 }
 
 /**
- * @Private
  * Retrieves input value, sends to the given server, and handles server response
  */
- function submitNewItem_(server, input) {
+ function submitNewItem(server, input) {
    var params = {
        name: input.value,
        id: idToken
@@ -205,43 +205,81 @@ function submitUsername() {
  * @param {String} email the user's email address
  * @param {?String} username the user's chosen username
  */
-function showUserDetails_(email, username) {
-  var emailBlock = makeDetailsGroup_("email", email);
-
-  if (username) {
-    var usernameBlock = makeDetailsGroup_("username", username);
-  } else {
-    var usernameBlock = makeDetailsGroup_("username", "");
-  }
-
+function loadUserDetails_(email, username) {
+  showEl_(document.getElementById(PANEL));
   let displayDiv = document.getElementById(DETAILS_EL);
+
+  var emailBlock = makeDetailsGroup_
+      ("email", email, /* isUsernameGroup= */ false);
   displayDiv.appendChild(emailBlock);
+
+  let usernameValue = username? username: "";
+  let usernameBlock =
+      makeDetailsGroup_("username", usernameValue, /* isUsernameGroup= */ true);
   displayDiv.appendChild(usernameBlock);
+
   showEl_(displayDiv);
 }
 
 /**
  * @Private
+ * Changes which tab is visible in the main panel
+ * @param {String} showDivId id of the content to be shown
+ * @param {String} showBtnId id of the tab button to be selected
+ * @param {String} hideDivId id of the content to be hidden
+ * @param {String} hideBtnId id of the tab button to be deselected
+ */
+function togglePanel_(showDivId, showBtnId, hideDivId, hideBtnId) {
+  showEl_(document.getElementById(showDivId));
+  hideEl_(document.getElementById(hideDivId));
+
+  let showBtn = document.getElementById(showBtnId);
+  showBtn.classList.add("show");
+
+  let hideBtn = document.getElementById(hideBtnId);
+  hideBtn.classList.remove("show");
+}
+
+/**
+ * Hides the user's maps tab and shows the profile tab instead
+ */
+function showUserDetails() {
+  togglePanel_(/* showDivId= */ DETAILS_EL, /* showBtnId= */ "profile-btn", /* hideDivId= */ MAPS_WRAPPER, /* hideBtnId= */ "maps-btn");
+}
+
+/**
+ * Hides the user's profile tab and shows the map tab instead
+ */
+function showUserMaps() {
+  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* showBtnId= */ "maps-btn", /* hideDivId= */ DETAILS_EL, /* hideBtnId= */ "profile-btn");
+}
+
+/**
+ * @Private
  * Returns div containing a piece of user information determined by
- * the group name and value
+ * the group name and value and an editable component if applicable
  * @param {String} name the name of this group of information
  * @param {String} val the value of the group of information
+ * @param {boolean} isUsernameGroup whether this is the username group
  */
-function makeDetailsGroup_(name, val) {
-  let wrapper = document.createElement("div");
-  wrapper.id = name;
-  wrapper.classList.add("detailsGroup");
+function makeDetailsGroup_(name, val, isUsernameGroup) {
+  let wrapper = makeEl("div", "detailsGroup", name);
 
-  let label = document.createElement("h4");
-  label.classList.add("groupLabel");
+  let label = makeEl("h4", "groupLabel");
   label.innerHTML = name;
-
-  let content = document.createElement("p");
-  content.classList.add("groupContent");
-  content.innerHTML = val;
-
   wrapper.appendChild(label);
+
+  let content = makeEl("p", "groupContent");
+  content.innerHTML = val;
   wrapper.appendChild(content);
+
+  if (isUsernameGroup) {
+    let editForm = makeEl("textarea", /* class= */ null, USERNAME_FORM);
+    editForm.style.display = 'none';
+    editForm.placeholder = "Username...";
+    wrapper.appendChild(editForm);
+  }
+
   return wrapper;
 }
 
@@ -250,10 +288,9 @@ function makeDetailsGroup_(name, val) {
  * Creates buttons to navigate the user to the given maps
  * @param {JSON} mapsJson json array containing map ids and names
  */
-function showUserMaps_(mapsJson) {
+function loadUserMaps_(mapsJson) {
   let rooms = document.getElementById('user-maps');
   let roomWrapper = document.getElementById(MAPS_WRAPPER);
-  showEl_(roomWrapper);
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -270,12 +307,11 @@ function showUserMaps_(mapsJson) {
  * @param {String} name the given name of the map
  */
 function makeRoomButton_(id, name) {
-  let roomBtn = document.createElement("button");
+  let roomBtn = makeEl("button", "roomBtn");
   roomBtn.innerHTML = name;
   roomBtn.addEventListener('click', () => {
      location.href=`/chatroom.html?roomId=${id}`;
   });
-  roomBtn.classList.add("roomBtn");
   return roomBtn;
 }
 
@@ -283,15 +319,27 @@ function makeRoomButton_(id, name) {
 // LOGIN/LOGOUT
 
 /**
+ * Prevents the user from creating a new map
+ */
+function disableMapCreating_() {
+  let btn = document.getElementById("add-map");
+  btn.onclick = "";
+}
+
+/**
  * @Private
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  let toHide = [LOADING_EL, MAPS_WRAPPER, DETAILS_EL, MAP_FORM, USERNAME_FORM,
-                WELCOME_EL];
-  toHide.forEach((id) => document.getElementById(id).style.display = 'none');
+  let toHide = [LOADING_EL, PANEL, WELCOME_EL];
+  toHide.forEach((id) => hideEl_(document.getElementById(id)));
+
+  // change header styling to default
+  let header = document.getElementById(HEADER)
+  header.classList.remove(LOGGED_IN);
 
   showEl_(document.getElementById(LOGIN_EL));
+
   ui.start('#'+LOGIN_EL, uiConfig);
 }
 
@@ -321,4 +369,21 @@ function showEl_(el) {
  */
 function hideEl_(el) {
   el.style.display = 'none';
+}
+
+/**
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
+ */
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
 }
