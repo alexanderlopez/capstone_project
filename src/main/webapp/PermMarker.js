@@ -47,8 +47,9 @@ class PermMarker extends MarkerTemplate{
     myMap.sendDeleteRequest(this);
   }
 
+  /** Changes this marker's icon */
   changeIcon_(color) {
-    this.googleMarker_.setIcon(MarkerTemplate.markerIconUrl+color+"-dot.png");
+    this.googleMarker_.setIcon(ColorPicker.getPermMarkerIcon(color));
   }
 
   /**
