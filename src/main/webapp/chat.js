@@ -138,3 +138,49 @@ function handleChatMessage(obj) {
   node.appendChild(textnode);
   document.getElementById("past-comments").appendChild(node);
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// CHAT THREADS
+
+/** Shows or hides the chat thread menu accordingly */
+function toggleThreadMenu() {
+  // change visibility of the thread menu wrapper
+}
+
+/** Displays the form to create a new thread in the thread menu */
+function showThreadForm() {
+  // same idea as new maps (form in menu directly)
+}
+
+/** Creates a new thread, adds it the the menu, and switches to it */
+function createThread() {
+  // only create thread if thread name is unique and do not allow spaces
+  // create a div with id the same as the name
+  // create menu item with the div
+}
+
+/**
+ * @Private
+ * Builds the menu item for the given thread wrapper
+ * @param {Element} threadWrapper the div containing the thread chat history
+ */
+function createThreadMenuItem_(threadWrapper) {
+  // create menu item for the given thread
+  // set menu item onlick event (changeThreads is called)
+}
+
+/**
+ * @Private
+ * Hides the current thread and displays the given thread
+ * @param {Element} threadWrapper the thread to make visible
+ */
+function changeThreads_(threadWrapper) {
+  // hide currently visible thread
+  // show the given div
+  // change the chat name to the div id
+}
+
+/** returns the id of the thread that is currently visible */
+function getVisibleThread_() {
+
+}
