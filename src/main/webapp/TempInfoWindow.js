@@ -53,10 +53,11 @@ class TempInfoWindow extends InfoWindowTemplate {
   sendFormInfo() {
     let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT).value;
     let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT).value;
+    let color = ColorPicker.getSelectedColorName();
 
     this.setColor_(ColorPicker.DEFAULT_COLOR);
 
-    this.myMarker_.setPermMarkerInfo(inputTitle.value, inputBody.value);
+    this.myMarker_.setPermMarkerInfo(inputTitle, inputBody, color);
   }
 
   /**

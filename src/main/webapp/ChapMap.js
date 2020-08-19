@@ -35,7 +35,7 @@ class ChapMap {
 
   static SELECTED_CLASS = "selected";
 
-  
+
   constructor(coords) {
     var lat = coords[0];
     var lng = coords[1];
@@ -58,7 +58,7 @@ class ChapMap {
     this.loadMarkers_();
 
   }
-    
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
@@ -262,6 +262,7 @@ class ChapMap {
     let markerId = markerJson.id;
     let title    = markerJson.title;
     let body     = markerJson.body;
+    let color    = markerJson.color;
     let lat      = markerJson.lat;
     let lng      = markerJson.lng;
 
@@ -270,9 +271,9 @@ class ChapMap {
     let permMarker = this.permMarkers_[markerId];
 
     if (!permMarker) {
-      this.makeNewPermMarker_(markerId, title, body, coords)
+      this.makeNewPermMarker_(markerId, title, body, color, coords)
     } else {
-      this.updatePermMarker_(permMarker, coords, title, body);
+      this.updatePermMarker_(permMarker, coords, title, body, color);
     }
   }
 
@@ -282,12 +283,13 @@ class ChapMap {
    * @param {String} title the title of the marker
    * @param {String} body the body of the marker description
    * @param {String} id the id of the marker
+   * @param {String} color the color of the marker
    * @param {google.maps.LatLng} coords the coordinates of the marker
    */
-  makeNewPermMarker_(id, title, body, coords) {
+  makeNewPermMarker_(id, title, body, color, coords) {
     let permMarker = new PermMarker(id);
     this.permMarkers_[id] = permMarker;
-    this.updatePermMarker_(permMarker, coords, title, body);
+    this.updatePermMarker_(permMarker, coords, title, body, color);
   }
 
   /**
@@ -296,9 +298,10 @@ class ChapMap {
    * @param {PermMarker} permMarker marker that needs to be modified
    * @param {?String} title the title of the marker
    * @param {?String} body the body of the marker description
+   * @param {?String} color the color of the marker
    * @param {?google.maps.LatLng} coords the coordinates of the marker
    */
-  updatePermMarker_(permMarker, coords, title, body) {
+  updatePermMarker_(permMarker, coords, title, body, color) {
     if (coords) {
       permMarker.setPosition(coords);
     }
@@ -307,6 +310,10 @@ class ChapMap {
     }
     if (body) {
       permMarker.setBody(body);
+    }
+
+    if (color) {
+      permMarker.setColor(color);
     }
 
     if (permMarker === this.editedPermMarker_) {
@@ -339,16 +346,17 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} title the title of the marker
    * @param {String} body the body of the marker description
+   * @param {String} color the color of the marker
    */
-  sendPermMarkerInfo(coords, title, body) {
+  sendPermMarkerInfo(coords, title, body, color) {
     this.removeTempMarker();
     let editedPermMarker = this.editedPermMarker_;
 
     if (!editedPermMarker) {
-      connection.send(this.makeJson_(coords, title, body));
+      connection.send(this.makeJson_(coords, title, body, color));
     } else {
       let id = editedPermMarker.getId();
-      connection.send(this.makeJson_(coords, title, body, id));
+      connection.send(this.makeJson_(coords, title, body, color, id));
     }
   }
 
@@ -358,13 +366,15 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} markerTitle the title of the marker
    * @param {String} markerBody the body of the marker description
+   * @param {String} color the color of the marker
    * @param {?String} markerId the datastore id of this marker
    */
-  makeJson_(coords, markerTitle, markerBody, markerId) {
+  makeJson_(coords, markerTitle, markerBody, markerColor, markerId) {
     var jsonObject = {
         type : ChapMap.typeValue,
         title : markerTitle,
         body : markerBody,
+        color: markerColor,
         lat : coords.lat(),
         lng : coords.lng()
     };

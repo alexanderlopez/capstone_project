@@ -62,9 +62,10 @@ class TempMarker extends MarkerTemplate{
   * Sends the marker given marker details to the map to update a PermMarker
   * @param {String} title new title of the marker
   * @param {String} body new body of the marker
-   */
-  setPermMarkerInfo(title, body) {
-    myMap.sendPermMarkerInfo(this.getPosition(), title, body);
+  * @param {String} color the new color of the marker
+  */
+  setPermMarkerInfo(title, body, color) {
+    myMap.sendPermMarkerInfo(this.getPosition(), title, body, color);
     this.hide();
   }
 }

@@ -62,7 +62,7 @@ class ColorPicker {
    */
    static switchSelectedColor_(clickedBtn, callback) {
      let pickedClass = ColorPicker.PICKED_COLOR;
-     let prevSelectedBtn = this.getSelectedColor_();
+     let prevSelectedBtn = this.getSelectedColor();
 
      prevSelectedBtn.classList.remove(pickedClass);
      clickedBtn.classList.add(pickedClass);
@@ -72,8 +72,13 @@ class ColorPicker {
    }
 
    /** Returns the color button currently selected */
-   static getSelectedColor_() {
+   static getSelectedColor() {
      return document.getElementsByClassName(ColorPicker.PICKED_COLOR)[0];
+   }
+
+   /** Returns the name of the color currently selected */
+   static getSelectedColorName() {
+     return ColorPicker.getSelectedColor().id;
    }
 
    /**
