@@ -35,7 +35,7 @@ class ChapMap {
 
   static SELECTED_CLASS = "selected";
 
-  
+
   constructor(coords) {
     var lat = coords[0];
     var lng = coords[1];
@@ -58,7 +58,7 @@ class ChapMap {
     this.loadMarkers_();
 
   }
-    
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS

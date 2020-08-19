@@ -10,9 +10,6 @@
         <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
-        <!-- TODO: Add SDKs for Firebase products that you want to use
-            https://firebase.google.com/docs/web/setup#available-libraries -->
-
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
 
         <script src="welcome.js"></script>
@@ -23,37 +20,37 @@
 
     </head>
     <body>
+        <div id="panel">
+          <div id="nav">
+            <button class="nav-btn show" id="profile-btn" onclick="showUserDetails()"></button>
+            <button class="nav-btn" id="maps-btn" onclick="showUserMaps()"></button>
+          </div>
+
+          <div id="maps-wrapper" class="panel-content">
+            <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <input type="button" id="add-map" class="panel-icon" onclick="showMapForm()">
+            <input type="submit" id="submit-map" class="panel-icon" onclick="submitMap()" value="">
+            <div id="user-maps">
+              <button id="map-form-wrapper" class="roomBtn">
+                <textarea id="new-map-form" placeholder="Name..."></textarea>
+              </button>
+            </div>
+          </div>
+
+          <div id="user-details" class="panel-content">
+            <h2 id="profile" class="panel-header">Profile</h2>
+            <input type="button" id="edit-details" class="panel-icon" onclick="showUsernameForm()" value="">
+            <input type="submit" id="save-details" class="panel-icon" onclick="submitUsername()" value="">
+          </div>
+        </div>
+
         <div id="header">
           <h1>CHAP</h1>
           <h4 id="welcome-message"></h4>
         </div>
-        <div id="pageContent">
-          <div id="loading">Loading...</div>
-          
-          <div id="user-details" class="panel">
-            <h2 id="profile" class="panel-header">Profile</h2>
-          </div>
 
-          <div id="firebaseui-auth-container"></div>
-
-          <div id="username-form" class="panel form">
-            <label for="input-username" class="panel-header">My Username:
-              </label>
-            <textarea id="input-username" placeholder="Enter name..."></textarea>
-            <input type="button" value="Submit" onclick="submitUsername()">
-          </div>
-
-          <div id="new-map-form" class="panel form">
-            <label for="map-name" class="panel-header">New Map:</label>
-            <textarea id="map-name" placeholder="Enter name..."></textarea>
-            <input type="button" value="Submit" onclick="submitMap()">
-          </div>
-
-          <div id="maps-wrapper" class="panel">
-            <h2 id="my-maps" class="panel-header">My Maps</h2>
-            <div id="user-maps"></div>
-          </div>
-        </div>
+        <div id="loading">Loading...</div>
+        <div id="firebaseui-auth-container"></div>
 
         <button id="sign-out" onclick="logOut()">Sign Out
             </button>
