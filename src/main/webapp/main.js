@@ -141,3 +141,18 @@ function initChat() {
     }
   });
 }
+
+function geocodeLatLng(geocoder, coords) {
+  geocoder.geocode({ location: coords }, (results, status) => {
+    if (status === "OK") {
+      if (results[0]) {
+        console.log(results[0].formatted_address);
+        return results[0].formatted_address;
+      } else {
+        window.alert("No results found");
+      }
+    } else {
+      window.alert("Geocoder failed due to: " + status);
+    }
+  });
+}

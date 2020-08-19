@@ -17,6 +17,7 @@ class PermInfoWindow extends InfoWindowTemplate {
 
     static TITLE_CLASS = "markerTitle";
     static BODY_CLASS = "markerBody";
+    geocoder = new google.maps.Geocoder();
 
     constructor() {
       super();
@@ -59,6 +60,7 @@ class PermInfoWindow extends InfoWindowTemplate {
       let body  = document.createElement("p");
       body.classList.add(PermInfoWindow.BODY_CLASS);
       body.innerHTML = this.myMarker_.getBody();
+      body.innerHTML += "<br>" + geocodeLatLng(this.geocoder,this.myMarker_.getPosition());
       return body;
     }
 

@@ -36,9 +36,6 @@ class ChapMap {
       zoom: 8
     });
 
-    const geocoder = new google.maps.Geocoder();
-    const infowindow = new google.maps.InfoWindow();
-
     this.makeMapButtons_();
     this.addMapClickListener_();
 
@@ -63,11 +60,6 @@ class ChapMap {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
         this.closePermInfoWindow();
-
-        
-        const geocoder = new google.maps.Geocoder();
-        const infowindow = new google.maps.InfoWindow();
-        geocodeLatLng(geocoder, map, infowindow, e.latLng);
       }
     });
   }
@@ -482,36 +474,6 @@ class ChapMap {
     };
 
     connection.send(JSON.stringify(jsonObject));
-  }
+  }  
 }
 
-function geocodeLatLng(geocoder, map, infowindow, coords) {
- /* const latlngStr = coords.split(",", 2);
-  const latlng = {
-    lat: parseFloat(latlngStr[0]),
-    lng: parseFloat(latlngStr[1])
-  }; */
-  geocoder.geocode({ location: coords }, (results, status) => {
-    if (status === "OK") {
-      if (results[0]) {
-        //map.setZoom(11);
-        /*
-        const marker = new google.maps.Marker({
-          position: coords,
-          map: map
-        });
-        */
-        /*
-        infowindow.setContent(results[0].formatted_address);
-        infowindow.open(map, marker);
-        */
-        console.log(results[0].formatted_address);
-        return results[0].formatted_address;
-      } else {
-        window.alert("No results found");
-      }
-    } else {
-      window.alert("Geocoder failed due to: " + status);
-    }
-  });
-}
