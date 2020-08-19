@@ -260,6 +260,35 @@ class ChapMap {
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
+
+    let permMarker = this.permMarkers_[markerId];
+
+    if (!permMarker) {
+      this.makeNewPermMarker_(markerId, markerJson)
+    } else {
+      this.updatePermMarker_(permMarker, markerJson);
+    }
+  }
+
+  /**
+   * @Private
+   * Creates a new PermMarker with the given details and stores it
+   * @param {String} id the id of the marker
+   * @param {Object} markerJson json containing marker details
+   */
+  makeNewPermMarker_(id, markerJson) {
+    let permMarker = new PermMarker(id);
+    this.permMarkers_[id] = permMarker;
+    this.updatePermMarker_(permMarker, markerJson);
+  }
+
+  /**
+   * @Private
+   * Updates an existing perm marker's details with the info from the server
+   * @param {PermMarker} permMarker marker that needs to be modified
+   * @param {Object} markerJson json containing marker details
+   */
+  updatePermMarker_(permMarker, markerJson) {
     let title    = markerJson.title;
     let body     = markerJson.body;
     let color    = markerJson.color;
@@ -268,40 +297,6 @@ class ChapMap {
 
     let coords = new google.maps.LatLng(lat, lng);
 
-    let permMarker = this.permMarkers_[markerId];
-
-    if (!permMarker) {
-      this.makeNewPermMarker_(markerId, title, body, color, coords)
-    } else {
-      this.updatePermMarker_(permMarker, coords, title, body, color);
-    }
-  }
-
-  /**
-   * @Private
-   * Creates a new PermMarker with the given details and stores it
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
-   * @param {String} id the id of the marker
-   * @param {String} color the color of the marker
-   * @param {google.maps.LatLng} coords the coordinates of the marker
-   */
-  makeNewPermMarker_(id, title, body, color, coords) {
-    let permMarker = new PermMarker(id);
-    this.permMarkers_[id] = permMarker;
-    this.updatePermMarker_(permMarker, coords, title, body, color);
-  }
-
-  /**
-   * @Private
-   * Updates an existing perm marker's details with the info from the server
-   * @param {PermMarker} permMarker marker that needs to be modified
-   * @param {?String} title the title of the marker
-   * @param {?String} body the body of the marker description
-   * @param {?String} color the color of the marker
-   * @param {?google.maps.LatLng} coords the coordinates of the marker
-   */
-  updatePermMarker_(permMarker, coords, title, body, color) {
     if (coords) {
       permMarker.setPosition(coords);
     }
