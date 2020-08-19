@@ -71,6 +71,7 @@ function removeClass_(id, className) {
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
+  // setChatDiv();
   firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
       .then(idToken => getChatHistory_(idToken))
       .catch(error => {
@@ -91,6 +92,7 @@ function getChatHistory_(idToken) {
             let comment = comments[index];
             handleChatMessage(comment);
           }
+          //Thread.doneLoading();
         });
 }
 
@@ -107,6 +109,7 @@ function addChatComment() {
       var commentObj = {
         type : "MSG_SEND",
         message : commentContent
+        // tag : Thread.getCurrThreadName()
       };
 
       document.getElementById('comment-container').value = "";
@@ -118,69 +121,36 @@ function addChatComment() {
 }
 
 /**
+ * Sends the chat message to Thread to be added to the DOM
  * @param{!Object} obj A JSON Object that represents the comment to be added
- * Adds comment to page
  */
 function handleChatMessage(obj) {
-  //TODO(astepin): Include timestamp in the message
+  let name = obj.name;
+  let message = obj.message;
+  let thread = obj.tag;
+  let isCurrUser = obj.uid === userId;
 
-  var node = document.createElement("div");
-  var textnode = document.createTextNode(obj.name + ": " + obj.message);
-
-  // userID is defined in the main.js file
-  if(obj.uid === userId) {
-    node.classList.add("myMessage");
-  } else {
-    node.classList.add("otherMessage");
-  }
-  node.classList.add("message");
-
-  node.appendChild(textnode);
-  document.getElementById("past-comments").appendChild(node);
+  Thread.addMessage(name, message, thread, isCurrUser);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CHAT THREADS
 
+/** Prevents the user from sending messages */
+function disableMessageSend() {}
+
+/** Allows the user to send messages */
+function enableMessageSend() {}
+
 /** Shows or hides the chat thread menu accordingly */
-function toggleThreadMenu() {
-  // change visibility of the thread menu wrapper
-}
-
-/** Displays the form to create a new thread in the thread menu */
-function showThreadForm() {
-  // same idea as new maps (form in menu directly)
-}
-
-/** Creates a new thread, adds it the the menu, and switches to it */
-function createThread() {
-  // only create thread if thread name is unique and do not allow spaces
-  // create a div with id the same as the name
-  // create menu item with the div
-}
+function toggleThreadMenu() {}
 
 /**
  * @Private
  * Builds the menu item for the given thread wrapper
- * @param {Element} threadWrapper the div containing the thread chat history
+ * @param {Thread} thread the Thread associated with this menu item
  */
-function createThreadMenuItem_(threadWrapper) {
-  // create menu item for the given thread
-  // set menu item onlick event (changeThreads is called)
-}
+function createThreadMenuItem(thread) {}
 
-/**
- * @Private
- * Hides the current thread and displays the given thread
- * @param {Element} threadWrapper the thread to make visible
- */
-function changeThreads_(threadWrapper) {
-  // hide currently visible thread
-  // show the given div
-  // change the chat name to the div id
-}
-
-/** returns the id of the thread that is currently visible */
-function getVisibleThread_() {
-
-}
+/** Gives Thread the DOM element that should contain the chat messages */
+function setChatDiv() {}
