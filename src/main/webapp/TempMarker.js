@@ -21,7 +21,6 @@ class TempMarker extends MarkerTemplate{
   constructor() {
     super();
 
-    this.googleMarker_.setLabel("+");
     this.googleMarker_.setDraggable(true);
     this.tempInfoWindow_ = new TempInfoWindow(this);
     this.setTempListeners_();
