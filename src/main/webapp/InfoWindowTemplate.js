@@ -19,6 +19,7 @@ class InfoWindowTemplate {
   static EDIT_ID = "markerEdit";
   static CONTENT_WRAPPER = "contentWrapper";
   static LEFT_COLUMN = "leftColumn";
+  static MIDDLE_COLUMN = "middleColumn";
   static RIGHT_COLUMN = "rightColumn";
 
   /** google.maps.Marker object this info window is anchored to */
@@ -62,8 +63,9 @@ class InfoWindowTemplate {
    * Returns the html string to be displayed in this info window
    */
   makeContent_() {
-    let contentWrapper = myMap.makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
+    let contentWrapper = myMap.makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
+    contentWrapper.appendChild(this.makeMiddleColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
 
     let result = contentWrapper.outerHTML;
@@ -76,8 +78,9 @@ class InfoWindowTemplate {
    * @Private
    * Puts together info window buttons
    */
-  makeLeftColumn_() {
-    let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+  makeMiddleColumn_() {
+    let midCol = myMap.makeEl("div", /* class= */null,
+        InfoWindowTemplate.MIDDLE_COLUMN);
 
     let deleteBtn = myMap.makeEl("button", /* class= */ null,
         InfoWindowTemplate.DELETE_ID);
@@ -85,9 +88,9 @@ class InfoWindowTemplate {
     let editBtn = myMap.makeEl("button", /* class= */ null,
         InfoWindowTemplate.EDIT_ID);
 
-    leftCol.appendChild(deleteBtn);
-    leftCol.appendChild(editBtn);
-    return leftCol;
+    midCol.appendChild(deleteBtn);
+    midCol.appendChild(editBtn);
+    return midCol;
   }
 
   /**
@@ -95,4 +98,10 @@ class InfoWindowTemplate {
    * @abstract
    */
   makeRightColumn_() {}
+
+  /**
+   * Builds the left column of the information window
+   * @abstract
+   */
+  makeLeftColumn_() {}
 }

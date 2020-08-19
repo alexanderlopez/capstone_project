@@ -20,15 +20,16 @@ class TempInfoWindow extends InfoWindowTemplate {
   static SUBMIT_BTN = "mySubmitBtn";
   static DEFAULT_TITLE = "Title";
   static DEFAULT_BODY = "Body";
+  static WIDE = "wide";
 
-  /**
-   * @param {TempMarker} tempmarker temp marker linked to this TempInfoWindow
-   */
   constructor(tempMarker) {
     super();
     this.myMarker_ = tempMarker;
     this.googleInfoWindow_.addListener('domready', () => {
+        ColorPicker.setColorChangeEvent((color) => this.setColor_(color));
+        this.setSelectedColor_((color) => this.setColor_(color));
         this.setSubmitEvent_();
+        this.adjustWindow_();
       });
   }
 
@@ -44,15 +45,26 @@ class TempInfoWindow extends InfoWindowTemplate {
       });
   }
 
+  /** Changes the marker color to the given color */
+  setColor_(newColor) {
+    this.myMarker_.setColor(newColor);
+  }
+
+  /** Sets the selected color picker color to the current marker's color */
+  setSelectedColor_(colorChangeFn) {
+     let color = this.myMarker_.getColorName();
+     ColorPicker.setSelectedColor(color, colorChangeFn);
+  }
+
   /** Sends form input to the temporary marker */
   sendFormInfo() {
-    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT);
-    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT);
+    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT).value;
+    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT).value;
+    let color = ColorPicker.getSelectedColorName();
 
-    this.myMarker_.setPermMarkerInfo(inputTitle.value, inputBody.value);
+    this.setColor_(ColorPicker.DEFAULT_COLOR);
 
-    inputTitle.value = "";
-    inputBody.value = "";
+    this.myMarker_.setPermMarkerInfo(inputTitle, inputBody, color);
   }
 
   /**
@@ -60,7 +72,8 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Returns the HTML of the right section of the information window
    */
   makeRightColumn_() {
-    let rightCol = myMap.makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+    let rightCol = myMap.makeEl("div", /* class= */ null,
+          InfoWindowTemplate.RIGHT_COLUMN);
 
     let editedMarker = myMap.editingPermMarker();
     let titleText = editedMarker? editedMarker.getTitle(): null;
@@ -94,4 +107,27 @@ class TempInfoWindow extends InfoWindowTemplate {
     el.innerHTML = elInnerHTML? elInnerHTML: "";
     return el;
   }
+
+  /**
+   * @Private
+   * Builds the color picker for the marker
+   */
+   makeLeftColumn_() {
+     let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+     let pickerWrapper = ColorPicker.buildPicker(this.myMarker_.getColorName());
+     leftCol.appendChild(pickerWrapper);
+     return leftCol;
+   }
+
+   /**
+    * @Private
+    * Changes the dimensions and alignment of the info window components
+    */
+   adjustWindow_() {
+     let components = [InfoWindowTemplate.CONTENT_WRAPPER, InfoWindowTemplate.MIDDLE_COLUMN,  InfoWindowTemplate.RIGHT_COLUMN];
+
+     for (const id of components) {
+       document.getElementById(id).classList.add(TempInfoWindow.WIDE);
+     }
+   }
 }

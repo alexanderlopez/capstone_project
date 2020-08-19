@@ -21,7 +21,6 @@ class TempMarker extends MarkerTemplate{
   constructor() {
     super();
 
-    this.googleMarker_.setLabel("+");
     this.googleMarker_.setDraggable(true);
     this.tempInfoWindow_ = new TempInfoWindow(this);
     this.setTempListeners_();
@@ -44,6 +43,23 @@ class TempMarker extends MarkerTemplate{
   }
 
   /**
+   * Changes the icon of this marker
+   * @param {String} color the name of the new color of the icon
+   */
+  changeIcon_(color) {
+    this.googleMarker_.setIcon(ColorPicker.getTempMarkerIcon(color));
+  }
+
+  /**
+   * Changes this marker's color
+   * @param {String} color the name of the new color
+   */
+  setColor(color) {
+    this.markerColor_ = color;
+    this.changeIcon_(color);
+  }
+
+  /**
    * @Private
    * Sets click and drag events to the marker
    */
@@ -57,9 +73,10 @@ class TempMarker extends MarkerTemplate{
   * Sends the marker given marker details to the map to update a PermMarker
   * @param {String} title new title of the marker
   * @param {String} body new body of the marker
-   */
-  setPermMarkerInfo(title, body) {
-    myMap.sendPermMarkerInfo(this.getPosition(), title, body);
+  * @param {String} color the new color of the marker
+  */
+  setPermMarkerInfo(title, body, color) {
+    myMap.sendPermMarkerInfo(this.getPosition(), title, body, color);
     this.hide();
   }
 }

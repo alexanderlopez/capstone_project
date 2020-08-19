@@ -145,6 +145,7 @@ class ChapMap {
     this.disableAddingMarkers_();
 
     this.setTempMarker(permMarker.getPosition());
+    this.tempMarker_.setColor(permMarker.getColorName());
     this.tempMarker_.openInfoWindow();
   }
 
@@ -260,45 +261,43 @@ class ChapMap {
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
-    let title    = markerJson.title;
-    let body     = markerJson.body;
-    let lat      = markerJson.lat;
-    let lng      = markerJson.lng;
-
-    let coords = new google.maps.LatLng(lat, lng);
 
     let permMarker = this.permMarkers_[markerId];
 
     if (!permMarker) {
-      this.makeNewPermMarker_(markerId, title, body, coords)
+      this.makeNewPermMarker_(markerId, markerJson)
     } else {
-      this.updatePermMarker_(permMarker, coords, title, body);
+      this.updatePermMarker_(permMarker, markerJson);
     }
   }
 
   /**
    * @Private
    * Creates a new PermMarker with the given details and stores it
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
    * @param {String} id the id of the marker
-   * @param {google.maps.LatLng} coords the coordinates of the marker
+   * @param {Object} markerJson json containing marker details
    */
-  makeNewPermMarker_(id, title, body, coords) {
+  makeNewPermMarker_(id, markerJson) {
     let permMarker = new PermMarker(id);
     this.permMarkers_[id] = permMarker;
-    this.updatePermMarker_(permMarker, coords, title, body);
+    this.updatePermMarker_(permMarker, markerJson);
   }
 
   /**
    * @Private
    * Updates an existing perm marker's details with the info from the server
    * @param {PermMarker} permMarker marker that needs to be modified
-   * @param {?String} title the title of the marker
-   * @param {?String} body the body of the marker description
-   * @param {?google.maps.LatLng} coords the coordinates of the marker
+   * @param {Object} markerJson json containing marker details
    */
-  updatePermMarker_(permMarker, coords, title, body) {
+  updatePermMarker_(permMarker, markerJson) {
+    let title    = markerJson.title;
+    let body     = markerJson.body;
+    let color    = markerJson.color;
+    let lat      = markerJson.lat;
+    let lng      = markerJson.lng;
+
+    let coords = new google.maps.LatLng(lat, lng);
+
     if (coords) {
       permMarker.setPosition(coords);
     }
@@ -307,6 +306,10 @@ class ChapMap {
     }
     if (body) {
       permMarker.setBody(body);
+    }
+
+    if (color) {
+      permMarker.setColor(color);
     }
 
     if (permMarker === this.editedPermMarker_) {
@@ -339,16 +342,17 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} title the title of the marker
    * @param {String} body the body of the marker description
+   * @param {String} color the color of the marker
    */
-  sendPermMarkerInfo(coords, title, body) {
+  sendPermMarkerInfo(coords, title, body, color) {
     this.removeTempMarker();
     let editedPermMarker = this.editedPermMarker_;
 
     if (!editedPermMarker) {
-      connection.send(this.makeJson_(coords, title, body));
+      connection.send(this.makeJson_(coords, title, body, color));
     } else {
       let id = editedPermMarker.getId();
-      connection.send(this.makeJson_(coords, title, body, id));
+      connection.send(this.makeJson_(coords, title, body, color, id));
     }
   }
 
@@ -358,13 +362,15 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} markerTitle the title of the marker
    * @param {String} markerBody the body of the marker description
+   * @param {String} color the color of the marker
    * @param {?String} markerId the datastore id of this marker
    */
-  makeJson_(coords, markerTitle, markerBody, markerId) {
+  makeJson_(coords, markerTitle, markerBody, markerColor, markerId) {
     var jsonObject = {
         type : ChapMap.typeValue,
         title : markerTitle,
         body : markerBody,
+        color: markerColor,
         lat : coords.lat(),
         lng : coords.lng()
     };
@@ -407,7 +413,7 @@ class ChapMap {
    * Sets a click-trigger event to the DOM element with the given id and
    * sets the callback function to the one given
    * @param {String} id the id of the element to be added
-   * @param {} fn the anonymous function to be called on click
+   * @param {*} fn the anonymous function to be called on click
    */
   addClickEvent_(id, fn) {
     let btn = document.getElementById(id);

@@ -26,22 +26,38 @@ body, html {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* INFO WINDOWS */
 
-.contentWrapper {
+#contentWrapper {
   width: 20em;
 }
 
-.leftColumn {
+#contentWrapper.wide {
+  width: 25em;
+}
+
+#leftColumn {
+  float: left;
+}
+
+#middleColumn {
   float: left;
   width: 2em;
   margin-right: 1em;
 }
 
-.rightColumn {
+#middleColumn.wide {
+  margin-top: 1.25em;
+}
+
+#rightColumn {
   float: left;
   width: calc(100% - 4em);
 }
 
-#markerDelete, #markerEdit {
+#rightColumn.wide {
+  width: calc(100% - 9em);
+}
+
+#markerDelete, #markerEdit, #markerColor {
   height: 1.5em;
   width: 2em;
   background-position: center;
@@ -50,6 +66,7 @@ body, html {
   border: 0;
   padding: 0;
   background-color: white;
+  cursor: pointer;
 }
 
 #markerDelete {
@@ -62,11 +79,7 @@ body, html {
   margin: .5em 0 1.5em 0 !important;
 }
 
-#markerDelete:hover, #markerEdit:hover {
-  cursor: pointer;
-}
-
-#markerDelete:focus, #markerEdit:focus {
+#markerDelete:focus, #markerEdit:focus, #markerColor {
   outline: 0;
 }
 
@@ -87,6 +100,30 @@ body, html {
   resize: none;
   height: 6em;
   width: 100%;
+}
+
+#colorPicker {
+  width: 50px;
+  height: 100%;
+  float: left;
+  display: grid;
+  grid-template-columns: 2em 2em;
+  margin-right: .5em;
+  display: grid;
+}
+
+.colorBtn, .colorBtn:focus {
+  height: 1.5em;
+  width: 1.5em;
+  margin: .5em;
+  border-radius: 50%;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.colorBtn.picked {
+  border: 2px solid black;
 }
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* MAP BUTTONS */
