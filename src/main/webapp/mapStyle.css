@@ -1,6 +1,7 @@
 body, html {
   height: 100%;
   margin: 0;
+  font-family: 'Roboto', sans-serif;
 }
 
 #mapOverlay {
@@ -262,10 +263,12 @@ body, html {
   width: calc(100% - 140px);
   margin-right: 30px;
   height: 28px;
+  font-family: 'Roboto', sans-serif;
 }
 
 #addEmail {
   font-size: 1.2em;
+  font-family: 'Roboto', sans-serif;
 }
 
 #email-bank {
@@ -280,6 +283,7 @@ body, html {
 #share {
   font-size: 1.5em;
   cursor: pointer;
+  font-family: 'Roboto', sans-serif;
 }
 
 .emailWrapper {

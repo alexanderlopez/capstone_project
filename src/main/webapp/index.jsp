@@ -16,8 +16,10 @@
 
         <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
         <link rel='stylesheet' type='text/css' href='welcomeStyle.css'>
-        <title>CHAP</title>
 
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+        <title>CHAP</title>
     </head>
     <body>
         <div id="panel">
