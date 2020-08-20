@@ -72,7 +72,7 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Returns the HTML of the right section of the information window
    */
   makeRightColumn_() {
-    let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+    let rightCol = makeEl("div", /* class= */ null, InfoWindowTemplate.RIGHT_COLUMN);
 
     let editedMarker = myMap.editingPermMarker();
     let titleText = editedMarker? editedMarker.getTitle(): null;
@@ -112,7 +112,7 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Builds the color picker for the marker
    */
    makeLeftColumn_() {
-     let leftCol = makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+     let leftCol = makeEl("div", /* class= */ null, InfoWindowTemplate.LEFT_COLUMN);
      let pickerWrapper = ColorPicker.buildPicker(this.myMarker_.getColorName());
      leftCol.appendChild(pickerWrapper);
      return leftCol;

@@ -63,7 +63,7 @@ class InfoWindowTemplate {
    * Returns the html string to be displayed in this info window
    */
   makeContent_() {
-    let contentWrapper = makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
+    let contentWrapper = makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeMiddleColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
@@ -78,8 +78,8 @@ class InfoWindowTemplate {
    * @Private
    * Puts together info window buttons
    */
-  makeLeftColumn_() {
-    let leftCol = makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+  makeMiddleColumn_() {
+    let midCol = makeEl("div", /* class= */ null, InfoWindowTemplate.MIDDLE_COLUMN);
 
     let deleteBtn = makeEl("button", /* class= */ null,
         InfoWindowTemplate.DELETE_ID);
