@@ -38,6 +38,7 @@ class Thread {
     node.classList.add(messageType);
 
     this.messageWrapper_.appendChild(node);
+    this.scrollToBottom();
   }
 
   /**
@@ -71,6 +72,11 @@ class Thread {
     menuWrapper.appendChild(btn);
   }
 
+  /** Scrolls the div to the bottom */
+  scrollToBottom() {
+    this.messageWrapper_.scrollTop = this.messageWrapper_.scrollHeight;
+  }
+
   /** Returns this thread's DOM wrapper */
   getThreadWrapper() {
     return this.threadWrapper_;
@@ -89,5 +95,6 @@ class Thread {
   /** Displays this thread for the user */
   show() {
     this.threadWrapper_.style.display = 'block';
+    this.scrollToBottom();
   }
 }

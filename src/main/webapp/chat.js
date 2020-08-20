@@ -23,6 +23,7 @@ function toggleChat() {
     closeThreadMenu();
   } else {
     openChat_();
+    visibleThread.scrollToBottom();
   }
 }
 
