@@ -18,6 +18,23 @@ import java.io.IOException;
 public class ShareServlet extends HttpServlet {
 
     @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String tokenId = request.getParameter("idToken");
+        long roomId = Long.parseLong(request.getParameter("idRoom"));
+
+        if (!CapstoneAuth.isUserAuthenticated(tokenId) ||
+                !DatastoreManager.getInstance().isUserAllowedChatroom(
+                CapstoneAuth.getUserId(tokenId), roomId)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        response.getWriter().println(DatastoreManager.getInstance().
+            getAllowedUsers(roomId));
+    }
+
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         JSONObject shareUserData =
