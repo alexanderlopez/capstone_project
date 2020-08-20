@@ -20,6 +20,7 @@ let chatOpen = false;
 function toggleChat() {
   if (chatOpen) {
     closeChat_();
+    closeThreadMenu();
   } else {
     openChat_();
   }
@@ -106,19 +107,19 @@ function addChatComment() {
     var chatInput = document.getElementById(CHAT_INPUT);
     var commentContent = chatInput.value;
 
-    if(commentContent.indexOf("\n") !== 0 && commentContent !== "") {
-      var commentObj = {
-        type : "MSG_SEND",
-        message : commentContent
-        // tag : visibleThread.getName()
-      };
-
+    if(commentContent !== "") {
+      sendMessage(commentContent, visibleThread.getName());
       chatInput.value = "";
-
-      if (connection) {
-          connection.send(JSON.stringify(commentObj));
-      }
     }
+}
+
+function sendMessage(content, currThread) {
+  var commentObj = {
+    type : "MSG_SEND",
+    message : content,
+    thread : currThread
+  };
+  connection.send(JSON.stringify(commentObj));
 }
 
 /**
@@ -128,7 +129,7 @@ function addChatComment() {
 function handleChatMessage(obj) {
   let name = obj.name;
   let message = obj.message;
-  // let thread = obj.tag;
+  // let thread = obj.thread;
   let isCurrUser = obj.uid === userId;
 
   addMessage(name, message, "General", isCurrUser);
@@ -154,15 +155,28 @@ function toggleMessageSend(enable) {
 
 const THREAD_MENU = "thread-menu";
 
+var menuOpen = false;
+
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {
-  let menu = document.getElementById(THREAD_MENU);
-  let isOpen = menu.classList.contains("open");
-  if (isOpen) {
-    menu.classList.remove("open");
+  if (menuOpen) {
+    closeThreadMenu(menu);
   } else {
-    menu.classList.add("open");
+    openThreadMenu(menu);
   }
-  toggleMessageSend(/* enable= */ isOpen);
+}
 
+/** Closes the thread menu */
+function closeThreadMenu(menu) {
+  menu.classList.remove("open");
+  hideTempThread();
+  toggleMessageSend(/* enable= */ false);
+  menuOpen = false;
+}
+
+/** Opens the thread menu */
+function openThreadMenu(menu) {
+  menu.classList.add("open");
+  toggleMessageSend(/* enable= */ true);
+  menuOpen = true;
 }

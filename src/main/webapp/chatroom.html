@@ -64,8 +64,15 @@
         <div id="thread-menu">
           <div id="menu-container">
             <button id="close-menu" onclick="toggleThreadMenu()"></button>
+            <button id="new-thread" onlick="showTempThread()"></button>
             <h1>Threads</h1>
-            <div id="menu-items"></div>
+            <div id="menu-items">
+              <div id="thread-form">
+                <textarea id="thread-input" placeholder="..."></textarea>
+                <button id="submit-thread" onclick="submitThread()"></button>
+                <button id="cancel-thread" onclick="hideTempThread()"></button>
+              </div>
+            </div>
           </div>
         </div>
         <div id="chat-wrapper"></div>

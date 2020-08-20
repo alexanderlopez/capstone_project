@@ -183,8 +183,27 @@ body {font-family: 'Roboto', sans-serif;}
   font-size: 1.25em;
 }
 
-.thread-menu-item:hover {
+#submit-thread {
+  background-image: url("icons/save.svg");
+}
 
+#cancel-thread {
+  background-image: url("icons/clear.svg");
+}
+
+#submit-thread, #cancel-thread,
+#submit-thread:focus, #cancel-thread:focus {
+  background-position: center;
+  background-repeat: none;
+  background-size: contain;
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  display: inline;
+}
+
+#thread-input {
+  float: left;
 }
 
 .thread-wrapper {

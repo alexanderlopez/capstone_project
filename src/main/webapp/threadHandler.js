@@ -10,15 +10,20 @@ var menuWrapper;
 /** The Thread that is currently being used by the user */
 var visibleThread;
 
+/** The name of the new thread that was just created by this user */
+var newThread;
+
 /** Name to be given to the first thread of every chatroom */
 const DEFAULT_THREAD_NAME = "General";
 
 /** Content of message used to initalize new threads */
-const DEFAULT_MESSAGE = " created this thread";
+const DEFAULT_MESSAGE = "created this thread";
 
 /** Classes used to build thread-related HTML */
 const MENU_WRAPPER = "menu-items";
 const CHAT_WRAPPER = "chat-wrapper";
+const THREAD_FORM = "thread-form";
+const THREAD_INPUT = "thread-input";
 
 /** Initializes function fields and creates the default and temporary threads */
 function setupThreads() {
@@ -59,6 +64,10 @@ function addThread(threadName) {
   allThreads[threadName] = threadObj;
 
   chatWrapper.appendChild(threadObj.getThreadWrapper());
+
+  if (threadName ===  newThread) {
+    changeThreads(threadObj);
+  }
 }
 
 /**
@@ -70,25 +79,55 @@ function addThread(threadName) {
    thread.show();
    visibleThread = thread;
    toggleThreadMenu();
+   hideTempThread();
  }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE THREAD
 
 /** Displays the temp thread with a textarea and submit button */
-// TODO: function createTempThread() {}
+function showTempThread() {
+  document.getElementById(THREAD_FORM).style.display = 'block';
+}
+
+/** Hides the temp thread with a textarea and submit button */
+function hideTempThread() {
+  let input = document.getElementById(THREAD_FORM);
+  input.style.display = 'none';
+  input.value = "";
+}
 
 /** Returns if the given thread name is a) one word, b) unique for this
  * chatroom, and c) only contains alphanumeric characters
  * @param {String} name the name of the new thread
  */
-// TODO: function isValidThreadName(name) {}
+function isValidThreadName(name) {
+  var regex = /^[a-zA-Z0-9-_]+$/;
+  return regex.test(name);
+}
 
 /**
  * Retrieves the given thread name, checks if it is valid, and sends the
  * information to the server and hides the temp thread
  */
-// TODO: function submitThread() {}
+function submitThread() {
+  let input = document.getElementById(THREAD_FORM);
+  let threadName = input.value;
+  if (isValidThreadName(threadName)) {
+    newThread = threadName;
+    sendDefaultMessage(threadName);
+    input.value = "";
+    hideTempThread();
+  } else  {
+    alert(`Thread name must be one word containing only alphanumeric characters
+           and dashes. Try again.`);
+  }
+}
 
-/** Sends a default message from the current user in a new thread */
-// TODO: function sendDefaultMessage() {}
+/**
+ * Sends a default message from the current user in a new thread
+ * @param {String} the name of the new thread
+ */
+function sendDefaultMessage(threadName) {
+  sendMessage(DEFAULT_MESSAGE, threadName);
+}
