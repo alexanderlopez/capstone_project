@@ -21,6 +21,7 @@ class Thread {
   constructor(name) {
     this.name_ = name;
     this.createWrapper_();
+    this.createMenuItem_();
   }
 
   /**
@@ -57,12 +58,17 @@ class Thread {
     wrapper.appendChild(messages);
   }
 
-  /** Returns the menu item for this thread */
-  createMenuItem() {
+  /**
+   * @Private
+   * Builds the menu item for this thread
+   */
+  createMenuItem_() {
     let btn = makeEl("btn", Thread.MENU_ITEM);
     btn.innerHTML = this.name_;
     btn.addEventListener('click', () => changeThreads(this));
-    return btn;
+
+    // menu wrapper initialized in threadHandler
+    menuWrapper.appendChild(btn);
   }
 
   /** Returns this thread's DOM wrapper */

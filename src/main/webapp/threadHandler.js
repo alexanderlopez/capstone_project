@@ -32,8 +32,6 @@ function doneLoading() {
   let defaultThread = allThreads[DEFAULT_THREAD_NAME];
   defaultThread.show();
   visibleThread = defaultThread;
-
-  buildMenu();
 }
 
 /**
@@ -72,14 +70,6 @@ function addThread(threadName) {
    thread.show();
    visibleThread = thread;
    toggleThreadMenu();
- }
-
- /** Adds all the thread menu items to the DOM */
- function buildMenu() {
-   let threads = Object.values(allThreads);
-   for (const thread of threads) {
-     menuWrapper.appendChild(thread.createMenuItem());
-   }
  }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -15,7 +15,7 @@ body {font-family: 'Roboto', sans-serif;}
 .form-container {
   width: 100%;
   min-width: 360px;
-  padding: 4%;
+  padding: 1em;
   background-color: white;
   height: 100%;
   position: relative;
@@ -116,6 +116,8 @@ body {font-family: 'Roboto', sans-serif;}
 #menu-btn:focus, #close-menu:focus {
   height: 2em;
   width: 2em;
+  top: 2em;
+  right: 2em;
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
@@ -132,6 +134,7 @@ body {font-family: 'Roboto', sans-serif;}
 
 #close-menu {
   background-image: url("icons/close.svg");
+  z-index: 2;
 }
 
 #thread-menu {
@@ -147,32 +150,41 @@ body {font-family: 'Roboto', sans-serif;}
 }
 
 #thread-menu.open {
-  width: 100%;
+  width: 60%;
 }
 
 #menu-container {
-  padding: 4%;
+  padding: 1em;
   position: relative;
   height: 100%;
-  width: 400px;
+  width: 240px;
 }
 
 #menu-container h1 {
   text-align: center;
   position: absolute;
   width: 100%;
+  left: 0;
 }
 
 #menu-items {
   position: absolute;
   top: 7em;
-  left: 3em;
+  left: 2em;
   padding: 0 2em 0 2em;
+  width: calc(100% - 7em);
+  overflow-y: scroll;
 }
 
 .thread-menu-item {
   cursor: pointer;
   margin-bottom: 1em;
+  display: block;
+  font-size: 1.25em;
+}
+
+.thread-menu-item:hover {
+
 }
 
 .thread-wrapper {
