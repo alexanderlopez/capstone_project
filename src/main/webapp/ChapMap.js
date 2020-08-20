@@ -59,7 +59,6 @@ class ChapMap {
 
   }
 
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
 
@@ -199,23 +198,6 @@ class ChapMap {
    */
   panTo(coords) {
     this.googleMap_.panTo(coords);
-  }
-
-  /**
-   * Returns a DOM element of the given type with a certain id and class
-   * @param {String} type the type of DOM element to be created
-   * @param {?String} elClass the classname to be given to the element
-   * @param {?String} elId the id the element should be given
-   */
-  makeEl(type, elClass, elId) {
-    let el = document.createElement(type);
-    if (elId) {
-      el.id = elId;
-    }
-    if (elClass) {
-      el.classList.add(elClass);
-    }
-    return el;
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -457,7 +439,7 @@ class ChapMap {
    * to the email bank
    */
   createEmailDiv_(email) {
-    let emailWrapper = this.makeEl("div", "emailWrapper");
+    let emailWrapper = makeEl("div", "emailWrapper");
     emailWrapper.setAttribute("data-email", email);
 
     let emailText = document.createElement("p");
