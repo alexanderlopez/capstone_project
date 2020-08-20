@@ -71,7 +71,7 @@ function removeClass_(id, className) {
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
-  Thread.setupThreads();
+  setupThreads();
   firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
       .then(idToken => getChatHistory_(idToken))
       .catch(error => {
@@ -92,7 +92,7 @@ function getChatHistory_(idToken) {
             let comment = comments[index];
             handleChatMessage(comment);
           }
-          Thread.doneLoading();
+          doneLoading();
         });
 }
 
@@ -110,7 +110,7 @@ function addChatComment() {
       var commentObj = {
         type : "MSG_SEND",
         message : commentContent
-        // tag : Thread.getCurrThreadName()
+        // tag : visibleThread.getName()
       };
 
       chatInput.value = "";
@@ -131,7 +131,7 @@ function handleChatMessage(obj) {
   // let thread = obj.tag;
   let isCurrUser = obj.uid === userId;
 
-  Thread.addMessage(name, message, "General", isCurrUser);
+  addMessage(name, message, "General", isCurrUser);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
