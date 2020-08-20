@@ -1,4 +1,3 @@
-
 /** contains all Thread objects mapped as name: Thread*/
 var allThreads = {};
 
@@ -69,20 +68,15 @@ function addThread(threadName) {
 }
 
 /**
- * @Private
  * Builds the menu item for the given thread wrapper
  * @param {Thread} thread the Thread associated with this menu item
  */
 function createThreadMenuItem(thread) {}
 
-/**
- * @Private
- * Makes the DOM element that allows users to create new elements
- */
+/** Makes the DOM element that allows users to create new elements */
 function makeTempThread() {}
 
 /**
- * @Private
  * Hides the current thread and displays the given thread
  * @param {Thread} thread the thread to make visible
  */
@@ -106,10 +100,7 @@ function isValidThreadName(name) {}
  */
 function submitThread() {}
 
-/**
- * @Private
- * Sends a default message from the current user in a new thread
- */
+/** Sends a default message from the current user in a new thread */
 function sendDefaultMessage() {}
 
 /** Hides the temporary thread */
