@@ -159,3 +159,7 @@ body {font-family: 'Roboto', sans-serif;}
   height: 2em;
   background-color: red;
 }
+
+.thread-wrapper {
+  display: none;
+}

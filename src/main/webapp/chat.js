@@ -71,7 +71,7 @@ function removeClass_(id, className) {
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
-  // setChatDiv();
+  Thread.setupThreads();
   firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
       .then(idToken => getChatHistory_(idToken))
       .catch(error => {
@@ -92,7 +92,7 @@ function getChatHistory_(idToken) {
             let comment = comments[index];
             handleChatMessage(comment);
           }
-          //Thread.doneLoading();
+          Thread.doneLoading();
         });
 }
 
@@ -127,14 +127,17 @@ function addChatComment() {
 function handleChatMessage(obj) {
   let name = obj.name;
   let message = obj.message;
-  let thread = obj.tag;
+  // let thread = obj.tag;
   let isCurrUser = obj.uid === userId;
 
-  Thread.addMessage(name, message, thread, isCurrUser);
+  Thread.addMessage(name, message, "General", isCurrUser);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CHAT THREADS
+
+const THREAD_MENU = "thread-menu";
+const CHAT_WRAPPER = "chat-wrapper";
 
 /** Prevents the user from sending messages */
 function disableMessageSend() {}
@@ -144,13 +147,3 @@ function enableMessageSend() {}
 
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {}
-
-/**
- * @Private
- * Builds the menu item for the given thread wrapper
- * @param {Thread} thread the Thread associated with this menu item
- */
-function createThreadMenuItem(thread) {}
-
-/** Gives Thread the DOM element that should contain the chat messages */
-function setChatDiv() {}
