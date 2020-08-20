@@ -58,7 +58,7 @@ class Thread {
   }
 
   /** Builds the menu item for this thread */
-  createThreadMenuItem() {}
+  // TODO: createThreadMenuItem() {}
 
   /** Returns this thread's DOM wrapper */
   getThreadWrapper() {

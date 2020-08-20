@@ -25,7 +25,7 @@ function setupThreads() {
   chatWrapper = document.getElementById(CHAT_WRAPPER);
   threadMenu = document.getElementById(THREAD_MENU);
   addThread(DEFAULT_THREAD_NAME);
-  makeTempThread();
+  // makeTempThread();
 }
 
 /** Displays the default thread */
@@ -63,34 +63,34 @@ function addThread(threadName) {
 }
 
 /** Makes the DOM element that allows users to create new elements */
-function makeTempThread() {}
+// TODO: function makeTempThread() {}
 
 /**
  * Hides the current thread and displays the given thread
  * @param {Thread} thread the thread to make visible
  */
-function changeThreads(thread) {}
+// TODO: function changeThreads(thread) {}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE THREAD
 
 /** Displays the temp thread with a textarea and submit button */
-function createTempThread() {}
+// TODO: function createTempThread() {}
 
 /** Returns if the given thread name is a) one word, b) unique for this
  * chatroom, and c) only contains alphanumeric characters
  * @param {String} name the name of the new thread
  */
-function isValidThreadName(name) {}
+// TODO: function isValidThreadName(name) {}
 
 /**
  * Retrieves the given thread name, checks if it is valid, and sends the
-* information to the server and hides the temp thread
+ * information to the server and hides the temp thread
  */
-function submitThread() {}
+// TODO: function submitThread() {}
 
 /** Sends a default message from the current user in a new thread */
-function sendDefaultMessage() {}
+// TODO: function sendDefaultMessage() {}
 
 /** Hides the temporary thread */
-function hideTempThread() {}
+// TODO: function hideTempThread() {}
