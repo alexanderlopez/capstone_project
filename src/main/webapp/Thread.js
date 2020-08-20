@@ -20,7 +20,7 @@ class Thread {
 
   constructor(name) {
     this.name_ = name;
-    this.createDiv_();
+    this.createWrapper_();
   }
 
   /**
@@ -43,7 +43,7 @@ class Thread {
    * @Private
    * Creates a new wrapper for this thread and adds the title
    */
-  createDiv_() {
+  createWrapper_() {
     let wrapper = makeEl("div", Thread.THREAD_WRAPPER);
     this.threadWrapper_ = wrapper;
 
