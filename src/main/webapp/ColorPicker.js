@@ -86,7 +86,7 @@ class ColorPicker {
     * @param {String} prevSelectedColor color that should already be selected
     */
    static buildPicker(prevSelectedColor) {
-     let pickerWrapper = myMap.makeEl("div", /* class= */ null,
+     let pickerWrapper = makeEl("div", /* class= */ null,
           ColorPicker.COLOR_PICKER);
 
      let colorNames = Object.keys(ColorPicker.colors_);
@@ -110,7 +110,7 @@ class ColorPicker {
     */
    static makeColorBtn_(colorName, prevSelectedColor) {
      let colorCode = ColorPicker.colors_[colorName];
-     let colorBtn = myMap.makeEl("button", ColorPicker.COLOR_BTN,
+     let colorBtn = makeEl("button", ColorPicker.COLOR_BTN,
           colorName);
 
      colorBtn.style.backgroundColor = colorCode;

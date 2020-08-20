@@ -72,8 +72,7 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Returns the HTML of the right section of the information window
    */
   makeRightColumn_() {
-    let rightCol = myMap.makeEl("div", /* class= */ null,
-          InfoWindowTemplate.RIGHT_COLUMN);
+    let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
 
     let editedMarker = myMap.editingPermMarker();
     let titleText = editedMarker? editedMarker.getTitle(): null;
@@ -87,7 +86,7 @@ class TempInfoWindow extends InfoWindowTemplate {
         TempInfoWindow.DEFAULT_BODY, bodyText);
     rightCol.appendChild(bodyInput);
 
-    let submitBtn = myMap.makeEl("button", /* class= */ null,
+    let submitBtn = makeEl("button", /* class= */ null,
         TempInfoWindow.SUBMIT_BTN);
     submitBtn.innerHTML = "Enter";
     rightCol.appendChild(submitBtn);
@@ -102,7 +101,7 @@ class TempInfoWindow extends InfoWindowTemplate {
    * @param {String} elInnerHTML the innerHTML text of the textarea
    */
   makeForm_(elId, elPlaceholder, elInnerHTML) {
-    let el = myMap.makeEl("textarea", /* class= */ null, elId);
+    let el = makeEl("textarea", /* class= */ null, elId);
     el.placeholder = elPlaceholder;
     el.innerHTML = elInnerHTML? elInnerHTML: "";
     return el;
@@ -113,7 +112,7 @@ class TempInfoWindow extends InfoWindowTemplate {
    * Builds the color picker for the marker
    */
    makeLeftColumn_() {
-     let leftCol = myMap.makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+     let leftCol = makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
      let pickerWrapper = ColorPicker.buildPicker(this.myMarker_.getColorName());
      leftCol.appendChild(pickerWrapper);
      return leftCol;

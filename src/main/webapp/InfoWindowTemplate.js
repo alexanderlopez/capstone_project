@@ -63,7 +63,7 @@ class InfoWindowTemplate {
    * Returns the html string to be displayed in this info window
    */
   makeContent_() {
-    let contentWrapper = myMap.makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
+    let contentWrapper = makeEl("div", InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
     contentWrapper.appendChild(this.makeMiddleColumn_());
     contentWrapper.appendChild(this.makeRightColumn_());
@@ -78,14 +78,13 @@ class InfoWindowTemplate {
    * @Private
    * Puts together info window buttons
    */
-  makeMiddleColumn_() {
-    let midCol = myMap.makeEl("div", /* class= */null,
-        InfoWindowTemplate.MIDDLE_COLUMN);
+  makeLeftColumn_() {
+    let leftCol = makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
 
-    let deleteBtn = myMap.makeEl("button", /* class= */ null,
+    let deleteBtn = makeEl("button", /* class= */ null,
         InfoWindowTemplate.DELETE_ID);
 
-    let editBtn = myMap.makeEl("button", /* class= */ null,
+    let editBtn = makeEl("button", /* class= */ null,
         InfoWindowTemplate.EDIT_ID);
 
     midCol.appendChild(deleteBtn);
