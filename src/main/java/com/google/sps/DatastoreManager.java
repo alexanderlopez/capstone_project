@@ -265,6 +265,37 @@ public class DatastoreManager {
         return chatRoomKey.getId();
     }
 
+    public void deleteChatRoom(long roomId) {
+        //Delete room entity
+        datastore.delete(roomFactory.newKey(roomId));
+
+        //Delete chat and marker entities
+        Query<Key> markerChatQuery =
+            Query.newKeyQueryBuilder()
+                 .setFilter(PropertyFilter.hasAncestor(
+                    roomFactory.newKey(roomId)))
+                 .build();
+
+        QueryResults<Key> markerChatResults = datastore.run(markerChatQuery);
+
+        while (markerChatResults.hasNext()) {
+            datastore.delete(markerChatResults.next());
+        }
+
+        //Delete childroom entities
+        Query<Key> childRoomQuery =
+            Query.newKeyQueryBuilder()
+                 .setKind(KIND_CHATROOM)
+                 .setFilter(PropertyFilter.eq(CHILD_ROOM_ATTRIBUTE_ID, roomId))
+                 .build();
+
+        QueryResults<Key> childRoomResults = datastore.run(childRoomQuery);
+
+        while (childRoomResults.hasNext()) {
+            datastore.delete(childRoomResults.next());
+        }
+    }
+
     public void addUserToChatRoom(long roomId, String email) {
         Entity roomEntity = datastore.get(roomFactory.newKey(roomId));
 
@@ -297,6 +328,27 @@ public class DatastoreManager {
                                          .build();
 
             datastore.put(childChatRoom);
+        }
+    }
+
+    public void removeUserFromChatRoom(long roomId, String email) {
+        Query<Key> userQuery =
+            Query.newKeyQueryBuilder()
+                 .setKind(KIND_USERS)
+                 .setFilter(PropertyFilter.eq(USER_ATTRIBUTE_EMAIL, email))
+                 .build();
+
+        QueryResults<Key> userResult = datastore.run(userQuery);
+
+        while (userResult.hasNext()) {
+            Key userKey = userResult.next();
+            Key childRoomKey = datastore.newKeyFactory()
+                                        .setKind(KIND_CHATROOM)
+                                        .addAncestor(PathElement.of(KIND_USERS,
+                                            userKey.getName()))
+                                        .newKey(roomId);
+
+            datastore.delete(childRoomKey);
         }
     }
 
