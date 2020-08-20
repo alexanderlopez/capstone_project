@@ -129,10 +129,10 @@ function sendMessage(content, currThread) {
 function handleChatMessage(obj) {
   let name = obj.name;
   let message = obj.message;
-  // let thread = obj.thread;
+  let thread = obj.thread;
   let isCurrUser = obj.uid === userId;
 
-  addMessage(name, message, "General", isCurrUser);
+  addMessage(name, message, thread, isCurrUser);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,23 +160,25 @@ var menuOpen = false;
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {
   if (menuOpen) {
-    closeThreadMenu(menu);
+    closeThreadMenu();
   } else {
-    openThreadMenu(menu);
+    openThreadMenu();
   }
 }
 
 /** Closes the thread menu */
-function closeThreadMenu(menu) {
+function closeThreadMenu() {
+  let menu = document.getElementById(THREAD_MENU);
   menu.classList.remove("open");
   hideTempThread();
-  toggleMessageSend(/* enable= */ false);
+  toggleMessageSend(/* enable= */ true);
   menuOpen = false;
 }
 
 /** Opens the thread menu */
-function openThreadMenu(menu) {
+function openThreadMenu() {
+  let menu = document.getElementById(THREAD_MENU);
   menu.classList.add("open");
-  toggleMessageSend(/* enable= */ true);
+  toggleMessageSend(/* enable= */ false);
   menuOpen = true;
 }

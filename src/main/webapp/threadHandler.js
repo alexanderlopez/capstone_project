@@ -92,8 +92,9 @@ function showTempThread() {
 
 /** Hides the temp thread with a textarea and submit button */
 function hideTempThread() {
-  let input = document.getElementById(THREAD_FORM);
-  input.style.display = 'none';
+  let form = document.getElementById(THREAD_FORM);
+  let input = document.getElementById(THREAD_INPUT);
+  form.style.display = 'none';
   input.value = "";
 }
 
@@ -111,16 +112,15 @@ function isValidThreadName(name) {
  * information to the server and hides the temp thread
  */
 function submitThread() {
-  let input = document.getElementById(THREAD_FORM);
-  let threadName = input.value;
+  let input = document.getElementById(THREAD_INPUT);
+  let threadName = input.value.trim();
   if (isValidThreadName(threadName)) {
     newThread = threadName;
     sendDefaultMessage(threadName);
     input.value = "";
     hideTempThread();
   } else  {
-    alert(`Thread name must be one word containing only alphanumeric characters
-           and dashes. Try again.`);
+    alert("Thread name must be one word containing only alphanumeric characters and dashes. Try again.");
   }
 }
 
