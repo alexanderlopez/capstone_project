@@ -137,9 +137,6 @@ function handleChatMessage(obj) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CHAT THREADS
 
-const THREAD_MENU = "thread-menu";
-const CHAT_WRAPPER = "chat-wrapper";
-
 /**
  * Changes whether a user can or cannot send messages in the chat
  * @param {Boolean} disable if message sending should be disabled

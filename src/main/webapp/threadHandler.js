@@ -17,12 +17,8 @@ const DEFAULT_THREAD_NAME = "General";
 const DEFAULT_MESSAGE = " created this thread";
 
 /** Classes used to build thread-related HTML */
-const MESSAGE = "message";
-const MY_MESSAGE = "myMessage";
-const OTHER_MESSAGE = "OtherMessage";
-const THREAD_WRAPPER = "thread-wrapper";
-const THREAD_NAME = "thread-name";
-const THREAD_MENU_ITEM = "thread-menu-item";
+const THREAD_MENU = "thread-menu";
+const CHAT_WRAPPER = "chat-wrapper";
 
 /** Initializes function fields and creates the default and temporary threads */
 function setupThreads() {
@@ -47,31 +43,24 @@ function doneLoading() {
  * @param {Boolean} isCurrUser if the author is the current user
  */
 function addMessage(username, message, threadName, isCurrUser) {
-  let threadObj = allThreads[threadName];
-
-  if (!threadObj) {
-    threadObj = addThread(threadName);
+  if (!(threadName in allThreads)) {
+    addThread(threadName);
   }
 
+  let threadObj = allThreads[threadName];
   threadObj.showMessage(username, message, isCurrUser);
 }
 
 /**
- * Returns a new Thread object and creates the menu item for it
+ * Creates and stores a new Thread object
  * @param {String} threadName the name of the thread
  */
 function addThread(threadName) {
   let threadObj = new Thread(threadName);
   allThreads[threadName] = threadObj;
-  createThreadMenuItem(threadObj);
-  return threadObj;
-}
 
-/**
- * Builds the menu item for the given thread wrapper
- * @param {Thread} thread the Thread associated with this menu item
- */
-function createThreadMenuItem(thread) {}
+  chatWrapper.appendChild(threadObj.getThreadWrapper());
+}
 
 /** Makes the DOM element that allows users to create new elements */
 function makeTempThread() {}
