@@ -138,6 +138,8 @@ public class DatastoreManager {
                         messageData.getString(ChatWebSocket.JSON_USER_ID))
                   .set(ChatWebSocket.JSON_MESSAGE,
                         messageData.getString(ChatWebSocket.JSON_MESSAGE))
+                  .set(ChatWebSocket.JSON_THREAD,
+                        messageData.getString(ChatWebSocket.JSON_THREAD))
                   .set(ChatWebSocket.JSON_TIMESTAMP,
                         TimestampValue.of(Timestamp.now()))
                   .build();
@@ -210,6 +212,9 @@ public class DatastoreManager {
                          .put(ChatWebSocket.JSON_USER_ID,
                                 messageEntity.getString(
                                     ChatWebSocket.JSON_USER_ID))
+                         .put(ChatWebSocket.JSON_THREAD,
+                                messageEntity.getString(
+                                ChatWebSocket.JSON_THREAD))
                          .put(ChatWebSocket.JSON_MESSAGE,
                            messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 
