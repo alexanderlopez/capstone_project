@@ -152,6 +152,8 @@ function toggleMessageSend(enable) {
   });
 }
 
+const THREAD_MENU = "thread-menu";
+
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {
   let menu = document.getElementById(THREAD_MENU);

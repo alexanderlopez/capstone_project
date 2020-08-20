@@ -5,7 +5,7 @@ var allThreads = {};
 var chatWrapper;
 
 /** the DOM element where the thread menu will be */
-var threadMenu;
+var menuWrapper;
 
 /** The Thread that is currently being used by the user */
 var visibleThread;
@@ -17,15 +17,14 @@ const DEFAULT_THREAD_NAME = "General";
 const DEFAULT_MESSAGE = " created this thread";
 
 /** Classes used to build thread-related HTML */
-const THREAD_MENU = "thread-menu";
+const MENU_WRAPPER = "menu-items";
 const CHAT_WRAPPER = "chat-wrapper";
 
 /** Initializes function fields and creates the default and temporary threads */
 function setupThreads() {
   chatWrapper = document.getElementById(CHAT_WRAPPER);
-  threadMenu = document.getElementById(THREAD_MENU);
+  menuWrapper = document.getElementById(MENU_WRAPPER);
   addThread(DEFAULT_THREAD_NAME);
-  // makeTempThread();
 }
 
 /** Displays the default thread */
@@ -33,6 +32,8 @@ function doneLoading() {
   let defaultThread = allThreads[DEFAULT_THREAD_NAME];
   defaultThread.show();
   visibleThread = defaultThread;
+
+  buildMenu();
 }
 
 /**
@@ -62,14 +63,24 @@ function addThread(threadName) {
   chatWrapper.appendChild(threadObj.getThreadWrapper());
 }
 
-/** Makes the DOM element that allows users to create new elements */
-// TODO: function makeTempThread() {}
-
 /**
  * Hides the current thread and displays the given thread
  * @param {Thread} thread the thread to make visible
  */
-// TODO: function changeThreads(thread) {}
+ function changeThreads(thread) {
+   visibleThread.hide();
+   thread.show();
+   visibleThread = thread;
+   toggleThreadMenu();
+ }
+
+ /** Adds all the thread menu items to the DOM */
+ function buildMenu() {
+   let threads = Object.values(allThreads);
+   for (const thread of threads) {
+     menuWrapper.appendChild(thread.createMenuItem());
+   }
+ }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE THREAD
@@ -91,6 +102,3 @@ function addThread(threadName) {
 
 /** Sends a default message from the current user in a new thread */
 // TODO: function sendDefaultMessage() {}
-
-/** Hides the temporary thread */
-// TODO: function hideTempThread() {}

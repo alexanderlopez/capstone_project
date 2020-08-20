@@ -7,7 +7,7 @@ class Thread {
   static THREAD_WRAPPER = "thread-wrapper";
   static THREAD_NAME = "thread-name";
   static THREAD_MESSAGES = "thread-messages";
-  static THREAD_MENU_ITEM = "thread-menu-item";
+  static MENU_ITEM = "thread-menu-item";
 
   /** The name of this thread */
   name_;
@@ -57,8 +57,13 @@ class Thread {
     wrapper.appendChild(messages);
   }
 
-  /** Builds the menu item for this thread */
-  // TODO: createThreadMenuItem() {}
+  /** Returns the menu item for this thread */
+  createMenuItem() {
+    let btn = makeEl("btn", Thread.MENU_ITEM);
+    btn.innerHTML = this.name_;
+    btn.addEventListener('click', () => changeThreads(this));
+    return btn;
+  }
 
   /** Returns this thread's DOM wrapper */
   getThreadWrapper() {
