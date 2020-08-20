@@ -36,6 +36,7 @@ public class ChatWebSocket {
     public static final String JSON_BODY = "body";
     public static final String JSON_LATITUDE = "lat";
     public static final String JSON_LONGITUDE = "lng";
+    public static final String JSON_COLOR = "color";
     public static final String JSON_TYPE = "type";
     public static final String JSON_USER_ID = "uid";
     public static final String JSON_USER_NAME = "name";
@@ -168,7 +169,7 @@ public class ChatWebSocket {
             throws IOException {
         JSONObject echoData = new JSONObject(
             messageData, new String[]{JSON_TITLE, JSON_BODY, JSON_LATITUDE,
-                    JSON_LONGITUDE});
+                    JSON_LONGITUDE, JSON_COLOR});
 
         if (messageData.has(JSON_ID)) {
             echoData.put(JSON_ID, messageData.getLong(JSON_ID));

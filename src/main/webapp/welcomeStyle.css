@@ -11,11 +11,8 @@ body {
   margin: 8vh 10vw 5vh 10vw;
   height: 90%;
   cursor: default;
-}
-
-#pageContent {
-  display: flex;
-  height: calc(90% - 24em);
+  font-size: 3vh;
+  font-family: 'Roboto', sans-serif;
 }
 
 #loading {
@@ -29,18 +26,26 @@ body {
 /* Header */
 #header {
   margin-bottom: 5%;
+  font-size: calc(5vw + 5vh);
+}
+
+#header.logged-in {
+  width: calc(78vw - 350px - 4%);
+  float: left;
+  font-size: calc(5vw + 5vh);
 }
 
 #header h1 {
   text-align: center;
   width: 100%;
-  font-size: 15em;
+  font-size: inherit;
   margin: 0;
+  font-family: 'Roboto Slab', serif;
 }
 
 #welcome-message {
   text-align: center;
-  font-size: 3em;
+  font-size: .2em;
   margin: 0;
   display: none;
 }
@@ -48,19 +53,48 @@ body {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* Forms */
 
-#username-form {
+#middle-panel {
+  display: none;
+  margin: 0 5% 0 5%;
+  width: 30%;
+  height: auto;
+  overflow: scroll;
+}
+
+#save-details, #submit-map {
+  background-image: url("icons/save.svg");
   display: none;
 }
 
-#new-map-form {
+#username-form {
   display: none;
+  resize: none;
+  overflow: scroll;
+  font-size: 1em;
+  width: calc(100% - 4px);
+  height: 1em;
+  border-radius: 2px;
+}
+
+#new-map-form {
+  width: 80%;
+  height: 1.5em;
+  margin: 0;
+  resize: none;
+  overflow: scroll;
+  font-size: 1vw;
+}
+
+#map-form-wrapper {
+  display: none;
+  border-width: 2px;
+  height: 2em;
 }
 
 .form {
   display: block;
-  margin: 0 5% 0 5%;
-  width: 30%;
-  height: auto
+  width: 100%;
+  height: 100%;
 }
 
 .form textarea {
@@ -69,14 +103,14 @@ body {
   margin-bottom: 30px;
   padding: 5px;
   resize: none;
-  font-size: 1.5em;
+  font-size: 1em;
   height: 1.5em;
   border-radius: 2px;
 }
 
 .form input {
-  font-size: 2em;
-  width: 90%;
+  font-size: 1em;
+  width: 40%;
   margin-left: 5%;
   margin-right: 5%;
   border-radius: 8px;
@@ -87,10 +121,19 @@ body {
   outline: 0;
   overflow-x: scroll;
   cursor: pointer;
+  float: left;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Details */
+
+#profile-btn {
+  background-image: url("icons/profile.svg");
+}
+
+#edit-details {
+  background-image: url("icons/edit.svg");
+}
 
 #user-details {
   overflow-y: scroll;
@@ -98,20 +141,28 @@ body {
 }
 
 .detailsGroup {
-  margin-bottom: 40px;
+  margin-bottom: 5vh;
 }
 
 .detailsGroup .groupLabel {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+  margin: 10px 0 10px 0;
 }
 
 .detailsGroup .groupContent {
-  font-size: 1.2em;
+  margin: 0;
+  overflow-wrap: break-word;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
+
+#maps-btn {
+  background-image: url("icons/map.svg");
+}
+
+#add-map {
+  background-image: url("icons/add.svg");
+}
 
 #maps-wrapper {
   display: none;
@@ -119,18 +170,18 @@ body {
 
 #user-maps {
   margin-top: 30px;
-  height: calc(100% - 5em - 30px);
+  height: calc(100% - 50px - 3vw);
   overflow-y: scroll;
 }
 
 .roomBtn, .roomBtn:focus {
   display: block;
-  width: 100%;
-  margin-bottom: 10px;
+  width: calc(100% - 30px);
+  margin: 15px;
   overflow: auto;
   white-space: normal;
   padding: 10px;
-  font-size: 2em;
+  font-size: 1em;
   outline: 0;
   border-radius: 5px;
   border-style: outset;
@@ -162,23 +213,73 @@ body {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* General */
 
-.panel {
+#panel {
   border-radius: 10px;
   padding: 2%;
   background-color: #e4e7ebb3;
+  min-width: 8em;
   width: 25%;
-  border-style: double;
+  max-width: 350px;
   border-color: gray;
+  float: left;
+  height: 80vh;
+  display: none;
+  font-size: calc(25px + .5vw);
+}
+
+#nav {
+  height: 6vh;
+  margin: 1vh;
+}
+
+.nav-btn, .nav-btn:focus {
+  height: 4vh;
+  width: 7vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  float: left;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.panel-content {
+  position: relative;
+  height: calc(100% - 2em);
 }
 
 .panel-header {
-  text-align: center;
-  font-size: 2.5em;
   margin: 0;
   display: block;
   margin-inline-start: 0;
   margin-inline-end: 0;
   font-weight: bold;
   margin-bottom: 20px;
-  padding: 0 20px 0 20px;
+  width: calc(100% - 4vw);
+}
+
+.panel-icon, .panel-icon:focus {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: calc(25px + 1vw);
+  width: calc(25px + 1vw);
+  margin: .5vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  padding: 0;
+}
+
+.nav-btn.show {
+  border: 1px solid black;
+  border-bottom: 0;
+  border-radius: 5px 5px 0 0;
 }

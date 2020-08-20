@@ -45,18 +45,23 @@ class PermInfoWindow extends InfoWindowTemplate {
      * Puts together the title and body of the info window
      */
     makeRightColumn_() {
-      let rightCol = myMap.makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+      let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
 
-      let title = myMap.makeEl("h1", PermInfoWindow.TITLE_CLASS);
+      let title = makeEl("h1", PermInfoWindow.TITLE_CLASS);
       let currTitle = this.myMarker_.getTitle();
       title.innerHTML = currTitle? currTitle: "";
       rightCol.appendChild(title);
 
-      let body  = myMap.makeEl("p", PermInfoWindow.BODY_CLASS);
+      let body  = makeEl("p", PermInfoWindow.BODY_CLASS);
       let currBody = this.myMarker_.getBody();
       body.innerHTML = currBody? currBody: "";
       rightCol.appendChild(body);
 
       return rightCol;
+    }
+
+    /** No left column visible for perm info windows */
+    makeLeftColumn_() {
+      return makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
     }
 }
