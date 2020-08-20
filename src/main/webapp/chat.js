@@ -96,23 +96,24 @@ function getChatHistory_(idToken) {
         });
 }
 
+const CHAT_INPUT = "comment-container";
+const CHAT_SEND = "submitBtn";
 
 /**
  * Sends nonempty chat comment from text area to server
-*/
+ */
 function addChatComment() {
-    var commentContent = document.getElementById('comment-container').value;
+    var chatInput = document.getElementById(CHAT_INPUT);
+    var commentContent = chatInput.value;
 
-    if(commentContent.indexOf("\n")==0 || commentContent===""){
-      document.getElementById('comment-container').value = "";
-    } else {
+    if(commentContent.indexOf("\n") !== 0 && commentContent !== "") {
       var commentObj = {
         type : "MSG_SEND",
         message : commentContent
         // tag : Thread.getCurrThreadName()
       };
 
-      document.getElementById('comment-container').value = "";
+      chatInput.value = "";
 
       if (connection) {
           connection.send(JSON.stringify(commentObj));
@@ -139,11 +140,26 @@ function handleChatMessage(obj) {
 const THREAD_MENU = "thread-menu";
 const CHAT_WRAPPER = "chat-wrapper";
 
-/** Prevents the user from sending messages */
-function disableMessageSend() {}
-
-/** Allows the user to send messages */
-function enableMessageSend() {}
+/**
+ * Changes whether a user can or cannot send messages in the chat
+ * @param {Boolean} disable if message sending should be disabled
+ */
+function toggleMessageSend(disable) {
+  [CHAT_INPUT, CHAT_SEND].forEach((id) => {
+      let el = document.getElementById(id);
+      if (disable) {
+        el.setAttribute("disabled", "");
+      } else {
+        el.removeAttribute("disabled");
+      }
+  });
+}
 
 /** Shows or hides the chat thread menu accordingly */
-function toggleThreadMenu() {}
+function toggleThreadMenu() {
+  let menu = document.getElementById(THREAD_MENU);
+  let isHidden = window.getComputedStyle(menu).display == 'none';
+  menu.style.display = isHidden? 'block': 'none';
+  toggleMessageSend(/* disable= */ isHidden);
+
+}
