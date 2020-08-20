@@ -139,15 +139,15 @@ function handleChatMessage(obj) {
 
 /**
  * Changes whether a user can or cannot send messages in the chat
- * @param {Boolean} disable if message sending should be disabled
+ * @param {Boolean} enable if message sending should be enabled
  */
-function toggleMessageSend(disable) {
+function toggleMessageSend(enable) {
   [CHAT_INPUT, CHAT_SEND].forEach((id) => {
       let el = document.getElementById(id);
-      if (disable) {
-        el.setAttribute("disabled", "");
-      } else {
+      if (enable) {
         el.removeAttribute("disabled");
+      } else {
+        el.setAttribute("disabled", "");
       }
   });
 }
@@ -155,8 +155,12 @@ function toggleMessageSend(disable) {
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {
   let menu = document.getElementById(THREAD_MENU);
-  let isHidden = window.getComputedStyle(menu).display == 'none';
-  menu.style.display = isHidden? 'block': 'none';
-  toggleMessageSend(/* disable= */ isHidden);
+  let isOpen = menu.classList.contains("open");
+  if (isOpen) {
+    menu.classList.remove("open");
+  } else {
+    menu.classList.add("open");
+  }
+  toggleMessageSend(/* enable= */ isOpen);
 
 }

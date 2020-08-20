@@ -112,29 +112,47 @@ body {font-family: 'Roboto', sans-serif;}
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* Thread menu */
 
-#menu-btn, #menu-btn:focus {
+#menu-btn, #close-menu,
+#menu-btn:focus, #close-menu:focus {
   height: 2em;
   width: 2em;
-  background-image: url("icons/more.svg");
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  background-color: white;
+  background-color: transparent;
   border: 0;
   outline: 0;
   cursor: pointer;
   position: absolute
 }
 
+#menu-btn {
+  background-image: url("icons/open.svg");
+}
+
+#close-menu {
+  background-image: url("icons/close.svg");
+}
+
 #thread-menu {
-  display: none;
-  width: 50%;
+  display: block;
+  width: 0;
   height: 100%;
   position: absolute;
   right: 0;
   top: 0;
-  background-color: white;
+  background-color: #efefef;
   z-index: 1;
+  transition: width .5s;
+}
+
+#thread-menu.open {
+  width: 100%;
+}
+
+#menu-container {
+  padding: 4%;
+  position: relative;
 }
 
 .thread-wrapper {
