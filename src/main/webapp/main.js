@@ -75,6 +75,9 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
         })
 
         initChat();
+
+        // defined in sharing.js
+        initSharing();
       });
     });
 
@@ -116,6 +119,17 @@ function makeEl(type, elClass, elId) {
     el.classList.add(elClass);
   }
   return el;
+}
+
+/**
+ * Sets a click-trigger event to the DOM element with the given id and
+ * sets the callback function to the one given
+ * @param {String} id the id of the element to be added
+ * @param {*} fn the anonymous function to be called on click
+ */
+function addClickEvent(id, fn) {
+  let btn = document.getElementById(id);
+  btn.addEventListener('click', fn);
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
