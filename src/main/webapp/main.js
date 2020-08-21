@@ -65,6 +65,8 @@ Promise.all([mapPromise, domPromise, firebasePromise])
          firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
              .then(token => {
                idToken = token;
+               fetchStr = `?idToken=${idToken}&idRoom=${currRoomId}`;
+
                validateUser(values);
                initChatroom();
              });
@@ -76,10 +78,13 @@ Promise.all([mapPromise, domPromise, firebasePromise])
  */
 function validateUser(values) {
   let user = values[2];
-  if (!user) {
-    location.href = "/";
-  }
-  return;
+  fetch("/authentication"+fetchStr)
+    .then((response) => response.text())
+    .then((allowed) => {
+      if (!user || allowed == "false") {
+        location.href = "/";
+      }
+    });
 }
 
 var fetchStr;
@@ -89,7 +94,6 @@ function initChatroom() {
   getServerUrl()
       .then(result => {
         connection = new WebSocket(result);
-        fetchStr = `?idToken=${idToken}&idRoom=${currRoomId}`;
 
         initWebsocket();
         initMap();
@@ -99,6 +103,11 @@ function initChatroom() {
       });
 }
 
+/**
+ * Builds the content of the fetch call with a method, headers, and body
+ * @param {String} type the fetch method
+ * @param {Object} params the parameters that need to be sent
+ */
 function buildFetchContent(type, params) {
   return {
     method: type,
@@ -107,6 +116,10 @@ function buildFetchContent(type, params) {
   };
 }
 
+/**
+ * Adds the user id token and room id to fetch parameters
+ * @param {Object} params the existing customized parameters
+ */
 function buildFetchParams(params) {
   params.id = idToken;
   params.roomId = currRoomId;

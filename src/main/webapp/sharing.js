@@ -138,7 +138,6 @@ function removeMember(email) {
 
   // room is not being deleted
   if (memberEmails.size !== 1) {
-    console.log("here");
     params.email = email;
     server = "/share-server";
   }
@@ -146,7 +145,6 @@ function removeMember(email) {
   //userEmail is initalized in main.js
   // user is not removing themselves from the chatroom
   if (email != userEmail) {
-    console.log("what");
     callback = () => loadSharedUsers();
   }
 
