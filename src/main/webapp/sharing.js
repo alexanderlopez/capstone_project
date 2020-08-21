@@ -4,12 +4,19 @@ var emailInput;
 
 var emailBank;
 
+var sharedBank;
+
 /** sets */
 function initSharing() {
   overlay = document.getElementById("share-popup");
   emailInput = document.getElementById("email");
   emailBank = document.getElementById("email-bank");
+  sharedBank = document.getElementById("shared-bank");
+  loadSharedUsers();
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// POPUP
 
 /** Opens the sharing popup and prevents the client from clicking on the map */
 function openSharePopup() {
@@ -56,6 +63,28 @@ function clearPopupInput() {
   emailBank.innerHTML = "";
 }
 
+/** Retrieves all the emails the email bank in the sharing popup */
+function getEmailsFromBank() {
+  var emailWrappers = emailBank.childNodes;
+  let emails = [];
+  emailWrappers.forEach(function(node) {
+    emails.push(node.getAttribute("data-email"));
+  });
+  return emails;
+}
+
+/** Retrieves all the emails the email bank in the sharing popup */
+function parseEmails(emails) {
+  sharedBank.innerHTML="";
+  emails.forEach((email) => {
+    let emailDiv = createEmailDiv(email);
+    sharedBank.appendChild(emailDiv);
+  });
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// SERVER INTERACTIONS
+
 /** Shares the map with all the emails in the email bank */
 function submitSharing() {
   let shareEmails = getEmailsFromBank();
@@ -74,6 +103,7 @@ function submitSharing() {
     .then((worked) => {
      if (worked == 'true') {
        clearPopupInput();
+       loadSharedUsers();
      }
      else {
        alert("Submit failed, please try again");
@@ -81,12 +111,9 @@ function submitSharing() {
    });
 }
 
-/** Retrieves all the emails the email bank in the sharing popup */
-function getEmailsFromBank() {
-  var emailWrappers = emailBank.childNodes;
-  let emails = [];
-  emailWrappers.forEach(function(node) {
-    emails.push(node.getAttribute("data-email"));
-  });
-  return emails;
+/** Retrieves all the users shared to this map */
+function loadSharedUsers() {
+  fetch(`/share-server?idToken=${idToken}&idRoom=${roomId}`)
+      .then((response) => response.json())
+      .then((emails) => parseEmails(emails));
 }
