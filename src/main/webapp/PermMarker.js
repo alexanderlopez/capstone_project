@@ -47,6 +47,11 @@ class PermMarker extends MarkerTemplate{
     myMap.sendDeleteRequest(this);
   }
 
+  /** Changes this marker's icon */
+  changeIcon_(color) {
+    this.googleMarker_.setIcon(ColorPicker.getPermMarkerIcon(color));
+  }
+
   /**
    * Sets the title this marker to the given value
    * @param {String} title the title of this marker

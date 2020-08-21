@@ -12,6 +12,7 @@ body {
   height: 90%;
   cursor: default;
   font-size: 3vh;
+  font-family: 'Roboto', sans-serif;
 }
 
 #loading {
@@ -39,6 +40,7 @@ body {
   width: 100%;
   font-size: inherit;
   margin: 0;
+  font-family: 'Roboto Slab', serif;
 }
 
 #welcome-message {

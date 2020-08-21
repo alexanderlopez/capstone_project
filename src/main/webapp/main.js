@@ -32,6 +32,7 @@ firebase.initializeApp(firebaseConfig);
 // MAP
 
 let myMap;
+
 let roomId = (new URLSearchParams(location.search)).get('roomId');
 
 /** Waits for the page HTML to load */
@@ -100,6 +101,23 @@ function getCoords(){
       reject();
     }
   })
+}
+
+/**
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
+ */
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
