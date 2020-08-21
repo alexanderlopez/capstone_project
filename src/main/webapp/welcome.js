@@ -236,19 +236,11 @@ function loadUserDetails_(email, username) {
  * @Private
  * Changes which tab is visible in the main panel
  * @param {String} showDivId id of the content to be shown
- * @param {String} showBtnId id of the tab button to be selected
  * @param {String} hideDivId id of the content to be hidden
- * @param {String} hideBtnId id of the tab button to be deselected
  */
-function togglePanel_(showDivId, showBtnId, hideDivId, hideBtnId) {
+function togglePanel_(showDivId, hideDivId) {
   showEl_(document.getElementById(showDivId));
   hideEl_(document.getElementById(hideDivId));
-
-  let showBtn = document.getElementById(showBtnId);
-  showBtn.classList.add("show");
-
-  let hideBtn = document.getElementById(hideBtnId);
-  hideBtn.classList.remove("show");
 }
 
 function getCurrentActiveTab() {
@@ -267,7 +259,7 @@ function showUserDetails() {
   let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
   tabRegions[0].activate(currentActive);
   tabRegions[1].deactivate();
-  togglePanel_(/* showDivId= */ DETAILS_EL, /* showBtnId= */ "profile-btn", /* hideDivId= */ MAPS_WRAPPER, /* hideBtnId= */ "maps-btn");
+  togglePanel_(/* showDivId= */ DETAILS_EL, /* hideDivId= */ MAPS_WRAPPER);
 }
 
 /**
@@ -277,7 +269,7 @@ function showUserMaps() {
   let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
   tabRegions[0].deactivate();
   tabRegions[1].activate(currentActive);
-  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* showBtnId= */ "maps-btn", /* hideDivId= */ DETAILS_EL, /* hideBtnId= */ "profile-btn");
+  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* hideDivId= */ DETAILS_EL);
 }
 
 /**
