@@ -71,19 +71,6 @@ function removeClass_(id, className) {
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
-  firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-      .then(idToken => getChatHistory_(idToken))
-      .catch(error => {
-        throw "Problem getting chat history";
-      });
-}
-
-/**
- * @Private
- * Retrieves chat history from the server and adds them to the page
- * @param{number} idToken The ID associated with the current user
- */
-function getChatHistory_(idToken) {
   fetch(`/chat-server?idToken=${idToken}&idRoom=${roomId}`)
         .then(response => response.json())
         .then((comments) => {
@@ -93,7 +80,6 @@ function getChatHistory_(idToken) {
           }
         });
 }
-
 
 /**
  * Sends nonempty chat comment from text area to server

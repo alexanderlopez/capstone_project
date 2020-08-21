@@ -1,34 +1,31 @@
-function initSharing() {
-  setMapShareEvents();
-}
+var overlay;
 
-/** Sets the events related to sharing the map with another user */
-function setMapShareEvents() {
-  addClickEvent("shareBtnWrapper", () => openSharePopup());
-  addClickEvent("addEmail", () => addEmail());
-  addClickEvent("share", () => submitSharing());
-  addClickEvent("close", () => closeSharePopup());
+var emailInput;
+
+var emailBank;
+
+/** sets */
+function initSharing() {
+  overlay = document.getElementById("share-popup");
+  emailInput = document.getElementById("email");
+  emailBank = document.getElementById("email-bank");
 }
 
 /** Opens the sharing popup and prevents the client from clicking on the map */
 function openSharePopup() {
-  let overlay = document.getElementById("share-popup");
   overlay.classList.add("cover");
 }
 
 /** Closes the pop and allows clients to click on the map again */
 function closeSharePopup() {
-  let overlay = document.getElementById("share-popup");
   overlay.classList.remove("cover");
   clearPopupInput();
 }
 
 /** Adds the given email to the email bank */
 function addEmail() {
-  let input = document.getElementById("email");
-  let emailDiv = createEmailDiv(input.value);
-  input.value="";
-  let emailBank = document.getElementById("email-bank");
+  let emailDiv = createEmailDiv(emailInput.value);
+  emailInput.value="";
   emailBank.appendChild(emailDiv);
 }
 
@@ -55,10 +52,7 @@ function createEmailDiv(email) {
 
 /** Clears the email input and email bank in the sharing popup */
 function clearPopupInput() {
-  let emailInput = document.getElementById("email");
   emailInput.value = "";
-
-  let emailBank = document.getElementById("email-bank");
   emailBank.innerHTML = "";
 }
 
@@ -79,7 +73,7 @@ function submitSharing() {
   }).then((response) => response.text())
     .then((worked) => {
      if (worked == 'true') {
-       myMap.clearPopupInput();
+       clearPopupInput();
      }
      else {
        alert("Submit failed, please try again");
@@ -89,7 +83,6 @@ function submitSharing() {
 
 /** Retrieves all the emails the email bank in the sharing popup */
 function getEmailsFromBank() {
-  let emailBank = document.getElementById("email-bank");
   var emailWrappers = emailBank.childNodes;
   let emails = [];
   emailWrappers.forEach(function(node) {

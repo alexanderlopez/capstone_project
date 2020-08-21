@@ -41,18 +41,21 @@
       <div id="backBtnWrapper" class="btnWrapper topBtn">
         <input type="submit" id="backButton" class="btnIcon" value=""></input>
       </div>
-      <div id="shareBtnWrapper" class="btnWrapper topBtn">
+      <div id="shareBtnWrapper" class="btnWrapper topBtn"
+           onclick="openSharePopup()">
         <button id="shareBtn" class="btnIcon"></button>
       </div>
 
       <div id="share-popup">
         <div id="popup-window">
-          <button id="close">x</button>
+          <button id="close" onclick="closeSharePopup()">x</button>
           <label for="email">Share with:</label>
           <input type="email" id="email" name="email">
-          <input id="addEmail" type="button" value="Add email">
+          <input id="addEmail" type="button" value="Add email"
+                 onclick="addEmail()">
           <div id="email-bank"></div>
-          <input id="share" type="button" value="Share">
+          <input id="share" type="button" value="Share"
+                 onclick="submitSharing()">
         </div>
       </div>
 

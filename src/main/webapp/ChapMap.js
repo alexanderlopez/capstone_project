@@ -30,11 +30,7 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
-  /** Id Token of the current user*/
-  idToken_;
-
   static SELECTED_CLASS = "selected";
-
 
   constructor(coords) {
     var lat = coords[0];
@@ -55,7 +51,6 @@ class ChapMap {
 
     this.permMarkers_ = {};
     this.loadMarkers_();
-
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -207,20 +202,7 @@ class ChapMap {
    * Fetches all the map's markers from the server and loads them to the map
    */
   loadMarkers_() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-        .then(idToken => myMap.getMarkers(idToken))
-        .catch(error => {
-          throw "Problem getting markers";
-        });
-  }
-
-  /**
-   * Retrieves markers from the server and adds them to the map
-   * @param {firebase.idToken} idToken the current user's getIdToken
-   */
-  getMarkers(userIdToken) {
-    this.idToken = userIdToken;
-    fetch(`/map-server?idToken=${userIdToken}&idRoom=${roomId}`)
+    fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }

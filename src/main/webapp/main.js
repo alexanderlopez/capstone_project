@@ -50,36 +50,74 @@ let firebasePromise = new Promise(function(resolve) {
 
 let connection = null;
 let userId = null;
-
-const DEFAULT_LAT = -34.397;
-const DEFAULT_LNG =  150.644;
+let idToken = null;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
  */
-Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
-      let user = values[2];
-      if (!user) {
-        location.href = "/";
-      }
+Promise.all([mapPromise, domPromise, firebasePromise])
+       .then((values) => {
+         validateUser(values);
 
-      userId = firebase.auth().currentUser.uid;
-      getServerUrl().then(result => {
+         userId = firebase.auth().currentUser.uid;
+         firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+             .then(token => {
+               idToken = token;
+               initChatroom();
+             });
+       });
+
+/**
+ * Sends the user back to the home page if they do not have access to this
+ * chatroom
+ */
+function validateUser(values) {
+  let user = values[2];
+  if (!user) {
+    location.href = "/";
+  }
+}
+
+/** Opens the websocket and initalizes all the chatroom components */
+function initChatroom() {
+  getServerUrl()
+      .then(result => {
         connection = new WebSocket(result);
+
         initWebsocket();
-
-        getCoords().then(coords => {
-          myMap = new ChapMap(coords);
-        }).catch(() => {
-          myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
-        })
-
+        initMap();
         initChat();
-
         // defined in sharing.js
         initSharing();
       });
-    });
+}
+
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
+
+/** Initalizes the map */
+function initMap() {
+  getCoords().then(coords => {
+    myMap = new ChapMap(coords);
+  }).catch(() => {
+    myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+  })
+}
+
+/**
+ * Sets up chat listeners
+ */
+function initChat() {
+  loadChatHistory();
+
+  var input = document.getElementById("comment-container");
+  input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("submitBtn").click();
+    }
+  });
+}
 
 /**
  * Returns the user's coordinates, if possible
@@ -103,6 +141,9 @@ function getCoords(){
     }
   })
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HELPER FUNCIONS
 
 /**
  * Returns a DOM element of the given type with a certain id and class
@@ -188,22 +229,7 @@ async function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
+    // let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
 
     return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
-}
-
-/**
- * Sets up chat listeners
- */
-function initChat() {
-  loadChatHistory();
-
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
-    }
-  });
 }
