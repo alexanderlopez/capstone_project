@@ -326,6 +326,11 @@ function makeRoomButton_(id, name) {
   return roomBtn;
 }
 
+/**
+ * Removes a room from a user's welcome page. If this is the only user of the
+ * chatroom, the chatroom is deleted
+ * @param {String} id the id of the room to be removed
+ */
 function removeRoom(id) {
   fetch(`/share-server?idToken=${idToken}&idRoom=${id}`)
       .then((response) => response.json())
