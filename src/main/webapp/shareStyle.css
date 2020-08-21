@@ -36,49 +36,53 @@
   cursor: pointer;
 }
 
-#popup-window label {
-  display: block;
-  text-align: center;
-  font-size: 3em;
-}
-
 #email {
   width: calc(100% - 140px);
   margin-right: 30px;
   height: 28px;
   font-family: 'Roboto', sans-serif;
+  border: 1px solid gray;
 }
 
 #addEmail {
   font-size: 1.2em;
   font-family: 'Roboto', sans-serif;
+  background-color: #fcfcfc;
+  border: 1px solid gray;
+  border-radius: 2px;
 }
 
 #email-bank {
-  height: 200px;
+  height: 80px;
   margin-top: 20px;
-  border: 1px solid black;
   margin-bottom: 20px;
   border-radius: 5px;
-  padding: 20px;
+  overflow-y: scroll;
 }
 
 #share {
-  font-size: 1.5em;
+  font-size: 1.2em;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
+  background-color: #e5e5e5;
+  outline: 0;
+  border: 1px solid gray;
+  border-radius: 2px;
 }
 
 #shared-bank {
-
+  outline: 0;
+  height: 100px;
+  overflow-y: scroll;
 }
 
 .emailWrapper {
   overflow: visible;
   position: relative;
-  border: 1px solid black;
+  border: 1px solid gray;
   border-radius: 5px;
   padding: 5px;
+  margin: 5px 0;
 }
 
 .emailWrapper p {
@@ -94,4 +98,12 @@
   top: 0;
   cursor: pointer;
   margin: 5px;
+}
+
+#sharing-title {
+  margin-bottom: 0;
+}
+
+#members-title {
+  margin: 0;
 }
