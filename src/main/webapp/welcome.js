@@ -36,8 +36,11 @@ var uiConfig = {
     signInSuccessUrl: '/'
 };
 
+var email;
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+      email = firebase.auth().currentUser.email;
       firebase.auth().currentUser
         .getIdToken(/* forceRefresh= */ true)
         .then(idToken => getUserInfo_(user, idToken))
@@ -52,6 +55,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var idToken;
+
 
 const LOGIN_EL = 'firebaseui-auth-container';
 const LOADING_EL ='loading';
@@ -308,11 +312,41 @@ function loadUserMaps_(mapsJson) {
  */
 function makeRoomButton_(id, name) {
   let roomBtn = makeEl("button", "roomBtn");
-  roomBtn.innerHTML = name;
-  roomBtn.addEventListener('click', () => {
-     location.href=`/chatroom.html?roomId=${id}`;
-  });
+  roomBtn.onclick = () => location.href=`/chatroom.html?roomId=${id}`;
+
+  let roomName = makeEl("p", "roomName");
+  roomName.innerHTML = name;
+
+  let deleteBtn = makeEl("button", "deleteBtn");
+  deleteBtn.onclick = () => removeRoom(id);
+
+  roomBtn.appendChild(roomName);
+  roomBtn.appendChild(deleteBtn);
+
   return roomBtn;
+}
+
+function removeRoom(id) {
+  fetch(`/share-server?idToken=${idToken}&idRoom=${id}`)
+      .then((response) => response.json())
+      .then((emails) => {
+          let server = "/room-server";
+          let params = {
+            id: idToken,
+            roomId: id
+          }
+
+          if (emails.length !== 1) {
+            params.email = email;
+            server = "/share-server";
+          }
+
+          fetch(server, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'text/html' },
+                body: JSON.stringify(params)}
+          ).then(() => window.location.href = '/');
+        });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
