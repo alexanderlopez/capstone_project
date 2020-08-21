@@ -31,7 +31,7 @@ firebase.initializeApp(firebaseConfig);
 
 let myMap;
 
-let roomId = (new URLSearchParams(location.search)).get('roomId');
+let currRoomId = (new URLSearchParams(location.search)).get('roomId');
 
 /** Waits for the page HTML to load */
 let domPromise = new Promise(function(resolve) {
@@ -50,6 +50,7 @@ let firebasePromise = new Promise(function(resolve) {
 
 let connection = null;
 let userId = null;
+let userEmail = null;
 let idToken = null;
 
 /** Waits until all promises are fullfilled before opening the websocket and
@@ -57,12 +58,14 @@ let idToken = null;
  */
 Promise.all([mapPromise, domPromise, firebasePromise])
        .then((values) => {
-         validateUser(values);
+         let currUser = firebase.auth().currentUser;
+         userId = currUser.uid;
+         userEmail = currUser.email;
 
-         userId = firebase.auth().currentUser.uid;
          firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
              .then(token => {
                idToken = token;
+               validateUser(values);
                initChatroom();
              });
        });
@@ -76,13 +79,17 @@ function validateUser(values) {
   if (!user) {
     location.href = "/";
   }
+  return;
 }
+
+var fetchStr;
 
 /** Opens the websocket and initalizes all the chatroom components */
 function initChatroom() {
   getServerUrl()
       .then(result => {
         connection = new WebSocket(result);
+        fetchStr = `?idToken=${idToken}&idRoom=${currRoomId}`;
 
         initWebsocket();
         initMap();
@@ -90,6 +97,20 @@ function initChatroom() {
         // defined in sharing.js
         initSharing();
       });
+}
+
+function buildFetchContent(type, params) {
+  return {
+    method: type,
+    headers: { 'Content-Type': 'text/html' },
+    body: JSON.stringify(params)
+  };
+}
+
+function buildFetchParams(params) {
+  params.id = idToken;
+  params.roomId = currRoomId;
+  return params;
 }
 
 const DEFAULT_LAT = -34.397;
@@ -231,5 +252,5 @@ async function getServerUrl() {
 
     // let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
 
-    return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
 }

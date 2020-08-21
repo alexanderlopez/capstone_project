@@ -6,6 +6,10 @@ var emailBank;
 
 var sharedBank;
 
+var memberEmails = new Set();
+
+var shareEmails = {};
+
 /** sets */
 function initSharing() {
   overlay = document.getElementById("share-popup");
@@ -31,16 +35,31 @@ function closeSharePopup() {
 
 /** Adds the given email to the email bank */
 function addEmail() {
-  let emailDiv = createEmailDiv(emailInput.value);
-  emailInput.value="";
-  emailBank.appendChild(emailDiv);
+  let email = emailInput.value;
+  if (!(email in shareEmails) && !(memberEmails.has(email))) {
+    let emailDiv = createEmailDiv(email, () => removeEmail(email));
+    emailInput.value="";
+    shareEmails[email] = emailDiv;
+    emailBank.appendChild(emailDiv);
+  }
+}
+
+/**
+ * Removes an email from the email bank and from shareEmails
+ * @param {String} email the email that needs to be removed
+ */
+function removeEmail(email) {
+  shareEmails[email].remove();
+  delete shareEmails[email];
 }
 
 /**
  * Creates a DOM element with the email and a delete button and adds it
  * to the email bank
+ * @param{String} email the user's email
+ * @param{*} callback function called when the div is deleted by the user
  */
-function createEmailDiv(email) {
+function createEmailDiv(email, callback) {
   let emailWrapper = makeEl("div", "emailWrapper");
   emailWrapper.setAttribute("data-email", email);
 
@@ -49,7 +68,7 @@ function createEmailDiv(email) {
 
   let deleteBtn = document.createElement("button");
   deleteBtn.innerHTML = "x";
-  deleteBtn.addEventListener('click', () => emailWrapper.remove());
+  deleteBtn.addEventListener('click', callback);
 
   emailWrapper.appendChild(emailText);
   emailWrapper.appendChild(deleteBtn);
@@ -61,23 +80,18 @@ function createEmailDiv(email) {
 function clearPopupInput() {
   emailInput.value = "";
   emailBank.innerHTML = "";
-}
-
-/** Retrieves all the emails the email bank in the sharing popup */
-function getEmailsFromBank() {
-  var emailWrappers = emailBank.childNodes;
-  let emails = [];
-  emailWrappers.forEach(function(node) {
-    emails.push(node.getAttribute("data-email"));
-  });
-  return emails;
+  shareEmails = {};
 }
 
 /** Retrieves all the emails the email bank in the sharing popup */
 function parseEmails(emails) {
+  //clear previously stored emails
   sharedBank.innerHTML="";
+  memberEmails.clear();
+
   emails.forEach((email) => {
-    let emailDiv = createEmailDiv(email);
+    memberEmails.add(email);
+    let emailDiv = createEmailDiv(email, () => removeMember(email));
     sharedBank.appendChild(emailDiv);
   });
 }
@@ -87,19 +101,11 @@ function parseEmails(emails) {
 
 /** Shares the map with all the emails in the email bank */
 function submitSharing() {
-  let shareEmails = getEmailsFromBank();
-  let currRoomId = roomId;
-  let params = {
-    emails: shareEmails,
-    roomId: currRoomId,
-    id: idToken
-  };
+  let newEmails = Array.from(Object.keys(shareEmails));
+  let params = buildFetchParams({emails: newEmails});
 
-  fetch("/share-server", {
-    method:'POST',
-    headers: { 'Content-Type': 'text/html' },
-    body: JSON.stringify(params)
-  }).then((response) => response.text())
+  fetch("/share-server", buildFetchContent('POST', params))
+    .then((response) => response.text())
     .then((worked) => {
      if (worked == 'true') {
        clearPopupInput();
@@ -113,7 +119,37 @@ function submitSharing() {
 
 /** Retrieves all the users shared to this map */
 function loadSharedUsers() {
-  fetch(`/share-server?idToken=${idToken}&idRoom=${roomId}`)
+  // fetchStr initialized in main.js
+  fetch("/share-server"+fetchStr)
       .then((response) => response.json())
       .then((emails) => parseEmails(emails));
+}
+
+/**
+ * Removes the member from the chatroom
+ * @param {String} email email to be removed from the chatroom
+ */
+function removeMember(email) {
+  if (!memberEmails.has(email)) return;
+
+  let callback = () => window.location.href = '/';
+  let params = buildFetchParams({});
+  let server = "/room-server";
+
+  // room is not being deleted
+  if (memberEmails.size !== 1) {
+    console.log("here");
+    params.email = email;
+    server = "/share-server";
+  }
+
+  //userEmail is initalized in main.js
+  // user is not removing themselves from the chatroom
+  if (email != userEmail) {
+    console.log("what");
+    callback = () => loadSharedUsers();
+  }
+
+  fetch(server, buildFetchContent('DELETE', params))
+        .then(callback);
 }

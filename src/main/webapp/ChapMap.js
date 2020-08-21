@@ -202,7 +202,8 @@ class ChapMap {
    * Fetches all the map's markers from the server and loads them to the map
    */
   loadMarkers_() {
-    fetch(`/map-server?idToken=${idToken}&idRoom=${roomId}`)
+    // fetchStr initialized in main.js
+    fetch("/map-server"+fetchStr)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }

@@ -71,7 +71,8 @@ function removeClass_(id, className) {
  * @throws Will throw an error if cannot get chat history associated with current user
  */
 function loadChatHistory() {
-  fetch(`/chat-server?idToken=${idToken}&idRoom=${roomId}`)
+  // fetchStr initialized in main.js
+  fetch("/chat-server"+fetchStr)
         .then(response => response.json())
         .then((comments) => {
           for (const index in comments) {
