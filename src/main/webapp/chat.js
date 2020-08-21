@@ -158,10 +158,9 @@ function handleMapCommand(commentContent){
   var commentAddress = commentContent.split(' ').slice(2).join(' ');
 
   if(commentContentSize > 1 && commentContentArr[1].toUpperCase() === ADD_COMMAND) {
-    var position;
 
     if(!isNaN(parseFloat(commentContentArr[2])) && !isNaN(parseFloat(commentContentArr[3]))){
-      position = new google.maps.LatLng(commentContentArr[2], commentContentArr[3]);
+      var position = new google.maps.LatLng(commentContentArr[2], commentContentArr[3]);
       myMap.sendPermMarkerInfo(position, commentAddress, COMMAND_BODY);
       myMap.panTo(position);
     } else {
@@ -172,9 +171,6 @@ function handleMapCommand(commentContent){
         myMap.sendPermMarkerInfo(position, commentAddress, COMMAND_BODY);
         myMap.panTo(position);
       });
-      console.log("this is position: " + position);
-      
-      //getCoordsFromAddress();
     }  
   } else if (commentContentSize > 1 && commentContentArr[1] === HELP_COMMAND){
     // TODO(astepin): Open list of commands
