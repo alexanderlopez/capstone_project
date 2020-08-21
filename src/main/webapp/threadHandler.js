@@ -98,8 +98,8 @@ function hideTempThread() {
   input.value = "";
 }
 
-/** Returns if the given thread name is a) one word, b) unique for this
- * chatroom, and c) only contains alphanumeric characters
+/** Returns if the given thread name only contains alphanumeric characters
+ * and - or _
  * @param {String} name the name of the new thread
  */
 function hasValidCharacters(name) {
@@ -126,15 +126,7 @@ function submitThread() {
   }
 
   newThread = threadName;
-  sendDefaultMessage(threadName);
+  sendMessage(DEFAULT_MESSAGE, threadName);
   input.value = "";
   hideTempThread();
-}
-
-/**
- * Sends a default message from the current user in a new thread
- * @param {String} the name of the new thread
- */
-function sendDefaultMessage(threadName) {
-  sendMessage(DEFAULT_MESSAGE, threadName);
 }
