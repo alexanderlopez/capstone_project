@@ -60,17 +60,22 @@
     </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
-        <button id="menu-btn" onclick="toggleThreadMenu()"></button>
+        <button id="menu-btn" class="thread-btn"
+            onclick="toggleThreadMenu()"></button>
         <div id="thread-menu">
           <div id="menu-container">
-            <button id="close-menu" onclick="toggleThreadMenu()"></button>
-            <button id="new-thread" onclick="showTempThread()"></button>
+            <button id="close-menu" class="thread-btn"
+                onclick="toggleThreadMenu()"></button>
+            <button id="new-thread" class="thread-btn"
+                onclick="showTempThread()"></button>
+            <button id="submit-thread" class="thread-btn"
+                onclick="submitThread()"></button>
             <h1>Threads</h1>
             <div id="menu-items">
               <div id="thread-form">
                 <textarea id="thread-input" placeholder="..."></textarea>
-                <button id="submit-thread" onclick="submitThread()"></button>
-                <button id="cancel-thread" onclick="hideTempThread()"></button>
+                <button id="cancel-thread" class="thread-btn"
+                    onclick="hideTempThread()"></button>
               </div>
             </div>
           </div>

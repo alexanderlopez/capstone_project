@@ -24,6 +24,8 @@ const MENU_WRAPPER = "menu-items";
 const CHAT_WRAPPER = "chat-wrapper";
 const THREAD_FORM = "thread-form";
 const THREAD_INPUT = "thread-input";
+const NEW_THREAD = "new-thread";
+const SUBMIT_THREAD = "submit-thread";
 
 /** Initializes function fields and creates the default and temporary threads */
 function setupThreads() {
@@ -87,14 +89,17 @@ function addThread(threadName) {
 
 /** Displays the temp thread with a textarea and submit button */
 function showTempThread() {
-  document.getElementById(THREAD_FORM).style.display = 'block';
+  setDisplay(THREAD_FORM, 'block');
+  setDisplay(NEW_THREAD, 'none');
+  setDisplay(SUBMIT_THREAD, 'block');
 }
 
 /** Hides the temp thread with a textarea and submit button */
 function hideTempThread() {
-  let form = document.getElementById(THREAD_FORM);
+  setDisplay(THREAD_FORM, 'none');
+  setDisplay(SUBMIT_THREAD, 'none');
+  setDisplay(NEW_THREAD, 'block');
   let input = document.getElementById(THREAD_INPUT);
-  form.style.display = 'none';
   input.value = "";
 }
 
@@ -129,4 +134,13 @@ function submitThread() {
   sendMessage(DEFAULT_MESSAGE, threadName);
   input.value = "";
   hideTempThread();
+}
+
+/**
+ * Sets the display of the DOM element with a certain id to the given value
+ * @param {String} id the id of the DOM element
+ * @param {String} val the value of the DOM element
+ */
+function setDisplay(id, val) {
+  document.getElementById(id).style.display = val;
 }
