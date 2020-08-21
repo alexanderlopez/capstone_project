@@ -30,8 +30,8 @@ function toggleChat() {
  * Opens the chat
  */
 function openChat_() {
-  document.getElementById("myForm").classList.add("chatOpen");
-  document.getElementById("map").classList.remove("expanded");
+  addClass_("myForm", "chatOpen");
+  removeClass_("mapOverlay", "expanded");
   chatOpen =  true;
 }
 
@@ -40,9 +40,30 @@ function openChat_() {
  * Closes the chat
  */
 function closeChat_() {
-  document.getElementById("myForm").classList.remove("chatOpen");
-  document.getElementById("map").classList.add("expanded");
+  removeClass_("myForm", "chatOpen");
+  addClass_("mapOverlay", "expanded");
   chatOpen = false;
+}
+
+/**
+ * @Private
+ * Adds a classname to a DOM element with the given id
+ * @param {String} id the id of the DOM element
+ * @param {String} className the class name to be added
+ */
+function addClass_(id, className) {
+  document.getElementById(id).classList.add(className);
+}
+
+
+/**
+ * @Private
+ * Removes a classname to a DOM element with the given id
+ * @param {String} id the id of the DOM element
+ * @param {String} className the class name to be removed
+ */
+function removeClass_(id, className) {
+  document.getElementById(id).classList.remove(className);
 }
 
 /**
