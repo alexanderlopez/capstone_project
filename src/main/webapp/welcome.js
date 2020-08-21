@@ -1,3 +1,24 @@
+const MDCTab = mdc.tab.MDCTab;
+const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
+
+var tabRegions;
+var textRegions;
+var buttonRipple;
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  tabRegions = [].map.call(document.querySelectorAll('.mdc-tab'), function(el) {
+    return new MDCTab(el);
+  });
+
+  textRegions = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+  textRegions[0].disabled = true;
+  textRegions[1].disabled = true;
+
+  buttonRipple = new MDCRipple(document.querySelector('.mdc-button'));
+});
 
 var firebaseConfig = {
     apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -96,7 +117,7 @@ function displayUserInfo_(userJson, email) {
   if (isNewUser) {
     setWelcomeMessage_();
     disableMapCreating_();
-    showUsernameForm();
+    enableUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
     loadUserMaps_(userJson.rooms);
@@ -131,18 +152,11 @@ function setWelcomeMessage_(userName) {
  * Displays the form where users can enter their username and hides the
  * new map form if it is visible
  */
-function showUsernameForm() {
-  let usernameForm = document.getElementById(USERNAME_FORM);
-  let usernameGroup = usernameForm.parentNode;
-  let prevUsername = usernameGroup
-      .getElementsByClassName("groupContent")[0];
+function enableUsernameForm() {
+  textRegions[1].disabled = false;
 
   hideEl_(document.getElementById('edit-details'));
   showEl_(document.getElementById('save-details'));
-
-  hideEl_(prevUsername);
-  usernameForm.innerHTML = prevUsername.innerHTML;
-  showEl_(usernameForm);
 }
 
 /**
@@ -168,7 +182,7 @@ function submitMap() {
  * Sends the submitted username to the server
  */
 function submitUsername() {
-  let input = document.getElementById(USERNAME_FORM);
+  let input = textRegions[1];
   submitNewItem("user-server", input);
 }
 
@@ -209,14 +223,8 @@ function loadUserDetails_(email, username) {
   showEl_(document.getElementById(PANEL));
   let displayDiv = document.getElementById(DETAILS_EL);
 
-  var emailBlock = makeDetailsGroup_
-      ("email", email, /* isUsernameGroup= */ false);
-  displayDiv.appendChild(emailBlock);
-
-  let usernameValue = username? username: "";
-  let usernameBlock =
-      makeDetailsGroup_("username", usernameValue, /* isUsernameGroup= */ true);
-  displayDiv.appendChild(usernameBlock);
+  textRegions[0].value = email;
+  textRegions[1].value = username;
 
   showEl_(displayDiv);
 }
@@ -240,10 +248,22 @@ function togglePanel_(showDivId, showBtnId, hideDivId, hideBtnId) {
   hideBtn.classList.remove("show");
 }
 
+function getCurrentActiveTab() {
+  if (tabRegions[0].active) {
+    return tabRegions[0]
+  }
+  else if (tabRegions[1].active) {
+    return tabRegions[1];
+  }
+}
+
 /**
  * Hides the user's maps tab and shows the profile tab instead
  */
 function showUserDetails() {
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].activate(currentActive);
+  tabRegions[1].deactivate();
   togglePanel_(/* showDivId= */ DETAILS_EL, /* showBtnId= */ "profile-btn", /* hideDivId= */ MAPS_WRAPPER, /* hideBtnId= */ "maps-btn");
 }
 
@@ -251,36 +271,10 @@ function showUserDetails() {
  * Hides the user's profile tab and shows the map tab instead
  */
 function showUserMaps() {
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].deactivate();
+  tabRegions[1].activate(currentActive);
   togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* showBtnId= */ "maps-btn", /* hideDivId= */ DETAILS_EL, /* hideBtnId= */ "profile-btn");
-}
-
-/**
- * @Private
- * Returns div containing a piece of user information determined by
- * the group name and value and an editable component if applicable
- * @param {String} name the name of this group of information
- * @param {String} val the value of the group of information
- * @param {boolean} isUsernameGroup whether this is the username group
- */
-function makeDetailsGroup_(name, val, isUsernameGroup) {
-  let wrapper = makeEl("div", "detailsGroup", name);
-
-  let label = makeEl("h4", "groupLabel");
-  label.innerHTML = name;
-  wrapper.appendChild(label);
-
-  let content = makeEl("p", "groupContent");
-  content.innerHTML = val;
-  wrapper.appendChild(content);
-
-  if (isUsernameGroup) {
-    let editForm = makeEl("textarea", /* class= */ null, USERNAME_FORM);
-    editForm.style.display = 'none';
-    editForm.placeholder = "Username...";
-    wrapper.appendChild(editForm);
-  }
-
-  return wrapper;
 }
 
 /**

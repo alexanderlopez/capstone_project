@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const MDCTextField = mdc.textField.MDCTextField;
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -66,13 +68,13 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        
+
         getCoords().then(coords => {
           myMap = new ChapMap(coords);
         }).catch(() => {
           myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
         })
-       
+
         initChat();
       });
     });
@@ -85,7 +87,7 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
 function getCoords(){
 
   return new Promise(function(resolve, reject){
-    
+
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(position){
         if(position.coords.latitude && position.coords.longitude){
@@ -96,7 +98,7 @@ function getCoords(){
       }, reject);
     } else {
       reject();
-    }    
+    }
   })
 }
 
@@ -161,17 +163,18 @@ async function getServerUrl() {
     return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
 }
 
+var textInput;
+
 /**
  * Sets up chat listeners
  */
 function initChat() {
   loadChatHistory();
 
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
+  textInput = new MDCTextField(document.getElementById("comment-container-material"));
+  textInput.listen('keydown', (keyEvent) => {
+    if (keyEvent.key === 'Enter') {
+      addChatComment();
     }
   });
 }
