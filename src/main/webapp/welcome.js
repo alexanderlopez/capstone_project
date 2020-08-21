@@ -224,7 +224,10 @@ function loadUserDetails_(email, username) {
   let displayDiv = document.getElementById(DETAILS_EL);
 
   textRegions[0].value = email;
-  textRegions[1].value = username;
+
+  if (username != null) {
+    textRegions[1].value = username;
+  }
 
   showEl_(displayDiv);
 }
