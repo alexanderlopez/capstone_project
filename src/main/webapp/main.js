@@ -142,17 +142,26 @@ function initChat() {
   });
 }
 
+
+/**
+ * 
+ * @param {*} geocoder 
+ * @param {google.map.LatLng} coords Pair of coordinates
+ */
 function geocodeLatLng(geocoder, coords) {
-  geocoder.geocode({ location: coords }, (results, status) => {
-    if (status === "OK") {
-      if (results[0]) {
-        console.log(results[0].formatted_address);
-        return results[0].formatted_address;
+
+  return new Promise(function(resolve, reject) {
+    geocoder.geocode({ location: coords }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          console.log(results[0].formatted_address);
+          resolve (results[0].formatted_address);
+        } else {
+          window.alert("No results found");
+        }
       } else {
-        window.alert("No results found");
+        window.alert("Geocoder failed due to: " + status);
       }
-    } else {
-      window.alert("Geocoder failed due to: " + status);
-    }
-  });
+    });
+  })
 }

@@ -60,8 +60,15 @@ class PermInfoWindow extends InfoWindowTemplate {
       let body  = document.createElement("p");
       body.classList.add(PermInfoWindow.BODY_CLASS);
       body.innerHTML = this.myMarker_.getBody();
-      body.innerHTML += "<br>" + geocodeLatLng(this.geocoder,this.myMarker_.getPosition());
-      return body;
+      
+      return geocodeLatLng(this.geocoder,this.myMarker_.getPosition()).then(result => {
+        console.log("this is result: " + result);
+        body.innerHTML += "<br>" + result;
+        return body;
+      }).catch(() => {
+        //console.log("I think there's an error");
+        return body;
+      })
     }
 
 
