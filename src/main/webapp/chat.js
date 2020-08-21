@@ -168,28 +168,34 @@ function handleMapCommand(commentContent){
       let commentContentUrl = commentAddress.replace(/ /g, "+");
       let addressUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${commentContentUrl}&key=AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I`;
 
-      function getCoordsFromAddress() {
-        httpGetAsync(addressUrl).then(result => {
-          var addressObj = JSON.parse(result);
-          if(addressObj.status === "OK"){
-            let lat = addressObj.results[0].geometry.location.lat;
-            let lng = addressObj.results[0].geometry.location.lng;
-            position = new google.maps.LatLng(lat, lng);
-            myMap.sendPermMarkerInfo(position, commentAddress, COMMAND_BODY);
-            myMap.panTo(position);
-          } else {
-            // TODO(astepin): Signal address not understood, open help
-          }
-        });
-      }
-
-      getCoordsFromAddress();
+      getCoordsFromAddress(addressUrl).then(position => {
+        myMap.sendPermMarkerInfo(position, commentAddress, COMMAND_BODY);
+        myMap.panTo(position);
+      });
+      console.log("this is position: " + position);
+      
+      //getCoordsFromAddress();
     }  
   } else if (commentContentSize > 1 && commentContentArr[1] === HELP_COMMAND){
     // TODO(astepin): Open list of commands
   } else {
     // TODO(astepin): Signal that command not understood, open help
   }
+}
+
+function getCoordsFromAddress(addressUrl) {
+  return httpGetAsync(addressUrl).then(result => {
+    var addressObj = JSON.parse(result);
+    if(addressObj.status === "OK"){
+      let lat = addressObj.results[0].geometry.location.lat;
+      let lng = addressObj.results[0].geometry.location.lng;
+      position = new google.maps.LatLng(lat, lng);
+      return position;
+      
+    } else {
+      // TODO(astepin): Signal address not understood, open help
+    }
+  });
 }
 
 /**
