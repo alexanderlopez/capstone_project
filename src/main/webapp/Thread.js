@@ -3,7 +3,7 @@ class Thread {
   /** Classes used for identifying thread components */
   static MESSAGE = "message";
   static MY_MESSAGE = "myMessage";
-  static OTHER_MESSAGE = "OtherMessage";
+  static OTHER_MESSAGE = "otherMessage";
   static THREAD_WRAPPER = "thread-wrapper";
   static THREAD_NAME = "thread-name";
   static THREAD_MESSAGES = "thread-messages";
