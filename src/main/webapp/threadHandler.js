@@ -102,7 +102,7 @@ function hideTempThread() {
  * chatroom, and c) only contains alphanumeric characters
  * @param {String} name the name of the new thread
  */
-function isValidThreadName(name) {
+function hasValidCharacters(name) {
   var regex = /^[a-zA-Z0-9-_]+$/;
   return regex.test(name);
 }
@@ -114,14 +114,21 @@ function isValidThreadName(name) {
 function submitThread() {
   let input = document.getElementById(THREAD_INPUT);
   let threadName = input.value.trim();
-  if (isValidThreadName(threadName)) {
-    newThread = threadName;
-    sendDefaultMessage(threadName);
-    input.value = "";
-    hideTempThread();
-  } else  {
+  
+  if (!hasValidCharacters(threadName)) {
     alert("Thread name must be one word containing only alphanumeric characters and dashes. Try again.");
+    return;
   }
+
+  if (threadName in allThreads) {
+    alert("Thread already exists");
+    return;
+  }
+
+  newThread = threadName;
+  sendDefaultMessage(threadName);
+  input.value = "";
+  hideTempThread();
 }
 
 /**
