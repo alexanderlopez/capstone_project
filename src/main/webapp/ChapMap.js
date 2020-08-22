@@ -199,6 +199,11 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  highlightMarker(marker) {
+    this.panTo(marker.getPosition());
+    marker.openInfoWindow();
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 

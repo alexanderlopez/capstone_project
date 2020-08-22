@@ -124,6 +124,7 @@ function addToMarkerMenu(marker) {
 
   let title = marker.getTitle();
   let li = makeListElement(title);
+  li.onclick = () => myMap.highlightMarker(marker);
 
   let oneListElement = wrapper.childNodes.length === 1;
   if(oneListElement && removeDummyElement(wrapper)) {
