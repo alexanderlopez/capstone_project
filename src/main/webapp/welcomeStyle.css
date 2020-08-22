@@ -153,6 +153,10 @@ body {
   overflow-wrap: break-word;
 }
 
+.mdc-text-field__input {
+  color: rgba(0,0,0,1) !important;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
 
