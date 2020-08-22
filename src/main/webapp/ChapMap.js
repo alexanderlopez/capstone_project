@@ -86,7 +86,6 @@ class ChapMap {
                       () => this.enableAddingMarkers_());
     this.addClickEvent_("backBtnWrapper", () => window.location='/');
     this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
-    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
   }
 
   /**

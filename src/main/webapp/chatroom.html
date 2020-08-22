@@ -5,6 +5,7 @@
     <title>CHAP</title>
     <link rel="stylesheet" href="mapStyle.css">
     <link rel="stylesheet" href="chatStyle.css">
+    <link rel="stylesheet" href="markerMenuStyle.css">
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II" type="text/javascript" id="mapAPI"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js">
@@ -15,6 +16,7 @@
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
+    <script src="markerMenu.js"></script>
     <script src="ColorPicker.js"></script>
     <script src="MarkerTemplate.js"></script>
     <script src="InfoWindowTemplate.js"></script>
@@ -27,15 +29,18 @@
     <script src="chat.js"></script>
   </head>
   <body>
-
     <div id="mapOverlay" class="expanded">
+      <div id="markerMenuToggle" class="btnWrapper topBtn" onclick="toggleMarkerMenu()">
+        <button id="markerMenuOpen" class="btnIcon"></button>
+        <button id="markerMenuClose" class="btnIcon"></button>
+      </div>
       <div id="viewBtnWrapper" class="btnWrapper selected">
         <button id="viewBtn" class="btnIcon"></button>
       </div>
       <div id="addMarkerBtnWrapper" class="btnWrapper">
         <button id="addMarkerBtn" class="btnIcon"></button>
       </div>
-      <div id="chatBtnWrapper" class="btnWrapper topBtn">
+      <div id="chatBtnWrapper" class="btnWrapper topBtn" onclick="toggleChat()">
         <button id="chatButton" class="btnIcon"></button>
       </div>
       <div id="backBtnWrapper" class="btnWrapper topBtn">
@@ -43,6 +48,11 @@
       </div>
       <div id="shareBtnWrapper" class="btnWrapper topBtn">
         <button id="shareBtn" class="btnIcon"></button>
+      </div>
+
+      <div id="markerMenu" class="open">
+        <div id="markerMenuWrapper">
+        </div>
       </div>
 
       <div id="share-popup">

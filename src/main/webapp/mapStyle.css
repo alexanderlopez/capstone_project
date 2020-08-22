@@ -157,6 +157,20 @@ body, html {
   background-image: url("icons/addMarker.svg");
 }
 
+#markerMenuToggle {
+  left: 250px;
+}
+
+#markerMenuOpen {
+  display: none;
+  background-image: url("icons/down.svg");
+}
+
+#markerMenuClose {
+  background-image: url("icons/up.svg");
+  opacity: 1;
+}
+
 .btnIcon, .btnIcon:focus {
   background-repeat: no-repeat;
   background-position: center;
@@ -169,7 +183,7 @@ body, html {
   left: 5px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
-  outline: 0
+  outline: 0;
   opacity: .6;
 }
 

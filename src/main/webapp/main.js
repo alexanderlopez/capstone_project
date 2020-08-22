@@ -77,6 +77,7 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
         })
 
         initChat();
+        initMarkerMenu();
       });
     });
 

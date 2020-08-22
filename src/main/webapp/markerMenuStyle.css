@@ -1,0 +1,19 @@
+
+#markerMenu {
+  height: 0;
+  width: 280px;
+  transition: height .5s;
+  background-color: white;
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  z-index: 1;
+}
+
+#markerMenu.open {
+  height: 50%;
+}
+
+#markerMenuWrapper {
+  height: 100%;
+}
