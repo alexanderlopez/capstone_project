@@ -3,6 +3,10 @@ html {
   overflow: hidden;
 }
 
+:root {
+  --mdc-theme-primary: #306890;
+}
+
 body {
   background-image: url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80);
   background-size: cover;
