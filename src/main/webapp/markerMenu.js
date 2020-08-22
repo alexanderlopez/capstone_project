@@ -157,16 +157,22 @@ function removeMarkerFromMenu(marker) {
   }
 }
 
+/** Closes the marker menu */
+function closeMarkerMenu() {
+  menuOpen = true;
+  toggleMarkerMenu();
+}
+
 /** Opens and closes the marker menu */
 function toggleMarkerMenu() {
   if (menuOpen) {
-    openBtn.style.display='none';
-    closeBtn.style.display='block';
-    menu.classList.add("open");
-  } else {
     openBtn.style.display='block';
     closeBtn.style.display='none';
     menu.classList.remove("open");
+  } else {
+    openBtn.style.display='none';
+    closeBtn.style.display='block';
+    menu.classList.add("open");
   }
 
   menuOpen = !menuOpen;

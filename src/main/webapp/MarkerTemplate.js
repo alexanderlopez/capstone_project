@@ -73,6 +73,7 @@ class MarkerTemplate {
    */
   setMarkerListeners_() {
     this.googleMarker_.addListener('click', () => {
+      closeMarkerMenu();
       this.openInfoWindow();
     });
   }

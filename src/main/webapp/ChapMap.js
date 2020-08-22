@@ -68,6 +68,7 @@ class ChapMap {
    */
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
+      closeMarkerMenu();
       if (this.addingMarkers_) {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
@@ -114,6 +115,7 @@ class ChapMap {
    * @param {Boolean} enable whether this mode should be enabled or disabled
    */
   toggleAddingMarkers_(enable) {
+    closeMarkerMenu();
     let viewBtn = document.getElementById("viewBtnWrapper");
     let addMarkerBtn = document.getElementById("addMarkerBtnWrapper");
 
