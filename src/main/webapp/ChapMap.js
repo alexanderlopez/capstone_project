@@ -293,6 +293,7 @@ class ChapMap {
       permMarker.setColor(color);
     }
 
+    addToMarkerMenu(permMarker);
     if (permMarker === this.editedPermMarker_) {
       permMarker.openInfoWindow();
       this.editedPermMarker_ = null;
@@ -310,6 +311,7 @@ class ChapMap {
     if (permMarker) {
       permMarker.hide();
       delete this.permMarkers_[id];
+      removeMarkerFromMenu(permMarker);
     }
   }
 
