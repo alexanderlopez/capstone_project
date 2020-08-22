@@ -16,4 +16,10 @@
 
 #markerMenuWrapper {
   height: 100%;
+  overflow: scroll;
+}
+
+#markerMenuTitle {
+  margin: 1em 0;
+  text-align: center;
 }

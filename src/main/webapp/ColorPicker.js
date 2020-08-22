@@ -131,4 +131,9 @@ class ColorPicker {
      let colorBtn = document.getElementById(colorName);
      ColorPicker.switchSelectedColor_(colorBtn, callback);
    }
+
+   /** Returns the list of colors the color picker supports */
+   static getColorNames() {
+     return Object.keys(ColorPicker.colors_);
+   }
 }
