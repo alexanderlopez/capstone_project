@@ -99,21 +99,39 @@ function getChatHistory_(idToken) {
  * Sends nonempty chat comment from text area to server
 */
 function addChatComment() {
-    var commentContent = document.getElementById('comment-container').value;
+    // var commentContent = document.getElementById('comment-container').value;
+    //
+    // if(commentContent.indexOf("\n")==0 || commentContent===""){
+    //   document.getElementById('comment-container').value = "";
+    // } else {
+    //   var commentObj = {
+    //     type : "MSG_SEND",
+    //     message : commentContent
+    //   };
+    //
+    //   document.getElementById('comment-container').value = "";
+    //
+    //   if (connection) {
+    //       connection.send(JSON.stringify(commentObj));
+    //   }
+    // }
 
-    if(commentContent.indexOf("\n")==0 || commentContent===""){
-      document.getElementById('comment-container').value = "";
-    } else {
-      var commentObj = {
-        type : "MSG_SEND",
-        message : commentContent
-      };
+    let chatMessage = textInput.value;
 
-      document.getElementById('comment-container').value = "";
+    if (chatMessage.indexOf("\n") == 0 || chatMessage === "") {
+      textInput.value = "";
+      return;
+    }
 
-      if (connection) {
-          connection.send(JSON.stringify(commentObj));
-      }
+    var chatData = {
+      type: "MSG_SEND",
+      message: chatMessage
+    };
+
+    textInput.value = "";
+
+    if (connection) {
+      connection.send(JSON.stringify(chatData));
     }
 }
 
