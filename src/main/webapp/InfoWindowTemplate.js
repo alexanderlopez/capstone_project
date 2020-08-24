@@ -43,10 +43,13 @@ class InfoWindowTemplate {
 
   /** Displays the info window on the map */
   open() {
-    this.close();
-    this.googleInfoWindow_.setContent(this.makeContent_());
-    this.googleInfoWindow_.open
-        (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
+    return this.makeContent_().then(content =>{
+      this.close();
+      this.googleInfoWindow_.setContent(content);
+      this.googleInfoWindow_.open
+          (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
+    })
+    
   }
 
   /**
@@ -61,17 +64,22 @@ class InfoWindowTemplate {
   /**
    * @Private
    * Returns the html string to be displayed in this info window
+   * @returns {Promise} Promise object that represents content of info window
    */
   makeContent_() {
-    let contentWrapper = makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
-    contentWrapper.appendChild(this.makeLeftColumn_());
-    contentWrapper.appendChild(this.makeMiddleColumn_());
-    contentWrapper.appendChild(this.makeRightColumn_());
 
-    let result = contentWrapper.outerHTML;
-    contentWrapper.remove();
+    return this.makeRightColumn_().then(rightCol => {
+      let contentWrapper = makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
+      contentWrapper.appendChild(this.makeLeftColumn_());
+      contentWrapper.appendChild(this.makeMiddleColumn_());
+      contentWrapper.appendChild(rightCol);
 
-    return result;
+      let result = contentWrapper.outerHTML;
+      contentWrapper.remove();
+
+      return result;
+    })
+    
   }
 
   /**

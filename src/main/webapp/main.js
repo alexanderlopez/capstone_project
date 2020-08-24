@@ -55,6 +55,7 @@ let userId = null;
 
 const DEFAULT_LAT = -34.397;
 const DEFAULT_LNG =  150.644;
+var geocoder;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -66,10 +67,11 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
       }
 
       userId = firebase.auth().currentUser.uid;
+
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-
+        geocoder = new google.maps.Geocoder();
         getCoords().then(coords => {
           myMap = new ChapMap(coords);
         }).catch(() => {
@@ -195,4 +197,22 @@ function initChat() {
       addChatComment();
     }
   });
+}
+
+/**
+ * Converts and returns the address represented by the given coordinates
+ * @param {google.maps.Geocoder} geocoder Instance of the Google Maps Geocoding service
+ * @param {google.maps.LatLng} coords Pair of coordinates that is being geocoded
+ */
+async function geocodeLatLng(coords) {
+
+  return new Promise(function(resolve) {
+    geocoder.geocode({ location: coords }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          resolve (results[0].formatted_address);
+        } 
+      }
+    });
+  })
 }
