@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const MDCTextField = mdc.textField.MDCTextField;
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -30,6 +32,7 @@ firebase.initializeApp(firebaseConfig);
 // MAP
 
 let myMap;
+
 let roomId = (new URLSearchParams(location.search)).get('roomId');
 
 /** Waits for the page HTML to load */
@@ -48,6 +51,10 @@ let firebasePromise = new Promise(function(resolve) {
     });
 
 let connection = null;
+let userId = null;
+
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -58,13 +65,60 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
         location.href = "/";
       }
 
+      userId = firebase.auth().currentUser.uid;
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-        myMap = new ChapMap();
+
+        getCoords().then(coords => {
+          myMap = new ChapMap(coords);
+        }).catch(() => {
+          myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+        })
+
         initChat();
       });
     });
+
+/**
+ * Returns the user's coordinates, if possible
+ * @returns{!Promise<Array<Number>>} Promise for a tuple representing
+ * the user's latitude and longitude.
+ */
+function getCoords(){
+
+  return new Promise(function(resolve, reject){
+
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(position){
+        if(position.coords.latitude && position.coords.longitude){
+          resolve([position.coords.latitude, position.coords.longitude]);
+        } else {
+          reject();
+        }
+      }, reject);
+    } else {
+      reject();
+    }
+  })
+}
+
+/**
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
+ */
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
+}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
@@ -127,17 +181,18 @@ async function getServerUrl() {
     return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
 }
 
+var textInput;
+
 /**
  * Sets up chat listeners
  */
 function initChat() {
   loadChatHistory();
 
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
+  textInput = new MDCTextField(document.getElementById("comment-container-material"));
+  textInput.listen('keydown', (keyEvent) => {
+    if (keyEvent.key === 'Enter') {
+      addChatComment();
     }
   });
 }

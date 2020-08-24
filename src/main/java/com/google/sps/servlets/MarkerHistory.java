@@ -19,7 +19,9 @@ public class MarkerHistory extends HttpServlet {
         String tokenId = request.getParameter("idToken");
         long roomId = Long.parseLong(request.getParameter("idRoom"));
 
-        if (!CapstoneAuth.isUserAuthenticated(tokenId)) {
+        if (!CapstoneAuth.isUserAuthenticated(tokenId) ||
+                !DatastoreManager.getInstance().isUserAllowedChatroom(
+                CapstoneAuth.getUserId(tokenId), roomId)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

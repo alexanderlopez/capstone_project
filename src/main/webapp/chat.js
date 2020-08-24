@@ -135,7 +135,7 @@ function handleChatMessage(obj) {
   var node = document.createElement("div");
   var textnode = document.createTextNode(obj.name + ": " + obj.message);
 
-  let userId = firebase.auth().currentUser.uid;
+  // userID is defined in the main.js file
   if(obj.uid === userId) {
     node.classList.add("myMessage");
   } else {

@@ -101,6 +101,8 @@ public class DatastoreManager {
                         markerData.getDouble(ChatWebSocket.JSON_LATITUDE))
                   .set(ChatWebSocket.JSON_LONGITUDE,
                         markerData.getDouble(ChatWebSocket.JSON_LONGITUDE))
+                  .set(ChatWebSocket.JSON_COLOR,
+                        markerData.getString(ChatWebSocket.JSON_COLOR))
                   .build();
 
         datastore.put(markerEntity);
@@ -172,7 +174,9 @@ public class DatastoreManager {
                             markerEntity.getDouble(ChatWebSocket.JSON_LATITUDE))
                         .put(ChatWebSocket.JSON_LONGITUDE,
                             markerEntity.getDouble(
-                                ChatWebSocket.JSON_LONGITUDE));
+                                ChatWebSocket.JSON_LONGITUDE))
+                        .put(ChatWebSocket.JSON_COLOR,
+                            markerEntity.getString(ChatWebSocket.JSON_COLOR));
 
             markersJson.put(markerObject);
         }
