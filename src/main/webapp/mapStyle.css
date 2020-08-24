@@ -194,7 +194,7 @@ body, html {
 }
 
 #chatBtnWrapper {
-  right: 80px;
+  right: 70px;
 }
 
 #chatButton {
@@ -202,7 +202,7 @@ body, html {
 }
 
 #backBtnWrapper {
-  right: 150px;
+  right: 130px;
 }
 
 #backButton {
@@ -210,12 +210,24 @@ body, html {
 }
 
 #shareBtnWrapper {
-  right: 220px;
+  right: 190px;
   top: 10px;
 }
 
 #shareBtn {
   background-image: url("icons/share.svg");
+}
+
+#search {
+  left: 240px !important;
+  height: 40px;
+  outline: 0;
+  border: 0;
+  border-radius: 2px;
+  padding-left: 1em;
+  max-width: calc(100% - 500px);
+  width: 40em;
+  top: 10px !important;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
