@@ -13,12 +13,28 @@ body {font-family: 'Roboto', sans-serif;}
 
 /* Add styles to the form container */
 .form-container {
-  width: 100%;
+  width: 92%;
   min-width: 360px;
   padding: 4%;
   background-color: white;
-  height: 100%;
-  position: relative;
+  height: 92%;
+  display: grid;
+  grid-template-rows: 9em calc(100vh - 17em) 5em;
+}
+
+#send-area {
+  display: grid;
+  grid-template-columns: 85% 15%;
+}
+
+#comment-container-material {
+  margin: auto 0;
+}
+
+.form-container h1 {
+  text-align: center;
+  font-size: 4em;
+  margin: 0.5em 0 0 0;
 }
 
 /* Full-width textarea */
@@ -64,18 +80,12 @@ body {font-family: 'Roboto', sans-serif;}
 }
 
 #submitBtn {
-  vertical-align:top;
   background-color: white;
-  padding: 5%;
-  margin: 10px 0 10px 0;
   border: none;
   cursor: pointer;
-  width: 10%;
-  bottom: 4.2%;
-  position: absolute;
-  right: 4%;
-  max-height: 50px;
-  height: 7%;
+  width: 70%;
+  height: 70%;
+  margin: auto;
   border-radius: 2px;
   font-size: 2em;
   background-image: url(icons/send.svg);

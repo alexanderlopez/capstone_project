@@ -388,8 +388,8 @@ class ChapMap {
     this.addClickEvent_("addEmail", () => this.addEmail_());
     this.addClickEvent_("share", () => this.submitSharing_());
     this.addClickEvent_("close", () => this.closeSharePopup_());
+    this.addClickEvent_("share-popup", () => this.closeSharePopup_());
   }
-
 
   /**
    * Sets a click-trigger event to the DOM element with the given id and
