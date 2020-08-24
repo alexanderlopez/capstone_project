@@ -58,12 +58,17 @@ class TempInfoWindow extends InfoWindowTemplate {
   /**
    * @Private
    * Returns the HTML of the right section of the information window
+   * @returns {Promise} Promise object represents right column of info window
    */
   makeRightColumn_() {
-    let rightCol = document.createElement("div");
-    rightCol.classList.add(InfoWindowTemplate.RIGHT_COLUMN);
-    rightCol.appendChild(this.makeContentForm_());
-    return rightCol;
+
+    return new Promise((resolve) => {
+      let rightCol = document.createElement("div");
+      rightCol.classList.add(InfoWindowTemplate.RIGHT_COLUMN);
+      rightCol.appendChild(this.makeContentForm_());
+      
+      resolve (rightCol);
+    });
   }
 
   /**

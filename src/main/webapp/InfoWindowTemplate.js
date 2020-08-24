@@ -43,9 +43,13 @@ class InfoWindowTemplate {
   /** Displays the info window on the map */
   open() {
     this.close();
-    this.googleInfoWindow_.setContent(this.makeContent_());
-    this.googleInfoWindow_.open
+
+    return this.makeContent_().then(content => {
+      this.googleInfoWindow_.setContent(content);
+
+      this.googleInfoWindow_.open
         (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
+    })
   }
 
   /**
@@ -65,12 +69,13 @@ class InfoWindowTemplate {
     let contentWrapper = document.createElement("div");
     contentWrapper.classList.add(InfoWindowTemplate.CONTENT_WRAPPER);
     contentWrapper.appendChild(this.makeLeftColumn_());
-    contentWrapper.appendChild(this.makeRightColumn_());
 
-    let result = contentWrapper.outerHTML;
-    contentWrapper.remove();
-
-    return result;
+    return this.makeRightColumn_().then(rightCol => {
+      contentWrapper.appendChild(rightCol);
+      let result = contentWrapper.outerHTML;
+      contentWrapper.remove();
+      return result;
+    })
   }
 
   /**

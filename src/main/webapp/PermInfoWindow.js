@@ -55,6 +55,7 @@ class PermInfoWindow extends InfoWindowTemplate {
     /**
      * @Private
      * Returns the html of the DOM element for the body of the info window
+     * @returns {Promise} Promise object represents body and location of marker
      */
     makeBody_() {
       let body  = document.createElement("p");
@@ -62,11 +63,9 @@ class PermInfoWindow extends InfoWindowTemplate {
       body.innerHTML = this.myMarker_.getBody();
       
       return geocodeLatLng(this.geocoder,this.myMarker_.getPosition()).then(result => {
-        console.log("this is result: " + result);
-        body.innerHTML += "<br>" + result;
+        body.innerHTML += "<br> <b>Approximate Location: </b>" + result;
         return body;
       }).catch(() => {
-        //console.log("I think there's an error");
         return body;
       })
     }
@@ -75,12 +74,18 @@ class PermInfoWindow extends InfoWindowTemplate {
     /**
      * @Private
      * Puts together the title and body of the info window
+     * @returns {Promise} Promise object represents right column of info window
      */
     makeRightColumn_() {
       let rightCol = document.createElement("div");
       rightCol.classList.add(InfoWindowTemplate.RIGHT_COLUMN);
       rightCol.appendChild(this.makeTitle_());
-      rightCol.appendChild(this.makeBody_());
-      return rightCol;
+
+      return this.makeBody_().then(body => {
+        rightCol.appendChild(body);
+        return rightCol;
+      }).catch(() => {
+        return rightCol;
+      })
     }
 }

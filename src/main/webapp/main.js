@@ -144,23 +144,18 @@ function initChat() {
 
 
 /**
- * 
- * @param {*} geocoder 
- * @param {google.map.LatLng} coords Pair of coordinates
+ * Converts and returns the address represented by the given coordinates
+ * @param {google.maps.Geocoder} geocoder Instance of the Google Maps Geocoding service
+ * @param {google.maps.LatLng} coords Pair of coordinates that is being geocoded
  */
 function geocodeLatLng(geocoder, coords) {
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     geocoder.geocode({ location: coords }, (results, status) => {
       if (status === "OK") {
         if (results[0]) {
-          console.log(results[0].formatted_address);
           resolve (results[0].formatted_address);
-        } else {
-          window.alert("No results found");
-        }
-      } else {
-        window.alert("Geocoder failed due to: " + status);
+        } 
       }
     });
   })
