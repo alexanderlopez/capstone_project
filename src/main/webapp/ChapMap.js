@@ -145,6 +145,10 @@ class ChapMap {
     this.closePermInfoWindow();
     permMarker.hide();
 
+    if (this.editedPermMarker_) {
+      this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
+    }
+
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
 
