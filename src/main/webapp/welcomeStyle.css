@@ -3,6 +3,10 @@ html {
   overflow: hidden;
 }
 
+:root {
+  --mdc-theme-primary: #306890;
+}
+
 body {
   background-image: url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80);
   background-size: cover;
@@ -153,6 +157,10 @@ body {
   overflow-wrap: break-word;
 }
 
+.mdc-text-field__input {
+  color: rgba(0,0,0,1) !important;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
 
@@ -216,15 +224,10 @@ body {
 /* Sign out */
 #sign-out, #sign-out:focus {
   display: none;
-  margin: 10px;
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: transparent;
-  font-size: 20px;
   color: white;
-  border: 0;
-  cursor: pointer;
 }
 
 #firebaseui-auth-container {
@@ -238,7 +241,7 @@ body {
   border-radius: 10px;
   padding: 2%;
   background-color: #e4e7ebb3;
-  min-width: 8em;
+  min-width: 9em;
   width: 25%;
   max-width: 350px;
   border-color: gray;
@@ -251,6 +254,7 @@ body {
 #nav {
   height: 6vh;
   margin: 1vh;
+  display: flex;
 }
 
 .nav-btn, .nav-btn:focus {

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const MDCTextField = mdc.textField.MDCTextField;
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -262,8 +264,6 @@ async function getServerUrl() {
     } else {
         protoSpec = 'ws:';
     }
-
-    // let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
 
     return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
 }
