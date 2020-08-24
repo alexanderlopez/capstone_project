@@ -103,4 +103,17 @@ class MarkerTemplate {
     marker.setPosition(coords);
     marker.setMap(myMap.getGoogleMap());
   }
+
+  /**
+   * Changes the marker's map
+   * @param {google.maps.Map} map the map to move the marker to
+   */
+  setMap(map) {
+    this.googleMarker_.setMap(map);
+  }
+
+  /** Returns whether the marker is currently visible on the map */
+  isVisible() {
+    return this.googleMarker_.getMap() !== null;
+  }
 }

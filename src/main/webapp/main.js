@@ -69,15 +69,14 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
       getServerUrl().then(result => {
         connection = new WebSocket(result);
         initWebsocket();
-
+        initMarkerMenu();
+        initChat();
+        
         getCoords().then(coords => {
           myMap = new ChapMap(coords);
         }).catch(() => {
           myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
         })
-
-        initChat();
-        initMarkerMenu();
       });
     });
 

@@ -1,13 +1,13 @@
-
 #markerMenu {
   height: 0;
   width: 280px;
   transition: height .5s;
-  background-color: white;
+  background-color: #ffffffd6;
   position: absolute;
   top: 60px;
   left: 10px;
   z-index: 1;
+  border-radius: 5px;
 }
 
 #markerMenu.open {
@@ -20,6 +20,47 @@
 }
 
 #markerMenuTitle {
-  margin: 1em 0;
+  margin: .6em 0;
   text-align: center;
+  font-weight: 500;
+}
+
+#markerMenuList {
+  max-height: inherit;
+}
+
+.mdc-list {
+  max-height: 0;
+  transition: max-height .5s;
+  overflow: hidden;
+  padding: 0!important;
+}
+
+.mdc-list-item.marker-item {
+  margin-left: 2em;
+  height: 2.2em;
+}
+
+.mdc-list-item {
+  cursor: default!important;
+}
+
+.mdc-list-item__text {
+  padding-left: 1em!important;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
+.toggleIcon {
+  margin-left: auto!important;
+  cursor: pointer
+}
+
+.markerIcon {
+  cursor: pointer;
+  text-shadow: black 0px 1px 2px;
+  z-index: 1;
+  margin-left: auto;
 }

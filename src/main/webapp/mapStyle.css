@@ -161,14 +161,12 @@ body, html {
   left: 250px;
 }
 
-#markerMenuOpen {
-  display: none;
-  background-image: url("icons/down.svg");
+#markerMenuClose.rotate {
+  opacity: 1;
 }
 
 #markerMenuClose {
   background-image: url("icons/up.svg");
-  opacity: 1;
 }
 
 .btnIcon, .btnIcon:focus {

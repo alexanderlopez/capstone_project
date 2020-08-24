@@ -115,7 +115,6 @@ class ChapMap {
    * @param {Boolean} enable whether this mode should be enabled or disabled
    */
   toggleAddingMarkers_(enable) {
-    closeMarkerMenu();
     let viewBtn = document.getElementById("viewBtnWrapper");
     let addMarkerBtn = document.getElementById("addMarkerBtnWrapper");
 
@@ -201,9 +200,21 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Pans the map to the given marker and opens its information window
+   * @param {PermMarker} marker the marker that should be centered
+   */
   highlightMarker(marker) {
     this.panTo(marker.getPosition());
     marker.openInfoWindow();
+  }
+
+  /**
+   * Returns the permanent marker with the given id
+   * @param {String} id the id the marker wanted
+   */
+  getPermMarker(id) {
+    return this.permMarkers_[id];
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,6 +266,7 @@ class ChapMap {
     if (!permMarker) {
       this.makeNewPermMarker_(markerId, markerJson)
     } else {
+      removeMarkerFromMenu(permMarker);
       this.updatePermMarker_(permMarker, markerJson);
     }
   }
@@ -295,7 +307,6 @@ class ChapMap {
     if (body) {
       permMarker.setBody(body);
     }
-
     if (color) {
       permMarker.setColor(color);
     }

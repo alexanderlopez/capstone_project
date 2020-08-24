@@ -123,6 +123,14 @@ class ColorPicker {
    }
 
    /**
+    * Returns the hex code for the color with the a certain name
+    * @param {String} name the name of the color needed
+    */
+   static getColorCode(name) {
+     return ColorPicker.colors_[name];
+   }
+
+   /**
     * Sets the currently selected color to the given color name
     * @param {String} colorName the name of the color to be selected
     * @param {?*} callback function to call on the new color string
