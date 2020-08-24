@@ -144,15 +144,10 @@ class ChapMap {
   editPermMarker(permMarker) {
     this.closePermInfoWindow();
     permMarker.hide();
-
-    if (this.editedPermMarker_) {
-      this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
-    }
+    this.setTempMarker(permMarker.getPosition());
 
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
-
-    this.setTempMarker(permMarker.getPosition());
     this.tempMarker_.setColor(permMarker.getColorName());
     this.tempMarker_.openInfoWindow();
   }
@@ -170,7 +165,13 @@ class ChapMap {
    * @param {google.maps.LatLng} coords coordinates where to show the marker
    */
   setTempMarker(coords) {
+    if (this.editedPermMarker_) {
+      this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
+      this.editedPermMarker_ = null;
+    }
     this.closePermInfoWindow();
+    this.tempMarker_.closeInfoWindow();
+    this.tempMarker_.setColor(ColorPicker.DEFAULT_COLOR);
     this.tempMarker_.setPosition(coords);
     this.googleMap_.panTo(coords);
     this.clearSuggestedMarker_();
