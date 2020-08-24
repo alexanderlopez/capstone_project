@@ -103,6 +103,10 @@ function makeColorGroup(color) {
   let groupHeader = headerComponents.item;
   let newCheckbox = headerComponents.checkbox;
 
+  let markerIcon = makeIconBtn("place", "markerIcon");
+  markerIcon.style.color = ColorPicker.getColorCode(color);
+  groupHeader.appendChild(markerIcon);
+
   // add toggle button to group header
   let iconBtnCallback = () => collapseMenuGroup(color);
   let iconBtn = makeIconBtn(OPEN_ICON, "toggleIcon", iconBtnCallback);
@@ -222,8 +226,7 @@ function makeMarkerMenuItem(marker) {
 
   // make the marker icon button with the same color as the PermMarker
   let markerCallback = () => goToMarker(marker);
-  let markerIcon = makeIconBtn("place", "markerIcon", markerCallback);
-  markerIcon.style.color = ColorPicker.getColorCode(color);
+  let markerIcon = makeIconBtn("north_east", "goToIcon", markerCallback);
   menuItem.appendChild(markerIcon);
 
   return elementComponents;
@@ -259,7 +262,7 @@ function collapseMenuGroup(color) {
   let maxHeight = `${groupWrapper.scrollHeight}px`;
   groupWrapper.style.maxHeight = atMaxHeight? null: maxHeight;
 
-  let toggleIcon = groupHeader.getElementsByClassName(ICON)[0];
+  let toggleIcon = groupHeader.getElementsByClassName("toggleIcon")[0];
   toggleIcon.classList.toggle("rotate");
 }
 
