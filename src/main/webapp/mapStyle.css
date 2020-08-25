@@ -59,7 +59,7 @@ body, html {
 }
 
 #markerDelete, #markerEdit, #markerColor {
-  height: 1.5em;
+  height: 2.5em;
   width: 2em;
   background-position: center;
   background-repeat: no-repeat;
@@ -85,7 +85,7 @@ body, html {
 }
 
 .markerTitle {
-  font-size: 3em;
+  font-size: 2.5em;
   font-weight: bold;
   margin: 0;
 }
@@ -169,7 +169,7 @@ body, html {
   left: 5px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
-  outline: 0
+  outline: 0;
   opacity: .6;
 }
 

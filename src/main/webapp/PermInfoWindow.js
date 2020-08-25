@@ -57,7 +57,7 @@ class PermInfoWindow extends InfoWindowTemplate {
         let body  = makeEl("p", PermInfoWindow.BODY_CLASS);
         let currBody = this.myMarker_.getBody();
         body.innerHTML = currBody? currBody: "";
-        body.innerHTML += "<br> <b>Approximate Location: </b>" + result;
+        body.innerHTML += "<br> <br> <b>Approximate Location: </b>" + result;
         rightCol.appendChild(body);
 
         return rightCol;
