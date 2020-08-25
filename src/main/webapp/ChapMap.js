@@ -62,6 +62,7 @@ class ChapMap {
    */
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
+      closeMarkerMenu();
       if (this.addingMarkers_) {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
@@ -80,7 +81,6 @@ class ChapMap {
                       () => this.enableAddingMarkers_());
     addClickEvent("backBtnWrapper", () => window.location='/');
     addClickEvent("viewBtnWrapper", () => this.disableAddingMarkers_());
-    addClickEvent("chatBtnWrapper", () => toggleChat());
   }
 
   /**
@@ -194,6 +194,23 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Pans the map to the given marker and opens its information window
+   * @param {PermMarker} marker the marker that should be centered
+   */
+  highlightMarker(marker) {
+    this.panTo(marker.getPosition());
+    marker.openInfoWindow();
+  }
+
+  /**
+   * Returns the permanent marker with the given id
+   * @param {String} id the id the marker wanted
+   */
+  getPermMarker(id) {
+    return this.permMarkers_[id];
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
@@ -231,6 +248,7 @@ class ChapMap {
     if (!permMarker) {
       this.makeNewPermMarker_(markerId, markerJson)
     } else {
+      removeMarkerFromMenu(permMarker);
       this.updatePermMarker_(permMarker, markerJson);
     }
   }
@@ -271,11 +289,11 @@ class ChapMap {
     if (body) {
       permMarker.setBody(body);
     }
-
     if (color) {
       permMarker.setColor(color);
     }
 
+    addToMarkerMenu(permMarker);
     if (permMarker === this.editedPermMarker_) {
       permMarker.openInfoWindow();
       this.editedPermMarker_ = null;
@@ -293,6 +311,7 @@ class ChapMap {
     if (permMarker) {
       permMarker.hide();
       delete this.permMarkers_[id];
+      removeMarkerFromMenu(permMarker);
     }
   }
 
