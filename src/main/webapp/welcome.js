@@ -1,3 +1,29 @@
+const MDCTab = mdc.tab.MDCTab;
+const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
+const MDCList = mdc.list.MDCList;
+
+var tabRegions;
+var textRegions;
+var buttonRipple;
+var mapList;
+var mapListItems = [];
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  tabRegions = [].map.call(document.querySelectorAll('.mdc-tab'), function(el) {
+    return new MDCTab(el);
+  });
+
+  textRegions = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+  textRegions[0].disabled = true;
+  textRegions[1].disabled = true;
+
+  buttonRipple = new MDCRipple(document.querySelector('.mdc-button'));
+
+  mapList = new MDCList(document.querySelector('.mdc-list'));
+});
 
 var firebaseConfig = {
     apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -96,7 +122,7 @@ function displayUserInfo_(userJson, email) {
   if (isNewUser) {
     setWelcomeMessage_();
     disableMapCreating_();
-    showUsernameForm();
+    enableUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
     loadUserMaps_(userJson.rooms);
@@ -131,18 +157,11 @@ function setWelcomeMessage_(userName) {
  * Displays the form where users can enter their username and hides the
  * new map form if it is visible
  */
-function showUsernameForm() {
-  let usernameForm = document.getElementById(USERNAME_FORM);
-  let usernameGroup = usernameForm.parentNode;
-  let prevUsername = usernameGroup
-      .getElementsByClassName("groupContent")[0];
+function enableUsernameForm() {
+  textRegions[1].disabled = false;
 
   hideEl_(document.getElementById('edit-details'));
   showEl_(document.getElementById('save-details'));
-
-  hideEl_(prevUsername);
-  usernameForm.innerHTML = prevUsername.innerHTML;
-  showEl_(usernameForm);
 }
 
 /**
@@ -151,7 +170,7 @@ function showUsernameForm() {
  * username form if it is visible
  */
 function showMapForm() {
-  showEl_(document.getElementById("map-form-wrapper"));
+  document.getElementById("submit-map-form").style.display = 'flex';
   hideEl_(document.getElementById('add-map'));
   showEl_(document.getElementById('submit-map'));
 }
@@ -160,7 +179,7 @@ function showMapForm() {
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById('new-map-form');
+  let input = textRegions[2];
   submitNewItem("room-server", input);
 }
 
@@ -168,7 +187,7 @@ function submitMap() {
  * Sends the submitted username to the server
  */
 function submitUsername() {
-  let input = document.getElementById(USERNAME_FORM);
+  let input = textRegions[1];
   submitNewItem("user-server", input);
 }
 
@@ -209,14 +228,11 @@ function loadUserDetails_(email, username) {
   showEl_(document.getElementById(PANEL));
   let displayDiv = document.getElementById(DETAILS_EL);
 
-  var emailBlock = makeDetailsGroup_
-      ("email", email, /* isUsernameGroup= */ false);
-  displayDiv.appendChild(emailBlock);
+  textRegions[0].value = email;
 
-  let usernameValue = username? username: "";
-  let usernameBlock =
-      makeDetailsGroup_("username", usernameValue, /* isUsernameGroup= */ true);
-  displayDiv.appendChild(usernameBlock);
+  if (username != null) {
+    textRegions[1].value = username;
+  }
 
   showEl_(displayDiv);
 }
@@ -225,62 +241,40 @@ function loadUserDetails_(email, username) {
  * @Private
  * Changes which tab is visible in the main panel
  * @param {String} showDivId id of the content to be shown
- * @param {String} showBtnId id of the tab button to be selected
  * @param {String} hideDivId id of the content to be hidden
- * @param {String} hideBtnId id of the tab button to be deselected
  */
-function togglePanel_(showDivId, showBtnId, hideDivId, hideBtnId) {
+function togglePanel_(showDivId, hideDivId) {
   showEl_(document.getElementById(showDivId));
   hideEl_(document.getElementById(hideDivId));
+}
 
-  let showBtn = document.getElementById(showBtnId);
-  showBtn.classList.add("show");
-
-  let hideBtn = document.getElementById(hideBtnId);
-  hideBtn.classList.remove("show");
+function getCurrentActiveTab() {
+  if (tabRegions[0].active) {
+    return tabRegions[0]
+  }
+  else if (tabRegions[1].active) {
+    return tabRegions[1];
+  }
 }
 
 /**
  * Hides the user's maps tab and shows the profile tab instead
  */
 function showUserDetails() {
-  togglePanel_(/* showDivId= */ DETAILS_EL, /* showBtnId= */ "profile-btn", /* hideDivId= */ MAPS_WRAPPER, /* hideBtnId= */ "maps-btn");
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].activate(currentActive);
+  tabRegions[1].deactivate();
+  togglePanel_(/* showDivId= */ DETAILS_EL, /* hideDivId= */ MAPS_WRAPPER);
 }
 
 /**
  * Hides the user's profile tab and shows the map tab instead
  */
 function showUserMaps() {
-  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* showBtnId= */ "maps-btn", /* hideDivId= */ DETAILS_EL, /* hideBtnId= */ "profile-btn");
-}
-
-/**
- * @Private
- * Returns div containing a piece of user information determined by
- * the group name and value and an editable component if applicable
- * @param {String} name the name of this group of information
- * @param {String} val the value of the group of information
- * @param {boolean} isUsernameGroup whether this is the username group
- */
-function makeDetailsGroup_(name, val, isUsernameGroup) {
-  let wrapper = makeEl("div", "detailsGroup", name);
-
-  let label = makeEl("h4", "groupLabel");
-  label.innerHTML = name;
-  wrapper.appendChild(label);
-
-  let content = makeEl("p", "groupContent");
-  content.innerHTML = val;
-  wrapper.appendChild(content);
-
-  if (isUsernameGroup) {
-    let editForm = makeEl("textarea", /* class= */ null, USERNAME_FORM);
-    editForm.style.display = 'none';
-    editForm.placeholder = "Username...";
-    wrapper.appendChild(editForm);
-  }
-
-  return wrapper;
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].deactivate();
+  tabRegions[1].activate(currentActive);
+  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* hideDivId= */ DETAILS_EL);
 }
 
 /**
@@ -289,8 +283,7 @@ function makeDetailsGroup_(name, val, isUsernameGroup) {
  * @param {JSON} mapsJson json array containing map ids and names
  */
 function loadUserMaps_(mapsJson) {
-  let rooms = document.getElementById('user-maps');
-  let roomWrapper = document.getElementById(MAPS_WRAPPER);
+  let rooms = document.querySelector('.mdc-list');
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -307,11 +300,27 @@ function loadUserMaps_(mapsJson) {
  * @param {String} name the given name of the map
  */
 function makeRoomButton_(id, name) {
-  let roomBtn = makeEl("button", "roomBtn");
-  roomBtn.innerHTML = name;
-  roomBtn.addEventListener('click', () => {
-     location.href=`/chatroom.html?roomId=${id}`;
+  let roomBtn = makeEl("li", "mdc-list-item");
+  roomBtn.appendChild(makeEl("span", "mdc-list-item__ripple"));
+
+  let graphicElement = makeEl("span", "mdc-list-item__graphic");
+  let iconElement = makeEl("span", "material-icons");
+  iconElement.innerText = "map";
+
+  graphicElement.appendChild(iconElement);
+
+  roomBtn.appendChild(graphicElement);
+
+  let roomText = makeEl("span", "mdc-list-item__text");
+  roomText.innerText = name;
+  roomBtn.appendChild(roomText);
+
+  roomBtn.addEventListener('click', (clickEvent) => {
+    location.href=`/chatroom.html?roomId=${id}`;
   });
+
+  mapListItems.push(new MDCRipple(roomBtn));
+
   return roomBtn;
 }
 

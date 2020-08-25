@@ -157,7 +157,7 @@ body, html {
   background-image: url("icons/addMarker.svg");
 }
 
-.btnIcon, .btnIcon:focus, .btnIcon:hover {
+.btnIcon, .btnIcon:focus {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -170,6 +170,11 @@ body, html {
   background-color: rgb(255, 255, 255);
   cursor: pointer;
   outline: 0
+  opacity: .6;
+}
+
+.btnIcon:hover {
+  opacity: 1;
 }
 
 .selected .btnIcon {
@@ -177,6 +182,7 @@ body, html {
   left: 2px;
   height: 36px;
   width: 36px;
+  opacity: 1;
 }
 
 .selected {
