@@ -33,7 +33,7 @@ firebase.initializeApp(firebaseConfig);
 
 let myMap;
 
-let roomId = (new URLSearchParams(location.search)).get('roomId');
+let currRoomId = (new URLSearchParams(location.search)).get('roomId');
 
 /** Waits for the page HTML to load */
 let domPromise = new Promise(function(resolve) {
@@ -52,33 +52,108 @@ let firebasePromise = new Promise(function(resolve) {
 
 let connection = null;
 let userId = null;
-
-const DEFAULT_LAT = -34.397;
-const DEFAULT_LNG =  150.644;
+let userEmail = null;
+let idToken = null;
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
  */
-Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
-      let user = values[2];
-      if (!user) {
+Promise.all([mapPromise, domPromise, firebasePromise])
+       .then((values) => {
+         let currUser = firebase.auth().currentUser;
+         userId = currUser.uid;
+         userEmail = currUser.email;
+
+         firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+             .then(token => {
+               idToken = token;
+               fetchStr = `?idToken=${idToken}&idRoom=${currRoomId}`;
+
+               validateUser(values);
+               initChatroom();
+             });
+       });
+
+/**
+ * Sends the user back to the home page if they do not have access to this
+ * chatroom
+ */
+function validateUser(values) {
+  let user = values[2];
+  fetch("/authentication"+fetchStr)
+    .then((response) => response.text())
+    .then((allowed) => {
+      if (!user || allowed == "false") {
         location.href = "/";
       }
-
-      userId = firebase.auth().currentUser.uid;
-      getServerUrl().then(result => {
-        connection = new WebSocket(result);
-        initWebsocket();
-
-        getCoords().then(coords => {
-          myMap = new ChapMap(coords);
-        }).catch(() => {
-          myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
-        })
-
-        initChat();
-      });
     });
+}
+
+var fetchStr;
+
+/** Opens the websocket and initalizes all the chatroom components */
+function initChatroom() {
+  getServerUrl()
+      .then(result => {
+        connection = new WebSocket(result);
+
+        initWebsocket();
+        initMap();
+        initChat();
+        // defined in sharing.js
+        initSharing();
+      });
+}
+
+/**
+ * Builds the content of the fetch call with a method, headers, and body
+ * @param {String} type the fetch method
+ * @param {Object} params the parameters that need to be sent
+ */
+function buildFetchContent(type, params) {
+  return {
+    method: type,
+    headers: { 'Content-Type': 'text/html' },
+    body: JSON.stringify(params)
+  };
+}
+
+/**
+ * Adds the user id token and room id to fetch parameters
+ * @param {Object} params the existing customized parameters
+ */
+function buildFetchParams(params) {
+  params.id = idToken;
+  params.roomId = currRoomId;
+  return params;
+}
+
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
+
+/** Initalizes the map */
+function initMap() {
+  getCoords().then(coords => {
+    myMap = new ChapMap(coords);
+  }).catch(() => {
+    myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+  })
+}
+
+/**
+ * Sets up chat listeners
+ */
+function initChat() {
+  loadChatHistory();
+
+  var input = document.getElementById("comment-container");
+  input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("submitBtn").click();
+    }
+  });
+}
 
 /**
  * Returns the user's coordinates, if possible
@@ -103,6 +178,9 @@ function getCoords(){
   })
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HELPER FUNCIONS
+
 /**
  * Returns a DOM element of the given type with a certain id and class
  * @param {String} type the type of DOM element to be created
@@ -118,6 +196,17 @@ function makeEl(type, elClass, elId) {
     el.classList.add(elClass);
   }
   return el;
+}
+
+/**
+ * Sets a click-trigger event to the DOM element with the given id and
+ * sets the callback function to the one given
+ * @param {String} id the id of the element to be added
+ * @param {*} fn the anonymous function to be called on click
+ */
+function addClickEvent(id, fn) {
+  let btn = document.getElementById(id);
+  btn.addEventListener('click', fn);
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,23 +265,5 @@ async function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
-
-    return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
-}
-
-var textInput;
-
-/**
- * Sets up chat listeners
- */
-function initChat() {
-  loadChatHistory();
-
-  textInput = new MDCTextField(document.getElementById("comment-container-material"));
-  textInput.listen('keydown', (keyEvent) => {
-    if (keyEvent.key === 'Enter') {
-      addChatComment();
-    }
-  });
+    return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
 }

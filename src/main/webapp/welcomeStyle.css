@@ -199,6 +199,27 @@ body {
   cursor: pointer
 }
 
+.deleteBtn, .deleteBtn:focus {
+  background-image: url("icons/delete.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 4;
+  height: 2em;
+  width: 2em;
+  padding: 0;
+}
+
+.roomName {
+  width: calc(100% - 2em);
+  margin: 0;
+  float: left;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* Sign out */
 #sign-out, #sign-out:focus {

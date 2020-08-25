@@ -30,14 +30,10 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
-  /** Id Token of the current user*/
-  idToken_;
-
   /** Suggested marker from the search box */
   suggestedMarker_;
 
   static SELECTED_CLASS = "selected";
-
 
   constructor(coords) {
     var lat = coords[0];
@@ -52,7 +48,6 @@ class ChapMap {
 
     this.addBtnListeners_();
     this.addMapClickListener_();
-    this.setMapShareEvents_();
 
     PermMarker.permInfoWindow = new PermInfoWindow();
     this.tempMarker_ = new TempMarker();
@@ -61,7 +56,6 @@ class ChapMap {
 
     this.permMarkers_ = {};
     this.loadMarkers_();
-
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,6 +67,7 @@ class ChapMap {
    */
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
+      closeMarkerMenu();
       if (this.addingMarkers_) {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
@@ -87,11 +82,10 @@ class ChapMap {
    * A client can only add markers when the "adding markers" mode is on
    */
   addBtnListeners_() {
-    this.addClickEvent_("addMarkerBtnWrapper",
+    addClickEvent("addMarkerBtnWrapper",
                       () => this.enableAddingMarkers_());
-    this.addClickEvent_("backBtnWrapper", () => window.location='/');
-    this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
-    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
+    addClickEvent("backBtnWrapper", () => window.location='/');
+    addClickEvent("viewBtnWrapper", () => this.disableAddingMarkers_());
   }
 
   /**
@@ -211,6 +205,23 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Pans the map to the given marker and opens its information window
+   * @param {PermMarker} marker the marker that should be centered
+   */
+  highlightMarker(marker) {
+    this.panTo(marker.getPosition());
+    marker.openInfoWindow();
+  }
+
+  /**
+   * Returns the permanent marker with the given id
+   * @param {String} id the id the marker wanted
+   */
+  getPermMarker(id) {
+    return this.permMarkers_[id];
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
@@ -219,20 +230,8 @@ class ChapMap {
    * Fetches all the map's markers from the server and loads them to the map
    */
   loadMarkers_() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-        .then(idToken => myMap.getMarkers(idToken))
-        .catch(error => {
-          throw "Problem getting markers";
-        });
-  }
-
-  /**
-   * Retrieves markers from the server and adds them to the map
-   * @param {firebase.idToken} idToken the current user's getIdToken
-   */
-  getMarkers(userIdToken) {
-    this.idToken = userIdToken;
-    fetch(`/map-server?idToken=${userIdToken}&idRoom=${roomId}`)
+    // fetchStr initialized in main.js
+    fetch("/map-server"+fetchStr)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }
@@ -260,6 +259,7 @@ class ChapMap {
     if (!permMarker) {
       this.makeNewPermMarker_(markerId, markerJson)
     } else {
+      removeMarkerFromMenu(permMarker);
       this.updatePermMarker_(permMarker, markerJson);
     }
   }
@@ -300,11 +300,11 @@ class ChapMap {
     if (body) {
       permMarker.setBody(body);
     }
-
     if (color) {
       permMarker.setColor(color);
     }
 
+    addToMarkerMenu(permMarker);
     if (permMarker === this.editedPermMarker_) {
       permMarker.openInfoWindow();
       this.editedPermMarker_ = null;
@@ -322,6 +322,7 @@ class ChapMap {
     if (permMarker) {
       permMarker.hide();
       delete this.permMarkers_[id];
+      removeMarkerFromMenu(permMarker);
     }
   }
 
@@ -387,141 +388,9 @@ class ChapMap {
 
     connection.send(JSON.stringify(jsonObject));
   }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// MAP SHARING
-
-  /**
-   * @Private
-   * Sets the events related to sharing the map with another user
-   */
-  setMapShareEvents_() {
-    this.addClickEvent_("shareBtnWrapper", () => this.openSharePopup_());
-    this.addClickEvent_("addEmail", () => this.addEmail_());
-    this.addClickEvent_("share", () => this.submitSharing_());
-    this.addClickEvent_("close", () => this.closeSharePopup_());
-    this.addClickEvent_("share-popup", () => this.closeSharePopup_());
-  }
-
-  /**
-   * Sets a click-trigger event to the DOM element with the given id and
-   * sets the callback function to the one given
-   * @param {String} id the id of the element to be added
-   * @param {*} fn the anonymous function to be called on click
-   */
-  addClickEvent_(id, fn) {
-    let btn = document.getElementById(id);
-    btn.addEventListener('click', fn);
-  }
-
-  /**
-   * @Private
-   * Opens the sharing popup and prevents the client from clicking on the map
-   */
-  openSharePopup_() {
-    let overlay = document.getElementById("share-popup");
-    overlay.classList.add("cover");
-  }
-
-  /**
-   * @Private
-   * Closes the pop and allows clients to click on the map again
-   */
-  closeSharePopup_() {
-    let overlay = document.getElementById("share-popup");
-    overlay.classList.remove("cover");
-    this.clearPopupInput_();
-  }
-
-  /**
-   * @Private
-   * Adds the given email to the email bank
-   */
-  addEmail_() {
-    let input = document.getElementById("email");
-    let emailDiv = this.createEmailDiv_(input.value);
-    input.value="";
-    let emailBank = document.getElementById("email-bank");
-    emailBank.appendChild(emailDiv);
-  }
-
-  /**
-   * @Private
-   * Creates a DOM element with the email and a delete button and adds it
-   * to the email bank
-   */
-  createEmailDiv_(email) {
-    let emailWrapper = makeEl("div", "emailWrapper");
-    emailWrapper.setAttribute("data-email", email);
-
-    let emailText = document.createElement("p");
-    emailText.innerHTML = email;
-
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "x";
-    deleteBtn.addEventListener('click', () => emailWrapper.remove());
-
-    emailWrapper.appendChild(emailText);
-    emailWrapper.appendChild(deleteBtn);
-
-    return(emailWrapper);
-  }
-
-  /**
-   * @Private
-   * Clears the email input and email bank in the sharing popup
-   */
-  clearPopupInput_() {
-    let emailInput = document.getElementById("email");
-    emailInput.value = "";
-
-    let emailBank = document.getElementById("email-bank");
-    emailBank.innerHTML = "";
-  }
-
-  /**
-   * @Private
-   * Shares the map with all the emails in the email bank
-   */
-  submitSharing_() {
-    let shareEmails = this.getEmailsFromBank_();
-    let currRoomId = roomId;
-    let params = {
-      emails: shareEmails,
-      roomId: currRoomId,
-      id: this.idToken
-    };
-
-    fetch("/share-server", {
-      method:'POST',
-      headers: { 'Content-Type': 'text/html' },
-      body: JSON.stringify(params)
-    }).then((response) => response.text())
-      .then((worked) => {
-       if (worked == 'true') {
-         myMap.clearPopupInput_();
-       }
-       else {
-         alert("Submit failed, please try again");
-       }
-     });
-  }
-
-  /**
-   * @Private
-   * Retrieves all the emails the email bank in the sharing popup
-   */
-  getEmailsFromBank_() {
-    let emailBank = document.getElementById("email-bank");
-    var emailWrappers = emailBank.childNodes;
-    let emails = [];
-    emailWrappers.forEach(function(node) {
-      emails.push(node.getAttribute("data-email"));
-    });
-    return emails;
-  }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// MAP SHARING
+// SEARCH BAR
 
   /**
    * @Private

@@ -5,17 +5,26 @@
     <title>CHAP</title>
     <link rel="stylesheet" href="mapStyle.css">
     <link rel="stylesheet" href="chatStyle.css">
+    <link rel="stylesheet" href="markerMenuStyle.css">
+    <link rel="stylesheet" href="shareStyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II&libraries=places&v=weekly" type="text/javascript" id="mapAPI"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II" type="text/javascript" id="mapAPI"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js">
     </script>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
+    <script src="markerMenu.js"></script>
+    <script src="Thread.js"></script>
+    <script src="threadHandler.js"></script>
     <script src="ColorPicker.js"></script>
     <script src="MarkerTemplate.js"></script>
     <script src="InfoWindowTemplate.js"></script>
@@ -25,37 +34,52 @@
     <script src="TempMarker.js"></script>
     <script src="main.js"></script>
     <script src="ChapMap.js"></script>
+    <script src="sharing.js"></script>
     <script src="chat.js"></script>
   </head>
   <body>
-
     <div id="mapOverlay" class="expanded">
       <input id="search" class="controls btnWrapper" type="text" placeholder="Search Box"/>
-
+      <div id="markerMenuToggle" class="btnWrapper topBtn" onclick="toggleMarkerMenu()">
+        <button id="markerMenuClose" class="btnIcon"></button>
+      </div>
       <div id="viewBtnWrapper" class="btnWrapper selected">
         <button id="viewBtn" class="btnIcon"></button>
       </div>
       <div id="addMarkerBtnWrapper" class="btnWrapper">
         <button id="addMarkerBtn" class="btnIcon"></button>
       </div>
-      <div id="chatBtnWrapper" class="btnWrapper topBtn">
+      <div id="chatBtnWrapper" class="btnWrapper topBtn" onclick="toggleChat()">
         <button id="chatButton" class="btnIcon"></button>
       </div>
       <div id="backBtnWrapper" class="btnWrapper topBtn">
         <input type="submit" id="backButton" class="btnIcon" value=""></input>
       </div>
-      <div id="shareBtnWrapper" class="btnWrapper topBtn">
+      <div id="shareBtnWrapper" class="btnWrapper topBtn"
+           onclick="openSharePopup()">
         <button id="shareBtn" class="btnIcon"></button>
+      </div>
+
+      <div id="markerMenu" class="open">
+        <div id="markerMenuWrapper">
+          <h5 id="markerMenuTitle" class="mdc-typography--headline5">My Markers:</h5>
+          <ul id="markerMenuList" class="mdc-list"></ul>
+        </div>
       </div>
 
       <div id="share-popup">
         <div id="popup-window">
-          <button id="close">x</button>
-          <label for="email">Share with:</label>
+          <button id="close" onclick="closeSharePopup()">x</button>
+          <h1 id="members-title">Members</h1>
+          <div id="shared-bank"></div>
+          <hr>
+          <h1 id="sharing-title">Share with:</h1>
           <input type="email" id="email" name="email">
-          <input id="addEmail" type="button" value="Add email">
+          <input id="addEmail" type="button" value="Add email"
+                 onclick="addEmail()">
           <div id="email-bank"></div>
-          <input id="share" type="button" value="Share">
+          <input id="share" type="button" value="Share"
+                 onclick="submitSharing()">
         </div>
       </div>
 
@@ -63,18 +87,36 @@
     </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
-          <h1>Your Chat</h1>
-          <div id="past-comments"></div>
-          <!--<textarea id="comment-container" placeholder="Type message.." name="msg" required></textarea>-->
-          <div id="send-area">
-            <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
-              <span class="mdc-text-field__ripple"></span>
-              <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-              <span class="mdc-floating-label" id="my-label-id">Message</span>
-              <span class="mdc-line-ripple"></span>
-            </label>
-            <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn"></button>
+        <button id="menu-btn" class="thread-btn"
+            onclick="toggleThreadMenu()"></button>
+        <div id="thread-menu">
+          <div id="menu-container">
+            <button id="close-menu" class="thread-btn"
+                onclick="toggleThreadMenu()"></button>
+            <button id="new-thread" class="thread-btn"
+                onclick="showTempThread()"></button>
+            <button id="submit-thread" class="thread-btn"
+                onclick="submitThread()"></button>
+            <h1>Threads</h1>
+            <div id="menu-items">
+              <div id="thread-form">
+                <textarea id="thread-input" placeholder="..."></textarea>
+                <button id="cancel-thread" class="thread-btn"
+                    onclick="hideTempThread()"></button>
+              </div>
+            </div>
           </div>
+        </div>
+        <div id="chat-wrapper"></div>
+        <div id="send-area">
+          <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
+            <span class="mdc-text-field__ripple"></span>
+            <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+            <span class="mdc-floating-label" id="my-label-id">Message</span>
+            <span class="mdc-line-ripple"></span>
+          </label>
+          <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn"></button>
+        </div>
       </div>
     </div>
   </body>
