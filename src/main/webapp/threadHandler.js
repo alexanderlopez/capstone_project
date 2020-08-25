@@ -5,27 +5,33 @@ var allThreads = {};
 var chatWrapper;
 
 /** the DOM element where the thread menu will be */
-var threadMenu;
+var menuWrapper;
 
 /** The Thread that is currently being used by the user */
 var visibleThread;
+
+/** The name of the new thread that was just created by this user */
+var newThread;
 
 /** Name to be given to the first thread of every chatroom */
 const DEFAULT_THREAD_NAME = "General";
 
 /** Content of message used to initalize new threads */
-const DEFAULT_MESSAGE = " created this thread";
+const DEFAULT_MESSAGE = "created this thread";
 
 /** Classes used to build thread-related HTML */
-const THREAD_MENU = "thread-menu";
+const MENU_WRAPPER = "menu-items";
 const CHAT_WRAPPER = "chat-wrapper";
+const THREAD_FORM = "thread-form";
+const THREAD_INPUT = "thread-input";
+const NEW_THREAD = "new-thread";
+const SUBMIT_THREAD = "submit-thread";
 
 /** Initializes function fields and creates the default and temporary threads */
 function setupThreads() {
   chatWrapper = document.getElementById(CHAT_WRAPPER);
-  threadMenu = document.getElementById(THREAD_MENU);
+  menuWrapper = document.getElementById(MENU_WRAPPER);
   addThread(DEFAULT_THREAD_NAME);
-  // makeTempThread();
 }
 
 /** Displays the default thread */
@@ -60,37 +66,81 @@ function addThread(threadName) {
   allThreads[threadName] = threadObj;
 
   chatWrapper.appendChild(threadObj.getThreadWrapper());
-}
 
-/** Makes the DOM element that allows users to create new elements */
-// TODO: function makeTempThread() {}
+  if (threadName ===  newThread) {
+    changeThreads(threadObj);
+  }
+}
 
 /**
  * Hides the current thread and displays the given thread
  * @param {Thread} thread the thread to make visible
  */
-// TODO: function changeThreads(thread) {}
+ function changeThreads(thread) {
+   visibleThread.hide();
+   thread.show();
+   visibleThread = thread;
+   toggleThreadMenu();
+   hideTempThread();
+ }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CREATE THREAD
 
 /** Displays the temp thread with a textarea and submit button */
-// TODO: function createTempThread() {}
+function showTempThread() {
+  setDisplay(THREAD_FORM, 'block');
+  setDisplay(NEW_THREAD, 'none');
+  setDisplay(SUBMIT_THREAD, 'block');
+}
 
-/** Returns if the given thread name is a) one word, b) unique for this
- * chatroom, and c) only contains alphanumeric characters
+/** Hides the temp thread with a textarea and submit button */
+function hideTempThread() {
+  setDisplay(THREAD_FORM, 'none');
+  setDisplay(SUBMIT_THREAD, 'none');
+  setDisplay(NEW_THREAD, 'block');
+  let input = document.getElementById(THREAD_INPUT);
+  input.value = "";
+}
+
+/** Returns if the given thread name only contains alphanumeric characters
+ * and - or _
  * @param {String} name the name of the new thread
  */
-// TODO: function isValidThreadName(name) {}
+function hasValidCharacters(name) {
+  var regex = /^[a-zA-Z0-9-_]+$/;
+  return regex.test(name);
+}
 
 /**
  * Retrieves the given thread name, checks if it is valid, and sends the
  * information to the server and hides the temp thread
  */
-// TODO: function submitThread() {}
+function submitThread() {
+  let input = document.getElementById(THREAD_INPUT);
+  let threadName = input.value.trim();
+  
+  if (!hasValidCharacters(threadName)) {
+    alert("Thread name must be one word containing only alphanumeric characters and dashes. Try again.");
+    return;
+  }
 
-/** Sends a default message from the current user in a new thread */
-// TODO: function sendDefaultMessage() {}
+  if (threadName in allThreads) {
+    alert("Thread already exists");
+    return;
+  }
 
-/** Hides the temporary thread */
-// TODO: function hideTempThread() {}
+  newThread = threadName;
+  sendMessage(DEFAULT_MESSAGE, threadName);
+  input.value = "";
+  hideTempThread();
+}
+
+/**
+ * Sets the display of the DOM element with a certain id to the given value
+ * @param {String} id the id of the DOM element
+ * @param {String} val the value of the DOM element
+ */
+function setDisplay(id, val) {
+  document.getElementById(id).style.display = val;
+}

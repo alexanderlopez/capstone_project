@@ -3,11 +3,11 @@ class Thread {
   /** Classes used for identifying thread components */
   static MESSAGE = "message";
   static MY_MESSAGE = "myMessage";
-  static OTHER_MESSAGE = "OtherMessage";
+  static OTHER_MESSAGE = "otherMessage";
   static THREAD_WRAPPER = "thread-wrapper";
   static THREAD_NAME = "thread-name";
   static THREAD_MESSAGES = "thread-messages";
-  static THREAD_MENU_ITEM = "thread-menu-item";
+  static MENU_ITEM = "thread-menu-item";
 
   /** The name of this thread */
   name_;
@@ -21,6 +21,7 @@ class Thread {
   constructor(name) {
     this.name_ = name;
     this.createWrapper_();
+    this.createMenuItem_();
   }
 
   /**
@@ -37,6 +38,7 @@ class Thread {
     node.classList.add(messageType);
 
     this.messageWrapper_.appendChild(node);
+    this.scrollToBottom();
   }
 
   /**
@@ -57,8 +59,23 @@ class Thread {
     wrapper.appendChild(messages);
   }
 
-  /** Builds the menu item for this thread */
-  // TODO: createThreadMenuItem() {}
+  /**
+   * @Private
+   * Builds the menu item for this thread
+   */
+  createMenuItem_() {
+    let btn = makeEl("btn", Thread.MENU_ITEM);
+    btn.innerHTML = this.name_;
+    btn.addEventListener('click', () => changeThreads(this));
+
+    // menu wrapper initialized in threadHandler
+    menuWrapper.appendChild(btn);
+  }
+
+  /** Scrolls the div to the bottom */
+  scrollToBottom() {
+    this.messageWrapper_.scrollTop = this.messageWrapper_.scrollHeight;
+  }
 
   /** Returns this thread's DOM wrapper */
   getThreadWrapper() {
@@ -78,5 +95,6 @@ class Thread {
   /** Displays this thread for the user */
   show() {
     this.threadWrapper_.style.display = 'block';
+    this.scrollToBottom();
   }
 }

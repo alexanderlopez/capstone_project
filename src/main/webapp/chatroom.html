@@ -61,8 +61,26 @@
     </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
-        <button id="menu-btn" onclick="toggleThreadMenu()"></button>
-        <div id="thread-menu"></div>
+        <button id="menu-btn" class="thread-btn"
+            onclick="toggleThreadMenu()"></button>
+        <div id="thread-menu">
+          <div id="menu-container">
+            <button id="close-menu" class="thread-btn"
+                onclick="toggleThreadMenu()"></button>
+            <button id="new-thread" class="thread-btn"
+                onclick="showTempThread()"></button>
+            <button id="submit-thread" class="thread-btn"
+                onclick="submitThread()"></button>
+            <h1>Threads</h1>
+            <div id="menu-items">
+              <div id="thread-form">
+                <textarea id="thread-input" placeholder="..."></textarea>
+                <button id="cancel-thread" class="thread-btn"
+                    onclick="hideTempThread()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div id="chat-wrapper"></div>
         <div id="send-area">
           <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
