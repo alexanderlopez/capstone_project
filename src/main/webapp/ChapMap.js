@@ -30,6 +30,9 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
+  /** Suggested marker from the search box */
+  suggestedMarker_;
+
   static SELECTED_CLASS = "selected";
 
   constructor(coords) {
@@ -40,6 +43,8 @@ class ChapMap {
       center: { lat: lat, lng: lng },
       zoom: 8
     });
+
+    this.initSearchBox_();
 
     this.addBtnListeners_();
     this.addMapClickListener_();
@@ -133,11 +138,10 @@ class ChapMap {
   editPermMarker(permMarker) {
     this.closePermInfoWindow();
     permMarker.hide();
+    this.setTempMarker(permMarker.getPosition());
 
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
-
-    this.setTempMarker(permMarker.getPosition());
     this.tempMarker_.setColor(permMarker.getColorName());
     this.tempMarker_.openInfoWindow();
   }
@@ -155,9 +159,16 @@ class ChapMap {
    * @param {google.maps.LatLng} coords coordinates where to show the marker
    */
   setTempMarker(coords) {
+    if (this.editedPermMarker_) {
+      this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
+      this.editedPermMarker_ = null;
+    }
     this.closePermInfoWindow();
+    this.tempMarker_.closeInfoWindow();
+    this.tempMarker_.setColor(ColorPicker.DEFAULT_COLOR);
     this.tempMarker_.setPosition(coords);
     this.googleMap_.panTo(coords);
+    this.clearSuggestedMarker_();
   }
 
   /** Removes the  temporary marker from the map */
@@ -376,5 +387,87 @@ class ChapMap {
     };
 
     connection.send(JSON.stringify(jsonObject));
+  }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// SEARCH BAR
+
+  /**
+   * @Private
+   * Initialize and setup the search box
+   */
+  initSearchBox_() {
+    const input = document.getElementById("search");
+    const searchBox = new google.maps.places.SearchBox(input);
+    const map = this.googleMap_;
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    // suggest results from current viewport
+    map.addListener("bounds_changed", () => {
+      searchBox.setBounds(map.getBounds());
+    });
+
+    searchBox.addListener("places_changed", () => {
+      const places = searchBox.getPlaces();
+      if (places.length == 0) return;
+
+      this.clearSuggestedMarker_();
+      const bounds = new google.maps.LatLngBounds();
+
+      places.forEach(place => {
+        this.addSuggestedMarker_(place);
+        this.adjustMapBounds_(place, bounds);
+      });
+      map.fitBounds(bounds);
+    });
+  }
+
+  /**
+   * @Private
+   * Removes suggested Markers and empties the suggest markers list
+   */
+  clearSuggestedMarker_() {
+    let marker = this.suggestedMarker_;
+    if (marker) {
+      marker.setMap(null);
+      marker = null;
+    }
+  }
+
+  /**
+   * @Private
+   * Adds a marker at the location given
+   * @param {google.maps.Place} place location to create a suggested marker
+   */
+  addSuggestedMarker_(place) {
+    let icon = ColorPicker.getPermMarkerIcon(ColorPicker.DEFAULT_COLOR);
+    let newMarker = new google.maps.Marker({
+      map: this.googleMap_,
+      title: place.name,
+      position: place.geometry.location
+    });
+    newMarker.setIcon(icon);
+
+    newMarker.addListener('click', () => {
+      let coords = newMarker.getPosition()
+      this.setTempMarker(coords);
+      this.tempMarker_.openInfoWindow();
+    });
+
+    this.suggestedMarker_ = newMarker;
+  }
+
+  /**
+   * @Private
+   * Adjusts the zoom and bounds of the map to center a location
+   * @param {google.maps.Place} place where to center the map
+   * @param {google.maps.LatLngBounds} bounds object to apply new bounds to
+   */
+  adjustMapBounds_(place, bounds) {
+    if (place.geometry.viewport) {
+      bounds.union(place.geometry.viewport);
+    } else {
+      bounds.extend(place.geometry.location);
+    }
   }
 }

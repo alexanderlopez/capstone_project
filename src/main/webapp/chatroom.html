@@ -7,19 +7,19 @@
     <link rel="stylesheet" href="chatStyle.css">
     <link rel="stylesheet" href="markerMenuStyle.css">
     <link rel="stylesheet" href="shareStyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II&libraries=places&v=weekly" type="text/javascript" id="mapAPI"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II" type="text/javascript" id="mapAPI"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js">
     </script>
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
 
     <script src="material.js"></script>
     <script src="markerMenu.js"></script>
@@ -39,6 +39,7 @@
   </head>
   <body>
     <div id="mapOverlay" class="expanded">
+      <input id="search" class="controls btnWrapper" type="text" placeholder="Search Box"/>
       <div id="markerMenuToggle" class="btnWrapper topBtn" onclick="toggleMarkerMenu()">
         <button id="markerMenuClose" class="btnIcon"></button>
       </div>
