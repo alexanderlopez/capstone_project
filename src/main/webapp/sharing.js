@@ -29,6 +29,7 @@ function setMapShareEvents() {
 
 /** Opens the sharing popup and prevents the client from clicking on the map */
 function openSharePopup() {
+  loadSharedUsers();
   overlay.classList.add("cover");
 }
 

@@ -42,6 +42,7 @@ body {
 #header h1 {
   text-align: center;
   width: 100%;
+  min-width: 3em;
   font-size: inherit;
   margin: 0;
   font-family: 'Roboto Slab', serif;
@@ -52,6 +53,7 @@ body {
   font-size: .2em;
   margin: 0;
   display: none;
+  min-width: 15em;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -161,6 +163,10 @@ body {
   color: rgba(0,0,0,1) !important;
 }
 
+.mdc-tab {
+  width: 50%;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
 
@@ -252,7 +258,7 @@ body {
 }
 
 #nav {
-  height: 6vh;
+  height: 50px;
   margin: 1vh;
   display: flex;
 }
