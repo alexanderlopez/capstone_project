@@ -69,7 +69,7 @@ class ChapMap {
     this.googleMap_.addListener('click', (e) => {
       closeMarkerMenu();
       if (this.addingMarkers_) {
-        this.editedPermMarker_ = null;
+        this.restoreEditedMarker_();
         this.setTempMarker(e.latLng);
         this.closePermInfoWindow();
       }
@@ -121,7 +121,6 @@ class ChapMap {
     let disableBtn = enable? viewBtn: addMarkerBtn;
 
     this.addingMarkers_ = !this.addingMarkers_;
-    this.removeTempMarker();
 
     enableBtn.classList.add(ChapMap.SELECTED_CLASS);
     disableBtn.classList.remove(ChapMap.SELECTED_CLASS);
@@ -136,9 +135,8 @@ class ChapMap {
    * @param {PermMarker} permMarker permanent marker to be edited
    */
   editPermMarker(permMarker) {
-    this.closePermInfoWindow();
-    permMarker.hide();
     this.setTempMarker(permMarker.getPosition());
+    permMarker.hide();
 
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
@@ -159,15 +157,14 @@ class ChapMap {
    * @param {google.maps.LatLng} coords coordinates where to show the marker
    */
   setTempMarker(coords) {
-    if (this.editedPermMarker_) {
-      this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
-      this.editedPermMarker_ = null;
-    }
+    this.restoreEditedMarker_();
     this.closePermInfoWindow();
+
     this.tempMarker_.closeInfoWindow();
     this.tempMarker_.setColor(ColorPicker.DEFAULT_COLOR);
     this.tempMarker_.setPosition(coords);
     this.googleMap_.panTo(coords);
+
     this.clearSuggestedMarker_();
   }
 
@@ -212,6 +209,16 @@ class ChapMap {
   highlightMarker(marker) {
     this.panTo(marker.getPosition());
     marker.openInfoWindow();
+  }
+
+  /**
+   * @Private
+   * Makes the edited permanent marker visible again
+   */
+  restoreEditedMarker_() {
+    if (!this.editedPermMarker_) return;
+    this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
+    this.editedPermMarker_ = null;
   }
 
   /**

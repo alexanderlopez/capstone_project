@@ -29,6 +29,8 @@ body, html {
 
 #contentWrapper {
   width: 20em;
+  max-height: 15em;
+  overflow-y: scroll;
 }
 
 #contentWrapper.wide {
@@ -42,7 +44,7 @@ body, html {
 #middleColumn {
   float: left;
   width: 2em;
-  margin-right: 1em;
+  margin: 0 .5em;
 }
 
 #middleColumn.wide {
@@ -52,6 +54,8 @@ body, html {
 #rightColumn {
   float: left;
   width: calc(100% - 4em);
+  max-width: 17em;
+  float: right;
 }
 
 #rightColumn.wide {
@@ -104,12 +108,11 @@ body, html {
 }
 
 #colorPicker {
-  width: 50px;
+  width: 5em;
   height: 100%;
   float: left;
   display: grid;
   grid-template-columns: 2em 2em;
-  margin-right: .5em;
   display: grid;
 }
 

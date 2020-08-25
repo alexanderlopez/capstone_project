@@ -47,14 +47,15 @@ class PermInfoWindow extends InfoWindowTemplate {
      */
     makeRightColumn_() {
       return geocodeLatLng(this.myMarker_.getPosition()).then(result => {
-        let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+        let rightCol = makeEl("div", /* class= */null,
+            InfoWindowTemplate.RIGHT_COLUMN);
 
-        let title = makeEl("h1", PermInfoWindow.TITLE_CLASS);
+        let title = makeEl("h1", /* class= */null, PermInfoWindow.TITLE_CLASS);
         let currTitle = this.myMarker_.getTitle();
         title.innerHTML = currTitle? currTitle: "";
         rightCol.appendChild(title);
 
-        let body  = makeEl("p", PermInfoWindow.BODY_CLASS);
+        let body  = makeEl("p", /* class= */null, PermInfoWindow.BODY_CLASS);
         let currBody = this.myMarker_.getBody();
         body.innerHTML = currBody? currBody: "";
         body.innerHTML += "<br> <br> <b>Approximate Location: </b>" + result;
@@ -67,6 +68,6 @@ class PermInfoWindow extends InfoWindowTemplate {
 
     /** No left column visible for perm info windows */
     makeLeftColumn_() {
-      return makeEl("div", InfoWindowTemplate.LEFT_COLUMN);
+      return makeEl("div", /* class= */null, InfoWindowTemplate.LEFT_COLUMN);
     }
 }
