@@ -147,11 +147,10 @@ function initMap() {
 function initChat() {
   loadChatHistory();
 
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
+  textInput = new MDCTextField(document.getElementById("comment-container-material"));
+  textInput.listen('keydown', (keyEvent) => {
+    if (keyEvent.key === 'Enter') {
+      addChatComment();
     }
   });
 }
