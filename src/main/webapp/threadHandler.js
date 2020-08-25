@@ -32,6 +32,7 @@ function initThreads() {
   chatWrapper = document.getElementById(CHAT_WRAPPER);
   menuWrapper = document.getElementById(MENU_WRAPPER);
   addThread(DEFAULT_THREAD_NAME);
+  menuOpen = false;
 }
 
 /** Displays the default thread */

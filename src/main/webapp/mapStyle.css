@@ -158,7 +158,7 @@ body, html {
 }
 
 #markerMenuToggle {
-  left: 250px;
+  left: 220px;
 }
 
 #markerMenuClose.rotate {
@@ -206,7 +206,7 @@ body, html {
 }
 
 #chatBtnWrapper {
-  right: 80px;
+  right: 70px;
 }
 
 #chatButton {
@@ -214,7 +214,7 @@ body, html {
 }
 
 #backBtnWrapper {
-  right: 150px;
+  right: 130px;
 }
 
 #backButton {
@@ -222,7 +222,7 @@ body, html {
 }
 
 #shareBtnWrapper {
-  right: 220px;
+  right: 190px;
   top: 10px;
 }
 
