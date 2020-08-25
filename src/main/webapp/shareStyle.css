@@ -1,3 +1,7 @@
+html:root {
+  --mdc-theme-primary: #306890;
+}
+
 #share-popup {
   background-color: #80808040;
   z-index: 3;
