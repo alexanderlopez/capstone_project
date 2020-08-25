@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -99,6 +100,8 @@ function initChatroom() {
   getServerUrl()
       .then(result => {
         connection = new WebSocket(result);
+        
+        initMaterial();
         geocoder = new google.maps.Geocoder();
         initWebsocket();
         initMarkerMenu();
@@ -158,6 +161,19 @@ function initChat() {
   });
 }
 
+var textFields;
+var ripples;
+
+function initMaterial() {
+  ripples = [].map.call(document.querySelectorAll('.mdc-button'), function(el) {
+    return new MDCRipple(el);
+  });
+
+  textFields = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+}
+
 /**
  * Returns the user's coordinates, if possible
  * @returns{!Promise<Array<Number>>} Promise for a tuple representing
@@ -178,7 +194,7 @@ function getCoords(){
     } else {
       reject();
     }
-  })
+  });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
