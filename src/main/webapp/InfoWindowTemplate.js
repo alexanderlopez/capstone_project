@@ -49,7 +49,6 @@ class InfoWindowTemplate {
       this.googleInfoWindow_.open
           (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
     })
-    
   }
 
   /**
