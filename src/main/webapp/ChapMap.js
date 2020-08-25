@@ -30,11 +30,7 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
-  /** Id Token of the current user*/
-  idToken_;
-
   static SELECTED_CLASS = "selected";
-
 
   constructor(coords) {
     var lat = coords[0];
@@ -47,7 +43,6 @@ class ChapMap {
 
     this.addBtnListeners_();
     this.addMapClickListener_();
-    this.setMapShareEvents_();
 
     PermMarker.permInfoWindow = new PermInfoWindow();
     this.tempMarker_ = new TempMarker();
@@ -56,7 +51,6 @@ class ChapMap {
 
     this.permMarkers_ = {};
     this.loadMarkers_();
-
   }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,6 +62,7 @@ class ChapMap {
    */
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
+      closeMarkerMenu();
       if (this.addingMarkers_) {
         this.editedPermMarker_ = null;
         this.setTempMarker(e.latLng);
@@ -82,11 +77,10 @@ class ChapMap {
    * A client can only add markers when the "adding markers" mode is on
    */
   addBtnListeners_() {
-    this.addClickEvent_("addMarkerBtnWrapper",
+    addClickEvent("addMarkerBtnWrapper",
                       () => this.enableAddingMarkers_());
-    this.addClickEvent_("backBtnWrapper", () => window.location='/');
-    this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
-    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
+    addClickEvent("backBtnWrapper", () => window.location='/');
+    addClickEvent("viewBtnWrapper", () => this.disableAddingMarkers_());
   }
 
   /**
@@ -200,6 +194,23 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Pans the map to the given marker and opens its information window
+   * @param {PermMarker} marker the marker that should be centered
+   */
+  highlightMarker(marker) {
+    this.panTo(marker.getPosition());
+    marker.openInfoWindow();
+  }
+
+  /**
+   * Returns the permanent marker with the given id
+   * @param {String} id the id the marker wanted
+   */
+  getPermMarker(id) {
+    return this.permMarkers_[id];
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
@@ -208,20 +219,8 @@ class ChapMap {
    * Fetches all the map's markers from the server and loads them to the map
    */
   loadMarkers_() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-        .then(idToken => myMap.getMarkers(idToken))
-        .catch(error => {
-          throw "Problem getting markers";
-        });
-  }
-
-  /**
-   * Retrieves markers from the server and adds them to the map
-   * @param {firebase.idToken} idToken the current user's getIdToken
-   */
-  getMarkers(userIdToken) {
-    this.idToken = userIdToken;
-    fetch(`/map-server?idToken=${userIdToken}&idRoom=${roomId}`)
+    // fetchStr initialized in main.js
+    fetch("/map-server"+fetchStr)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }
@@ -249,6 +248,7 @@ class ChapMap {
     if (!permMarker) {
       this.makeNewPermMarker_(markerId, markerJson)
     } else {
+      removeMarkerFromMenu(permMarker);
       this.updatePermMarker_(permMarker, markerJson);
     }
   }
@@ -289,11 +289,11 @@ class ChapMap {
     if (body) {
       permMarker.setBody(body);
     }
-
     if (color) {
       permMarker.setColor(color);
     }
 
+    addToMarkerMenu(permMarker);
     if (permMarker === this.editedPermMarker_) {
       permMarker.openInfoWindow();
       this.editedPermMarker_ = null;
@@ -311,6 +311,7 @@ class ChapMap {
     if (permMarker) {
       permMarker.hide();
       delete this.permMarkers_[id];
+      removeMarkerFromMenu(permMarker);
     }
   }
 
@@ -376,6 +377,7 @@ class ChapMap {
 
     connection.send(JSON.stringify(jsonObject));
   }
+<<<<<<< HEAD
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // MAP SHARING
 
@@ -527,4 +529,6 @@ class ChapMap {
 
     return [].map.call(emailSpans, (element) => { return element.innerText; });
   }
+=======
+>>>>>>> development
 }
