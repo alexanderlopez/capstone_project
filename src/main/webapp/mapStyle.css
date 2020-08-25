@@ -230,8 +230,29 @@ body, html {
   display: none;
 }
 
+#share-card {
+  margin: auto;
+  padding: 16px;
+}
+
+.share-card__title {
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.25rem;
+    line-height: 2rem;
+    font-weight: 500;
+    letter-spacing: .0125em;
+}
+
+.share-card__subhead {
+  font-size: .875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: .0178571429em;
+  opacity: .6;
+}
+
 #share-popup.cover {
-  display:block;
+  display: flex;
 }
 
 #popup-window {
@@ -249,7 +270,7 @@ body, html {
   cursor: default;
 }
 
-#close, #close:focus {
+/*#close, #close:focus {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -257,7 +278,7 @@ body, html {
   outline: 0;
   border: 0;
   cursor: pointer;
-}
+}*/
 
 #popup-window label {
   display: block;
@@ -290,6 +311,15 @@ body, html {
   font-size: 1.5em;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
+}
+
+#share-add-container {
+  display: flex;
+}
+
+#share-add-button {
+  margin: auto;
+  margin-left: 10px;
 }
 
 .emailWrapper {

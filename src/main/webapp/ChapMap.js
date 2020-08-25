@@ -385,10 +385,10 @@ class ChapMap {
    */
   setMapShareEvents_() {
     this.addClickEvent_("shareBtnWrapper", () => this.openSharePopup_());
-    this.addClickEvent_("addEmail", () => this.addEmail_());
-    this.addClickEvent_("share", () => this.submitSharing_());
+    this.addClickEvent_("share-add-button", () => this.addEmail_());
+    this.addClickEvent_("share-button", () => this.submitSharing_());
     this.addClickEvent_("close", () => this.closeSharePopup_());
-    this.addClickEvent_("share-popup", () => this.closeSharePopup_());
+    /*this.addClickEvent_("share-popup", () => this.closeSharePopup_());*/
   }
 
   /**
@@ -426,10 +426,9 @@ class ChapMap {
    * Adds the given email to the email bank
    */
   addEmail_() {
-    let input = document.getElementById("email");
-    let emailDiv = this.createEmailDiv_(input.value);
-    input.value="";
-    let emailBank = document.getElementById("email-bank");
+    let emailDiv = this.createEmailDivToAdd_(textFields[0].value);
+    textFields[0].value="";
+    let emailBank = document.getElementById("share-list");
     emailBank.appendChild(emailDiv);
   }
 
@@ -438,21 +437,45 @@ class ChapMap {
    * Creates a DOM element with the email and a delete button and adds it
    * to the email bank
    */
-  createEmailDiv_(email) {
-    let emailWrapper = makeEl("div", "emailWrapper");
-    emailWrapper.setAttribute("data-email", email);
+  createEmailDivToAdd_(email) {
+    let listItem = document.createElement('li');
+    listItem.setAttribute('class', 'mdc-list-item');
 
-    let emailText = document.createElement("p");
-    emailText.innerHTML = email;
+    let rippleItem = document.createElement('span');
+    rippleItem.setAttribute('class', 'mdc-list-item__ripple');
 
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "x";
-    deleteBtn.addEventListener('click', () => emailWrapper.remove());
+    let graphicElement = document.createElement('span');
+    graphicElement.setAttribute('class', 'mdc-list-item__meta');
+    let buttonElement = document.createElement('button');
+    buttonElement.setAttribute('class', 'mdc-icon-button material-icons');
+    buttonElement.innerText = "person_remove";
+    graphicElement.appendChild(buttonElement);
 
-    emailWrapper.appendChild(emailText);
-    emailWrapper.appendChild(deleteBtn);
+    let buttonRipple = new MDCRipple(buttonElement);
+    buttonRipple.unbounded = true;
 
-    return(emailWrapper);
+    buttonElement.addEventListener('click', (clickEvent) => {
+      listItem.remove();
+    });
+
+    let textItem = document.createElement('span');
+    textItem.setAttribute('class', 'mdc-list-item__text');
+
+    let primaryTextItem = document.createElement('span');
+    primaryTextItem.setAttribute('class', 'mdc-list-item__primary-text');
+    primaryTextItem.innerText = email;
+
+    let secondaryTextItem = document.createElement('span');
+    secondaryTextItem.setAttribute('class', 'mdc-list-item__secondary-text');
+    secondaryTextItem.innerText = 'To add';
+
+    listItem.appendChild(rippleItem);
+    listItem.appendChild(textItem);
+    listItem.appendChild(graphicElement);
+    textItem.appendChild(primaryTextItem);
+    textItem.appendChild(secondaryTextItem);
+
+    return listItem;
   }
 
   /**
@@ -460,11 +483,11 @@ class ChapMap {
    * Clears the email input and email bank in the sharing popup
    */
   clearPopupInput_() {
-    let emailInput = document.getElementById("email");
+    /*let emailInput = document.getElementById("email");
     emailInput.value = "";
 
     let emailBank = document.getElementById("email-bank");
-    emailBank.innerHTML = "";
+    emailBank.innerHTML = "";*/
   }
 
   /**
@@ -500,12 +523,8 @@ class ChapMap {
    * Retrieves all the emails the email bank in the sharing popup
    */
   getEmailsFromBank_() {
-    let emailBank = document.getElementById("email-bank");
-    var emailWrappers = emailBank.childNodes;
-    let emails = [];
-    emailWrappers.forEach(function(node) {
-      emails.push(node.getAttribute("data-email"));
-    });
-    return emails;
+    let emailSpans = document.querySelectorAll('.mdc-list-item__primary-text');
+
+    return [].map.call(emailSpans, (element) => { return element.innerText; });
   }
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -76,9 +77,24 @@ Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
           myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
         })
 
+        initMaterial();
+
         initChat();
       });
     });
+
+var textFields;
+var ripples;
+
+function initMaterial() {
+  ripples = [].map.call(document.querySelectorAll('.mdc-button'), function(el) {
+    return new MDCRipple(el);
+  });
+
+  textFields = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+}
 
 /**
  * Returns the user's coordinates, if possible
