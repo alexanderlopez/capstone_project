@@ -49,7 +49,7 @@ html:root {
 }
 
 #share-list {
-  max-height: 500px;
+  max-height: 60vh;
   overflow-y: scroll;
 }
 
