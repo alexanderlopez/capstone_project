@@ -98,9 +98,10 @@ function initChatroom() {
         connection = new WebSocket(result);
 
         initWebsocket();
+        initMarkerMenu();
+        initThreads();
         initMap();
         initChat();
-        // defined in sharing.js
         initSharing();
       });
 }
