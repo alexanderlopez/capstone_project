@@ -14,7 +14,8 @@
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
-
+    <script src="Thread.js"></script>
+    <script src="threadHandler.js"></script>
     <script src="ColorPicker.js"></script>
     <script src="MarkerTemplate.js"></script>
     <script src="InfoWindowTemplate.js"></script>
@@ -60,18 +61,36 @@
     </div>
     <div class="chat-popup" id="myForm">
       <div class="form-container">
-          <h1>Your Chat</h1>
-          <div id="past-comments"></div>
-          <!--<textarea id="comment-container" placeholder="Type message.." name="msg" required></textarea>-->
-          <div id="send-area">
-            <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
-              <span class="mdc-text-field__ripple"></span>
-              <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-              <span class="mdc-floating-label" id="my-label-id">Message</span>
-              <span class="mdc-line-ripple"></span>
-            </label>
-            <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn"></button>
+        <button id="menu-btn" class="thread-btn"
+            onclick="toggleThreadMenu()"></button>
+        <div id="thread-menu">
+          <div id="menu-container">
+            <button id="close-menu" class="thread-btn"
+                onclick="toggleThreadMenu()"></button>
+            <button id="new-thread" class="thread-btn"
+                onclick="showTempThread()"></button>
+            <button id="submit-thread" class="thread-btn"
+                onclick="submitThread()"></button>
+            <h1>Threads</h1>
+            <div id="menu-items">
+              <div id="thread-form">
+                <textarea id="thread-input" placeholder="..."></textarea>
+                <button id="cancel-thread" class="thread-btn"
+                    onclick="hideTempThread()"></button>
+              </div>
+            </div>
           </div>
+        </div>
+        <div id="chat-wrapper"></div>
+        <div id="send-area">
+          <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
+            <span class="mdc-text-field__ripple"></span>
+            <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+            <span class="mdc-floating-label" id="my-label-id">Message</span>
+            <span class="mdc-line-ripple"></span>
+          </label>
+          <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn"></button>
+        </div>
       </div>
     </div>
   </body>
