@@ -62,8 +62,11 @@ var uiConfig = {
     signInSuccessUrl: '/'
 };
 
+var email;
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+      email = firebase.auth().currentUser.email;
       firebase.auth().currentUser
         .getIdToken(/* forceRefresh= */ true)
         .then(idToken => getUserInfo_(user, idToken))
@@ -78,6 +81,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var idToken;
+
 
 const LOGIN_EL = 'firebaseui-auth-container';
 const LOADING_EL ='loading';
@@ -320,8 +324,35 @@ function makeRoomButton_(id, name) {
   });
 
   mapListItems.push(new MDCRipple(roomBtn));
-
   return roomBtn;
+}
+
+/**
+ * Removes a room from a user's welcome page. If this is the only user of the
+ * chatroom, the chatroom is deleted
+ * @param {String} id the id of the room to be removed
+ */
+function removeRoom(id) {
+  fetch(`/share-server?idToken=${idToken}&idRoom=${id}`)
+      .then((response) => response.json())
+      .then((emails) => {
+          let server = "/room-server";
+          let params = {
+            id: idToken,
+            roomId: id
+          }
+
+          if (emails.length !== 1) {
+            params.email = email;
+            server = "/share-server";
+          }
+
+          fetch(server, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'text/html' },
+                body: JSON.stringify(params)}
+          ).then(() => window.location.href = '/');
+        });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

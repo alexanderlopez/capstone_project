@@ -5,6 +5,7 @@
     <title>CHAP</title>
     <link rel="stylesheet" href="mapStyle.css">
     <link rel="stylesheet" href="chatStyle.css">
+    <link rel="stylesheet" href="shareStyle.css">
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II" type="text/javascript" id="mapAPI"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js">
@@ -25,6 +26,7 @@
     <script src="TempMarker.js"></script>
     <script src="main.js"></script>
     <script src="ChapMap.js"></script>
+    <script src="sharing.js"></script>
     <script src="chat.js"></script>
   </head>
   <body>
@@ -42,18 +44,24 @@
       <div id="backBtnWrapper" class="btnWrapper topBtn">
         <input type="submit" id="backButton" class="btnIcon" value=""></input>
       </div>
-      <div id="shareBtnWrapper" class="btnWrapper topBtn">
+      <div id="shareBtnWrapper" class="btnWrapper topBtn"
+           onclick="openSharePopup()">
         <button id="shareBtn" class="btnIcon"></button>
       </div>
 
       <div id="share-popup">
         <div id="popup-window">
-          <button id="close">x</button>
-          <label for="email">Share with:</label>
+          <button id="close" onclick="closeSharePopup()">x</button>
+          <h1 id="members-title">Members</h1>
+          <div id="shared-bank"></div>
+          <hr>
+          <h1 id="sharing-title">Share with:</h1>
           <input type="email" id="email" name="email">
-          <input id="addEmail" type="button" value="Add email">
+          <input id="addEmail" type="button" value="Add email"
+                 onclick="addEmail()">
           <div id="email-bank"></div>
-          <input id="share" type="button" value="Share">
+          <input id="share" type="button" value="Share"
+                 onclick="submitSharing()">
         </div>
       </div>
 
