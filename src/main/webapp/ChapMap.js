@@ -533,7 +533,7 @@ class ChapMap {
     const map = this.googleMap_;
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-    // suggest results from cccurrent viiewport
+    // suggest results from current viewport
     map.addListener("bounds_changed", () => {
       searchBox.setBounds(map.getBounds());
     });
