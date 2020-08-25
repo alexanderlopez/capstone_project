@@ -53,8 +53,11 @@ let firebasePromise = new Promise(function(resolve) {
 
 let connection = null;
 let userId = null;
+
+var geocoder;
 let userEmail = null;
 let idToken = null;
+
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -99,6 +102,7 @@ function initChatroom() {
         connection = new WebSocket(result);
         
         initMaterial();
+        geocoder = new google.maps.Geocoder();
         initWebsocket();
         initMarkerMenu();
         initThreads();
@@ -281,4 +285,22 @@ async function getServerUrl() {
     }
 
     return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
+}
+
+/**
+ * Converts and returns the address represented by the given coordinates
+ * @param {google.maps.Geocoder} geocoder Instance of the Google Maps Geocoding service
+ * @param {google.maps.LatLng} coords Pair of coordinates that is being geocoded
+ */
+async function geocodeLatLng(coords) {
+
+  return new Promise(function(resolve) {
+    geocoder.geocode({ location: coords }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          resolve (results[0].formatted_address);
+        } 
+      }
+    });
+  })
 }
