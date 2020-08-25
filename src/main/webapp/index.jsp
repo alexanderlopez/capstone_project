@@ -51,17 +51,6 @@
             </button>
           </div>
 
-          <div id="maps-wrapper" class="panel-content">
-            <h2 id="my-maps" class="panel-header">My Maps</h2>
-            <input type="button" id="add-map" class="panel-icon" onclick="showMapForm()">
-            <input type="submit" id="submit-map" class="panel-icon" onclick="submitMap()" value="">
-            <div id="user-maps">
-              <button id="map-form-wrapper" class="roomBtn">
-                <textarea id="new-map-form" placeholder="Name..."></textarea>
-              </button>
-            </div>
-          </div>
-
           <div id="user-details" class="panel-content">
             <h2 id="profile" class="panel-header">Profile</h2>
             <input type="button" id="edit-details" class="panel-icon" onclick="enableUsernameForm()" value="">
@@ -92,9 +81,29 @@
                 <span class="mdc-notched-outline__trailing"></span>
               </span>
             </label>
+          </div>
 
-            
-
+          <div id="maps-wrapper" class="panel-content">
+            <h2 id="my-maps" class="panel-header">My Maps</h2>
+            <input type="button" id="add-map" class="panel-icon" onclick="showMapForm()">
+            <input type="submit" id="submit-map" class="panel-icon" onclick="submitMap()" value="">
+            <div id="user-maps">
+              <ul class="mdc-list">
+                <li class="mdc-list-item" id="submit-map-form" tabindex="0" style="height:70px; display: none;">
+                  <span class="mdc-list-item__ripple"></span>
+                  <label class="mdc-text-field mdc-text-field--outlined">
+                    <input type="text" class="mdc-text-field__input" aria-labelledby="my-label-id">
+                    <span class="mdc-notched-outline">
+                      <span class="mdc-notched-outline__leading"></span>
+                      <span class="mdc-notched-outline__notch" style="font-size: 1rem;">
+                        <span class="mdc-floating-label" id="my-label-id">Map Name</span>
+                      </span>
+                      <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                  </label>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

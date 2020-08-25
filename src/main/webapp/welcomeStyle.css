@@ -3,6 +3,10 @@ html {
   overflow: hidden;
 }
 
+:root {
+  --mdc-theme-primary: #306890;
+}
+
 body {
   background-image: url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80);
   background-size: cover;
@@ -153,6 +157,10 @@ body {
   overflow-wrap: break-word;
 }
 
+.mdc-text-field__input {
+  color: rgba(0,0,0,1) !important;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* User Maps */
 
@@ -189,6 +197,27 @@ body {
   background-color: #bcbec19e;
   box-shadow: 0px 2px 5px 0px;
   cursor: pointer
+}
+
+.deleteBtn, .deleteBtn:focus {
+  background-image: url("icons/delete.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 4;
+  height: 2em;
+  width: 2em;
+  padding: 0;
+}
+
+.roomName {
+  width: calc(100% - 2em);
+  margin: 0;
+  float: left;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

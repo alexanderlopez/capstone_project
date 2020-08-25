@@ -1,10 +1,13 @@
 const MDCTab = mdc.tab.MDCTab;
 const MDCTextField = mdc.textField.MDCTextField;
 const MDCRipple = mdc.ripple.MDCRipple;
+const MDCList = mdc.list.MDCList;
 
 var tabRegions;
 var textRegions;
 var buttonRipple;
+var mapList;
+var mapListItems = [];
 
 document.addEventListener("DOMContentLoaded", (event) => {
   tabRegions = [].map.call(document.querySelectorAll('.mdc-tab'), function(el) {
@@ -18,6 +21,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   textRegions[1].disabled = true;
 
   buttonRipple = new MDCRipple(document.querySelector('.mdc-button'));
+
+  mapList = new MDCList(document.querySelector('.mdc-list'));
 });
 
 var firebaseConfig = {
@@ -57,8 +62,11 @@ var uiConfig = {
     signInSuccessUrl: '/'
 };
 
+var email;
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+      email = firebase.auth().currentUser.email;
       firebase.auth().currentUser
         .getIdToken(/* forceRefresh= */ true)
         .then(idToken => getUserInfo_(user, idToken))
@@ -73,6 +81,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var idToken;
+
 
 const LOGIN_EL = 'firebaseui-auth-container';
 const LOADING_EL ='loading';
@@ -165,7 +174,7 @@ function enableUsernameForm() {
  * username form if it is visible
  */
 function showMapForm() {
-  showEl_(document.getElementById("map-form-wrapper"));
+  document.getElementById("submit-map-form").style.display = 'flex';
   hideEl_(document.getElementById('add-map'));
   showEl_(document.getElementById('submit-map'));
 }
@@ -174,7 +183,7 @@ function showMapForm() {
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById('new-map-form');
+  let input = textRegions[2];
   submitNewItem("room-server", input);
 }
 
@@ -278,8 +287,7 @@ function showUserMaps() {
  * @param {JSON} mapsJson json array containing map ids and names
  */
 function loadUserMaps_(mapsJson) {
-  let rooms = document.getElementById('user-maps');
-  let roomWrapper = document.getElementById(MAPS_WRAPPER);
+  let rooms = document.querySelector('.mdc-list');
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -296,12 +304,55 @@ function loadUserMaps_(mapsJson) {
  * @param {String} name the given name of the map
  */
 function makeRoomButton_(id, name) {
-  let roomBtn = makeEl("button", "roomBtn");
-  roomBtn.innerHTML = name;
-  roomBtn.addEventListener('click', () => {
-     location.href=`/chatroom.html?roomId=${id}`;
+  let roomBtn = makeEl("li", "mdc-list-item");
+  roomBtn.appendChild(makeEl("span", "mdc-list-item__ripple"));
+
+  let graphicElement = makeEl("span", "mdc-list-item__graphic");
+  let iconElement = makeEl("span", "material-icons");
+  iconElement.innerText = "map";
+
+  graphicElement.appendChild(iconElement);
+
+  roomBtn.appendChild(graphicElement);
+
+  let roomText = makeEl("span", "mdc-list-item__text");
+  roomText.innerText = name;
+  roomBtn.appendChild(roomText);
+
+  roomBtn.addEventListener('click', (clickEvent) => {
+    location.href=`/chatroom.html?roomId=${id}`;
   });
+
+  mapListItems.push(new MDCRipple(roomBtn));
   return roomBtn;
+}
+
+/**
+ * Removes a room from a user's welcome page. If this is the only user of the
+ * chatroom, the chatroom is deleted
+ * @param {String} id the id of the room to be removed
+ */
+function removeRoom(id) {
+  fetch(`/share-server?idToken=${idToken}&idRoom=${id}`)
+      .then((response) => response.json())
+      .then((emails) => {
+          let server = "/room-server";
+          let params = {
+            id: idToken,
+            roomId: id
+          }
+
+          if (emails.length !== 1) {
+            params.email = email;
+            server = "/share-server";
+          }
+
+          fetch(server, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'text/html' },
+                body: JSON.stringify(params)}
+          ).then(() => window.location.href = '/');
+        });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
