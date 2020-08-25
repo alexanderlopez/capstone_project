@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="shareStyle.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZdeLtE431GvRd-XmPa9p7BWWev6q94II&libraries=places&v=weekly" type="text/javascript" id="mapAPI"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
@@ -22,6 +21,7 @@
     </script>
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 
+    <script src="material.js"></script>
     <script src="markerMenu.js"></script>
     <script src="Thread.js"></script>
     <script src="threadHandler.js"></script>
@@ -68,18 +68,39 @@
       </div>
 
       <div id="share-popup">
-        <div id="popup-window">
-          <button id="close" onclick="closeSharePopup()">x</button>
-          <h1 id="members-title">Members</h1>
-          <div id="shared-bank"></div>
-          <hr>
-          <h1 id="sharing-title">Share with:</h1>
-          <input type="email" id="email" name="email">
-          <input id="addEmail" type="button" value="Add email"
-                 onclick="addEmail()">
-          <div id="email-bank"></div>
-          <input id="share" type="button" value="Share"
-                 onclick="submitSharing()">
+        <div class="mdc-card" id="share-card">
+          <div class="mdc-card-wrapper__text-section">
+            <div class="share-card__title">Share with:</div>
+          </div>
+          <div id="share-add-container">
+            <label class="mdc-text-field mdc-text-field--filled mdc-text-field--with-leading-icon">
+              <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading" tabindex="0" role="button">mail</i>
+              <span class="mdc-text-field__ripple"></span>
+              <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+              <span class="mdc-floating-label" id="my-label-id">User email</span>
+              <span class="mdc-line-ripple"></span>
+            </label>
+            <button class="mdc-button" id="share-add-button">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Add</span>
+            </button>
+          </div>
+
+          <hr style="width: 100%;">
+
+          <ul id="share-list" class="mdc-list mdc-list--two-line">
+          </ul>
+
+          <div class="mdc-card__actions">
+            <button id="close" class="mdc-button mdc-card__action mdc-card__action--button">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Close</span>
+            </button>
+            <button id="share-button" class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Share</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -112,7 +133,7 @@
           <label id="comment-container-material" class="mdc-text-field mdc-text-field--filled">
             <span class="mdc-text-field__ripple"></span>
             <input id="comment-container" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-            <!-- <span class="mdc-floating-label" id="my-label-id">Message</span> -->
+            <span class="mdc-floating-label" id="my-label-id">Message</span>
             <span class="mdc-line-ripple"></span>
           </label>
           <button onclick="addChatComment()" id="submitBtn" type="submit" class="btn"></button>

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -52,8 +53,11 @@ let firebasePromise = new Promise(function(resolve) {
 
 let connection = null;
 let userId = null;
+
+var geocoder;
 let userEmail = null;
 let idToken = null;
+
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
@@ -96,7 +100,9 @@ function initChatroom() {
   getServerUrl()
       .then(result => {
         connection = new WebSocket(result);
-
+        
+        initMaterial();
+        geocoder = new google.maps.Geocoder();
         initWebsocket();
         initMarkerMenu();
         initThreads();
@@ -147,12 +153,24 @@ function initMap() {
 function initChat() {
   loadChatHistory();
 
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
+  textInput = new MDCTextField(document.getElementById("comment-container-material"));
+  textInput.listen('keydown', (keyEvent) => {
+    if (keyEvent.key === 'Enter') {
+      addChatComment();
     }
+  });
+}
+
+var textFields;
+var ripples;
+
+function initMaterial() {
+  ripples = [].map.call(document.querySelectorAll('.mdc-button'), function(el) {
+    return new MDCRipple(el);
+  });
+
+  textFields = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
   });
 }
 
@@ -176,7 +194,7 @@ function getCoords(){
     } else {
       reject();
     }
-  })
+  });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,4 +285,22 @@ async function getServerUrl() {
     }
 
     return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
+}
+
+/**
+ * Converts and returns the address represented by the given coordinates
+ * @param {google.maps.Geocoder} geocoder Instance of the Google Maps Geocoding service
+ * @param {google.maps.LatLng} coords Pair of coordinates that is being geocoded
+ */
+async function geocodeLatLng(coords) {
+
+  return new Promise(function(resolve) {
+    geocoder.geocode({ location: coords }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          resolve (results[0].formatted_address);
+        } 
+      }
+    });
+  })
 }

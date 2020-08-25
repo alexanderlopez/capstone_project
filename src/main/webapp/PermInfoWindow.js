@@ -43,21 +43,26 @@ class PermInfoWindow extends InfoWindowTemplate {
     /**
      * @Private
      * Puts together the title and body of the info window
+     * @returns {Promise} Promise object represents body and location of marker
      */
     makeRightColumn_() {
-      let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
+      return geocodeLatLng(this.myMarker_.getPosition()).then(result => {
+        let rightCol = makeEl("div", InfoWindowTemplate.RIGHT_COLUMN);
 
-      let title = makeEl("h1", PermInfoWindow.TITLE_CLASS);
-      let currTitle = this.myMarker_.getTitle();
-      title.innerHTML = currTitle? currTitle: "";
-      rightCol.appendChild(title);
+        let title = makeEl("h1", PermInfoWindow.TITLE_CLASS);
+        let currTitle = this.myMarker_.getTitle();
+        title.innerHTML = currTitle? currTitle: "";
+        rightCol.appendChild(title);
 
-      let body  = makeEl("p", PermInfoWindow.BODY_CLASS);
-      let currBody = this.myMarker_.getBody();
-      body.innerHTML = currBody? currBody: "";
-      rightCol.appendChild(body);
+        let body  = makeEl("p", PermInfoWindow.BODY_CLASS);
+        let currBody = this.myMarker_.getBody();
+        body.innerHTML = currBody? currBody: "";
+        body.innerHTML += "<br> <br> <b>Approximate Location: </b>" + result;
+        rightCol.appendChild(body);
 
-      return rightCol;
+        return rightCol;
+      })
+
     }
 
     /** No left column visible for perm info windows */

@@ -69,30 +69,35 @@ class TempInfoWindow extends InfoWindowTemplate {
 
   /**
    * @Private
-   * Returns the HTML of the right section of the information window
+   * Returns the HTML of the right section of the info window
+   * @returns {Promise} Promise object that represents right column of info window
    */
   makeRightColumn_() {
-    let rightCol = makeEl("div", /* class= */ null, InfoWindowTemplate.RIGHT_COLUMN);
+    return new Promise((resolve) => {
+      let rightCol = makeEl("div", /* class= */ null, InfoWindowTemplate.RIGHT_COLUMN);
 
-    let editedMarker = myMap.editingPermMarker();
-    let titleText = editedMarker? editedMarker.getTitle(): null;
-    let bodyText = editedMarker? editedMarker.getBody(): null;
+      let editedMarker = myMap.editingPermMarker();
+      let titleText = editedMarker? editedMarker.getTitle(): null;
+      let bodyText = editedMarker? editedMarker.getBody(): null;
+  
+      let titleInput = this.makeForm_(TempInfoWindow.TITLE_INPUT,
+          TempInfoWindow.DEFAULT_TITLE, titleText);
+      rightCol.appendChild(titleInput);
+  
+      let bodyInput = this.makeForm_(TempInfoWindow.BODY_INPUT,
+          TempInfoWindow.DEFAULT_BODY, bodyText);
+      rightCol.appendChild(bodyInput);
+  
+      let submitBtn = makeEl("button", /* class= */ null,
+          TempInfoWindow.SUBMIT_BTN);
+      submitBtn.innerHTML = "Enter";
+      rightCol.appendChild(submitBtn);
 
-    let titleInput = this.makeForm_(TempInfoWindow.TITLE_INPUT,
-        TempInfoWindow.DEFAULT_TITLE, titleText);
-    rightCol.appendChild(titleInput);
-
-    let bodyInput = this.makeForm_(TempInfoWindow.BODY_INPUT,
-        TempInfoWindow.DEFAULT_BODY, bodyText);
-    rightCol.appendChild(bodyInput);
-
-    let submitBtn = makeEl("button", /* class= */ null,
-        TempInfoWindow.SUBMIT_BTN);
-    submitBtn.innerHTML = "Enter";
-    rightCol.appendChild(submitBtn);
-
-    return rightCol;
+      resolve (rightCol);
+    });
   }
+
+  
 
   /**
    * Returns a textarea DOM element with given ID, placeholder, and value
