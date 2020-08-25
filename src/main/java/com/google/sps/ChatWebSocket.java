@@ -48,7 +48,6 @@ public class ChatWebSocket {
     public static final String JSON_EMAIL_ARRAY = "emails";
     public static final String JSON_THREAD = "thread";
     public static final String JSON_USER_EMAIL = "email";
-
     public static final String SOCKET_PARAMETER_ROOM = "chatroom";
     public static final String SOCKET_PARAMETER_ID = "idToken";
 
@@ -139,6 +138,7 @@ public class ChatWebSocket {
         echoData.put(JSON_TYPE, MESSAGE_RECEIVE);
         echoData.put(JSON_MESSAGE, messageData.getString(JSON_MESSAGE));
         echoData.put(JSON_USER_ID, uid);
+        echoData.put(JSON_THREAD, messageData.getString(JSON_THREAD));
 
         new Thread(){
             public void run() {
