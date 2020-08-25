@@ -36,6 +36,7 @@ public class ChatWebSocket {
     public static final String JSON_BODY = "body";
     public static final String JSON_LATITUDE = "lat";
     public static final String JSON_LONGITUDE = "lng";
+    public static final String JSON_COLOR = "color";
     public static final String JSON_TYPE = "type";
     public static final String JSON_USER_ID = "uid";
     public static final String JSON_USER_NAME = "name";
@@ -45,7 +46,8 @@ public class ChatWebSocket {
     public static final String JSON_ROOM_ID = "roomId";
     public static final String JSON_ROOM_ARRAY = "rooms";
     public static final String JSON_EMAIL_ARRAY = "emails";
-
+    public static final String JSON_THREAD = "thread";
+    public static final String JSON_USER_EMAIL = "email";
     public static final String SOCKET_PARAMETER_ROOM = "chatroom";
     public static final String SOCKET_PARAMETER_ID = "idToken";
 
@@ -136,6 +138,7 @@ public class ChatWebSocket {
         echoData.put(JSON_TYPE, MESSAGE_RECEIVE);
         echoData.put(JSON_MESSAGE, messageData.getString(JSON_MESSAGE));
         echoData.put(JSON_USER_ID, uid);
+        echoData.put(JSON_THREAD, messageData.getString(JSON_THREAD));
 
         new Thread(){
             public void run() {
@@ -168,7 +171,7 @@ public class ChatWebSocket {
             throws IOException {
         JSONObject echoData = new JSONObject(
             messageData, new String[]{JSON_TITLE, JSON_BODY, JSON_LATITUDE,
-                    JSON_LONGITUDE});
+                    JSON_LONGITUDE, JSON_COLOR});
 
         if (messageData.has(JSON_ID)) {
             echoData.put(JSON_ID, messageData.getLong(JSON_ID));

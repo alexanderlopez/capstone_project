@@ -18,8 +18,13 @@ class MarkerTemplate {
   /** The google.maps.Marker object visible on the map */
   googleMarker_;
 
+  /** The color of the marker */
+  markerColor_;
+
   constructor() {
     this.googleMarker_ = new google.maps.Marker();
+    this.markerColor_ = ColorPicker.DEFAULT_COLOR;
+    this.setColor(this.markerColor_);
     this.setMarkerListeners_();
   }
 
@@ -42,11 +47,33 @@ class MarkerTemplate {
   remove() {}
 
   /**
+   * Sets the color of the marker icon
+   * @param {String} color the color of the marker
+   */
+  setColor(color) {
+    this.markerColor_ = color;
+    this.changeIcon_(color);
+  }
+
+  /** Returns the marker's current color */
+  getColorName() {
+    return this.markerColor_;
+  }
+
+  /**
+   * @Private
+   * Changes the icon of this marker
+   * @abstract
+   */
+  changeIcon_(color) {}
+
+  /**
    * @Private
    * Sets marker-triggered events
    */
   setMarkerListeners_() {
     this.googleMarker_.addListener('click', () => {
+      closeMarkerMenu();
       this.openInfoWindow();
     });
   }
@@ -77,4 +104,16 @@ class MarkerTemplate {
     marker.setMap(myMap.getGoogleMap());
   }
 
+  /**
+   * Changes the marker's map
+   * @param {google.maps.Map} map the map to move the marker to
+   */
+  setMap(map) {
+    this.googleMarker_.setMap(map);
+  }
+
+  /** Returns whether the marker is currently visible on the map */
+  isVisible() {
+    return this.googleMarker_.getMap() !== null;
+  }
 }
