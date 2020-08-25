@@ -97,16 +97,12 @@ function initChatroom() {
   getServerUrl()
       .then(result => {
         connection = new WebSocket(result);
-
-<<<<<<< HEAD
+        
         initMaterial();
-
-=======
         initWebsocket();
         initMarkerMenu();
         initThreads();
         initMap();
->>>>>>> development
         initChat();
         initSharing();
       });
@@ -194,7 +190,7 @@ function getCoords(){
     } else {
       reject();
     }
-  })
+  });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

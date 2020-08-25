@@ -4,8 +4,6 @@ var emailInput;
 
 var emailBank;
 
-var sharedBank;
-
 var memberEmails = new Set();
 
 var shareEmails = {};
@@ -13,10 +11,17 @@ var shareEmails = {};
 /** sets */
 function initSharing() {
   overlay = document.getElementById("share-popup");
-  emailInput = document.getElementById("email");
-  emailBank = document.getElementById("email-bank");
-  sharedBank = document.getElementById("shared-bank");
+  emailInput = textFields[0];
+  emailBank = document.getElementById("share-list");
+  setMapShareEvents();
   loadSharedUsers();
+}
+
+function setMapShareEvents() {
+  addClickEvent("shareBtnWrapper", () => openSharePopup());
+  addClickEvent("share-add-button", () => addEmail());
+  addClickEvent("share-button", () => submitSharing());
+  addClickEvent("close", () => closeSharePopup());
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,10 +42,12 @@ function closeSharePopup() {
 function addEmail() {
   let email = emailInput.value;
   if (!(email in shareEmails) && !(memberEmails.has(email))) {
-    let emailDiv = createEmailDiv(email, () => removeEmail(email));
+    let newEmail = createEmailDiv(email, "To share", () => removeEmail(email));
     emailInput.value="";
-    shareEmails[email] = emailDiv;
-    emailBank.appendChild(emailDiv);
+    shareEmails[email] = newEmail;
+
+    let firstEmail = emailBank.firstElementChild;
+    emailBank.insertBefore(newEmail, firstEmail);
   }
 }
 
@@ -54,26 +61,29 @@ function removeEmail(email) {
 }
 
 /**
- * Creates a DOM element with the email and a delete button and adds it
- * to the email bank
- * @param{String} email the user's email
- * @param{*} callback function called when the div is deleted by the user
+ * Returns a DOM element with the email and a remove button
+ * @param {String} email the user's email
+ * @param {String} userStatus whether this is a new user or existing member
+ * @param {*} callback function called when the div is deleted by the user
  */
-function createEmailDiv(email, callback) {
-  let emailWrapper = makeEl("div", "emailWrapper");
-  emailWrapper.setAttribute("data-email", email);
+function createEmailDiv(email, userStatus, callback) {
+  let listItem = makeEl("li", LIST+ITEM);
+  let rippleItem = makeEl("span", LIST+ITEM+RIPPLE);
+  let graphicElement = makeEl("span", LIST+ITEM+META);
 
-  let emailText = document.createElement("p");
-  emailText.innerHTML = email;
+  let buttonElement = makeMaterialIconBtn("person_remove", ICON_BUTTON, callback);
+  graphicElement.appendChild(buttonElement);
 
-  let deleteBtn = document.createElement("button");
-  deleteBtn.innerHTML = "x";
-  deleteBtn.addEventListener('click', callback);
+  let buttonRipple = new MDCRipple(buttonElement);
+  buttonRipple.unbounded = true;
 
-  emailWrapper.appendChild(emailText);
-  emailWrapper.appendChild(deleteBtn);
+  let textItem = makeMaterialTextElement(email, userStatus);
 
-  return(emailWrapper);
+  listItem.appendChild(rippleItem);
+  listItem.appendChild(textItem);
+  listItem.appendChild(graphicElement);
+
+  return listItem;
 }
 
 /** Clears the email input and email bank in the sharing popup */
@@ -83,16 +93,16 @@ function clearPopupInput() {
   shareEmails = {};
 }
 
-/** Retrieves all the emails the email bank in the sharing popup */
+/** Updates the email bank with the given member emails */
 function parseEmails(emails) {
   //clear previously stored emails
-  sharedBank.innerHTML="";
   memberEmails.clear();
+  emailBank.innerHTML = "";
 
   emails.forEach((email) => {
     memberEmails.add(email);
-    let emailDiv = createEmailDiv(email, () => removeMember(email));
-    sharedBank.appendChild(emailDiv);
+    let emailDiv = createEmailDiv(email, "Member", () => removeMember(email));
+    emailBank.appendChild(emailDiv);
   });
 }
 

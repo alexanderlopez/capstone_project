@@ -18,26 +18,7 @@ var markerGroups = {};
  * object of marker ids to their marker element, menu item, and checkbox
  * input
  */
-var storedMarkers = {};
-
-// Material Design classnames and element content
-const LIST = "mdc-list";
-const FORM = "mdc-form-field";
-const ITEM = "-item";
-const TEXT = "__text";
-const RIPPLE = "__ripple";
-const BACKGROUND = "__background";
-const DIVIDER = "-divider";
-const INPUT = "__native-control";
-const ICON = "material-icons";
-const OPEN_ICON = "expand_more";
-const CHECKBOX = "mdc-checkbox";
-const CHECKBOX_BACKGROUND =
-`<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-  <path class="mdc-checkbox__checkmark-path" fill="none"
-        d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-</svg>
-<div class="mdc-checkbox__mixedmark"></div>`
+var storedMarkers = {}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // SETUP
@@ -103,13 +84,13 @@ function makeColorGroup(color) {
   let groupHeader = headerComponents.item;
   let newCheckbox = headerComponents.checkbox;
 
-  let markerIcon = makeIconBtn("place", "markerIcon");
+  let markerIcon = makeMaterialIconBtn("place", "markerIcon");
   markerIcon.style.color = ColorPicker.getColorCode(color);
   groupHeader.appendChild(markerIcon);
 
   // add toggle button to group header
   let iconBtnCallback = () => collapseMenuGroup(color);
-  let iconBtn = makeIconBtn(OPEN_ICON, "toggleIcon", iconBtnCallback);
+  let iconBtn = makeMaterialIconBtn(OPEN_ICON, "toggleIcon", iconBtnCallback);
   groupHeader.appendChild(iconBtn);
 
   // build the group content and add dummy element
@@ -133,20 +114,6 @@ function makeColorGroup(color) {
 }
 
 /**
- * Returns a MDC icon element with a click property
- * @param {String} name the name of the icon
- * @param {String} iconClass the classname for the icon
- * @param {*} callback the function to be called onclick
- */
-function makeIconBtn(name, iconClass, callback) {
-  let icon = makeEl("span", ICON);
-  icon.classList.add(iconClass);
-  icon.innerHTML = name;
-  icon.addEventListener('click', callback);
-  return icon;
-}
-
-/**
  * Returns the list elements and checkbox DOM elements of a new list element
  * The checkbox is not required so if no callback is given, no checkbox is added
  * @param {String} name the name of the list element
@@ -158,7 +125,7 @@ function makeListElement(name, callback) {
   // make and add checkbox if a callback is given
   let checkboxInput;
   if (callback) {
-    let checkboxInfo = makeCheckbox(callback);
+    let checkboxInfo = makeMaterialCheckbox(callback);
     let newCheckbox = checkboxInfo.wrapper;
     checkboxInput = checkboxInfo.checkbox;
     listItem.appendChild(newCheckbox);
@@ -173,37 +140,6 @@ function makeListElement(name, callback) {
   let result = {
     item: listItem,
     checkbox: checkboxInput
-  }
-
-  return result;
-}
-
-/**
- * Returns a MDC checkbox and its input element with an onclick listener
- * @param {*} callback the function to be called with new checkbox states
- */
-function makeCheckbox(callback) {
-  let form = makeEl("div", FORM);
-  let checkbox = makeEl("div", CHECKBOX);
-
-  let input = makeEl("input", CHECKBOX+INPUT);
-  input.type = "checkbox";
-  input.checked = true;
-  checkbox.appendChild(input);
-
-  let background = makeEl("div", CHECKBOX+BACKGROUND);
-  background.innerHTML = CHECKBOX_BACKGROUND;
-  checkbox.appendChild(background);
-
-  let ripple = makeEl("div", CHECKBOX+RIPPLE);
-  checkbox.appendChild(ripple);
-
-  form.appendChild(checkbox);
-  form.addEventListener('click', () => callback(input.checked));
-
-  let result = {
-    wrapper: form,
-    checkbox: input
   }
 
   return result;
@@ -226,7 +162,7 @@ function makeMarkerMenuItem(marker) {
 
   // make the marker icon button with the same color as the PermMarker
   let markerCallback = () => goToMarker(marker);
-  let markerIcon = makeIconBtn("north_east", "goToIcon", markerCallback);
+  let markerIcon = makeMaterialIconBtn("north_east", "goToIcon", markerCallback);
   menuItem.appendChild(markerIcon);
 
   return elementComponents;
