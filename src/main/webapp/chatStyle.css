@@ -1,9 +1,29 @@
 body {font-family: 'Roboto', sans-serif;}
 * {box-sizing: border-box;}
 
+/* Add styles to the form container */
+#form-container {
+  width: 100%;
+  min-width: 360px;
+  padding: 1em;
+  background-color: white;
+  height: 100%;
+}
 
-/* The popup chat - hidden by default */
-.chat-popup {
+#send-area {
+  width: calc(90% - 2em);
+}
+
+#comment-container-material {
+  width: 100%;
+}
+
+#chat-popup {
+  width: 0;
+  height: 100%;
+  overflow-x: hidden;
+  transition: width 0.5s;
+  border-radius: 2px;
   position: fixed;
   top: 0;
   right: 0;
@@ -11,24 +31,8 @@ body {font-family: 'Roboto', sans-serif;}
   z-index: 9;
 }
 
-/* Add styles to the form container */
-.form-container {
-  width: 92%;
-  min-width: 360px;
-  padding: 1em;
-  background-color: white;
-  height: 92%;
-  display: grid;
-  grid-template-rows: 9em calc(100vh - 17em) 5em;
-}
-
-#send-area {
-  display: grid;
-  grid-template-columns: 85% 15%;
-}
-
-#comment-container-material {
-  margin: auto 0;
+#chat-popup.chatOpen {
+  width: 400px;
 }
 
 .form-container h1 {
@@ -37,55 +41,14 @@ body {font-family: 'Roboto', sans-serif;}
   margin: 0.5em 0 0 0;
 }
 
-/* Full-width textarea */
-#comment-container {
-  vertical-align:top;
-  width: 78%;
-  padding: 10px;
-  margin: 10px 0 10px 0;
-  border: none;
-  background: #f1f1f1;
-  resize: none;
-  max-height: 50px;
-  height: 7%;
-  position: absolute;
-  left: 4%;
-  bottom: 4%;
-  border-radius: 2px;
-  overflow-x: scroll;
-  font-family: 'Roboto', sans-serif;
-}
-
-/* When the textarea gets focus, do something */
-.form-container textarea:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-/* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
-  opacity: 1;
-}
-
-#myForm {
-  width: 0;
-  height: 100%;
-  overflow-x: hidden;
-  transition: width 0.5s;
-  border-radius: 2px;
-}
-
-#myForm.chatOpen {
-  width: 400px;
-}
-
 #submitBtn {
   background-color: white;
   border: none;
   cursor: pointer;
-  width: 70%;
-  height: 70%;
-  margin: auto;
+  width: 1.5em;
+  height: 1.5em;
+  position: absolute;
+  right: 4%;
   border-radius: 2px;
   font-size: 2em;
   background-image: url(icons/send.svg);
@@ -116,7 +79,7 @@ body {font-family: 'Roboto', sans-serif;}
 }
 
 #chat-wrapper {
-  height: calc(89% - 50px);
+  height: calc(100% - 7em);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -230,12 +193,12 @@ body {font-family: 'Roboto', sans-serif;}
 .thread-name {
   text-align: center;
   font-size: 4em;
-  margin: 30px 0 30px 0;
+  margin: .5em 0;
 }
 
 .thread-messages {
   overflow-y: scroll;
-  height: calc(100% - 3em - 60px);
+  height: calc(100% - 7em);
   padding-right: 10px;
 }
 

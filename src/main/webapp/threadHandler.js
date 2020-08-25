@@ -28,10 +28,11 @@ const NEW_THREAD = "new-thread";
 const SUBMIT_THREAD = "submit-thread";
 
 /** Initializes function fields and creates the default and temporary threads */
-function setupThreads() {
+function initThreads() {
   chatWrapper = document.getElementById(CHAT_WRAPPER);
   menuWrapper = document.getElementById(MENU_WRAPPER);
   addThread(DEFAULT_THREAD_NAME);
+  menuOpen = false;
 }
 
 /** Displays the default thread */

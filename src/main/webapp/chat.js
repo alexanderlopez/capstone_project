@@ -32,7 +32,7 @@ function toggleChat() {
  * Opens the chat
  */
 function openChat_() {
-  addClass_("myForm", "chatOpen");
+  addClass_("chat-popup", "chatOpen");
   removeClass_("mapOverlay", "expanded");
   chatOpen =  true;
 }
@@ -42,7 +42,7 @@ function openChat_() {
  * Closes the chat
  */
 function closeChat_() {
-  removeClass_("myForm", "chatOpen");
+  removeClass_("chat-popup", "chatOpen");
   addClass_("mapOverlay", "expanded");
   chatOpen = false;
 }
@@ -112,6 +112,11 @@ function addChatComment() {
   }
 }
 
+/**
+ * Sends a message to a chat thread
+ * @param {String} content the content of the message
+ * @param {String} currThread the thread this message should be sent to
+ */
 function sendMessage(content, currThread) {
   var commentObj = {
     type : "MSG_SEND",
@@ -154,7 +159,7 @@ function toggleMessageSend(enable) {
 
 const THREAD_MENU = "thread-menu";
 
-var menuOpen = false;
+var menuOpen;
 
 /** Shows or hides the chat thread menu accordingly */
 function toggleThreadMenu() {
