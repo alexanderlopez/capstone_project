@@ -7,7 +7,6 @@
         <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
-        <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
@@ -115,8 +114,6 @@
         <div id="loading">Loading...</div>
         <div id="firebaseui-auth-container"></div>
 
-        <!--<button id="sign-out" onclick="logOut()">Sign Out
-      </button>-->
       <button id="sign-out" onclick="logOut()" class="mdc-button">
         <div class="mdc-button__ripple"></div>
         <span class="mdc-button__label">Sign Out</span>
