@@ -7,6 +7,10 @@ html {
   --mdc-theme-primary: #306890;
 }
 
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: rgba(48, 104, 144, .87) !important;
+}
+
 body {
   background-image: url("welcome.jpeg");
   background-size: cover;
