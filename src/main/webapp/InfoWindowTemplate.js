@@ -19,6 +19,7 @@ class InfoWindowTemplate {
   static EDIT_ID = "markerEdit";
   static CONTENT_WRAPPER = "contentWrapper";
   static LEFT_COLUMN = "leftColumn";
+  static MIDDLE_COLUMN = "middleColumn";
   static RIGHT_COLUMN = "rightColumn";
 
   /** google.maps.Marker object this info window is anchored to */
@@ -42,10 +43,12 @@ class InfoWindowTemplate {
 
   /** Displays the info window on the map */
   open() {
-    this.close();
-    this.googleInfoWindow_.setContent(this.makeContent_());
-    this.googleInfoWindow_.open
-        (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
+    return this.makeContent_().then(content =>{
+      this.close();
+      this.googleInfoWindow_.setContent(content);
+      this.googleInfoWindow_.open
+          (myMap.getGoogleMap(), this.myMarker_.getGoogleMarker());
+    })
   }
 
   /**
@@ -60,49 +63,40 @@ class InfoWindowTemplate {
   /**
    * @Private
    * Returns the html string to be displayed in this info window
+   * @returns {Promise} Promise object that represents content of info window
    */
   makeContent_() {
-    let contentWrapper = document.createElement("div");
-    contentWrapper.classList.add(InfoWindowTemplate.CONTENT_WRAPPER);
-    contentWrapper.appendChild(this.makeLeftColumn_());
-    contentWrapper.appendChild(this.makeRightColumn_());
 
-    let result = contentWrapper.outerHTML;
-    contentWrapper.remove();
+    return this.makeRightColumn_().then(rightCol => {
+      let contentWrapper = makeEl("div", /* class= */ null, InfoWindowTemplate.CONTENT_WRAPPER);
+      contentWrapper.appendChild(this.makeLeftColumn_());
+      contentWrapper.appendChild(this.makeMiddleColumn_());
+      contentWrapper.appendChild(rightCol);
 
-    return result;
+      let result = contentWrapper.outerHTML;
+      contentWrapper.remove();
+
+      return result;
+    })
+    
   }
 
   /**
    * @Private
    * Puts together info window buttons
    */
-  makeLeftColumn_() {
-    let leftCol = document.createElement("div");
-    leftCol.classList.add(InfoWindowTemplate.LEFT_COLUMN);
-    leftCol.appendChild(this.makeDeleteButton_());
-    leftCol.appendChild(this.makeEditButton_());
-    return leftCol;
-  }
+  makeMiddleColumn_() {
+    let midCol = makeEl("div", /* class= */ null, InfoWindowTemplate.MIDDLE_COLUMN);
 
-  /**
-   * @Private
-   * Returns the delete button for this marker
-   */
-  makeDeleteButton_() {
-    let btn = document.createElement("button");
-    btn.id = InfoWindowTemplate.DELETE_ID;
-    return btn;
-  }
+    let deleteBtn = makeEl("button", /* class= */ null,
+        InfoWindowTemplate.DELETE_ID);
 
-  /**
-   * @Private
-   * Returns the edit button for this marker
-   */
-  makeEditButton_() {
-    let btn = document.createElement("button");
-    btn.id = InfoWindowTemplate.EDIT_ID;
-    return btn;
+    let editBtn = makeEl("button", /* class= */ null,
+        InfoWindowTemplate.EDIT_ID);
+
+    midCol.appendChild(deleteBtn);
+    midCol.appendChild(editBtn);
+    return midCol;
   }
 
   /**
@@ -110,4 +104,10 @@ class InfoWindowTemplate {
    * @abstract
    */
   makeRightColumn_() {}
+
+  /**
+   * Builds the left column of the information window
+   * @abstract
+   */
+  makeLeftColumn_() {}
 }

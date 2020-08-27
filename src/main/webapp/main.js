@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
+
 // Your web app's Firebase configuration
 var firebaseConfig = {
   apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -30,7 +33,8 @@ firebase.initializeApp(firebaseConfig);
 // MAP
 
 let myMap;
-let roomId = (new URLSearchParams(location.search)).get('roomId');
+
+let currRoomId = (new URLSearchParams(location.search)).get('roomId');
 
 /** Waits for the page HTML to load */
 let domPromise = new Promise(function(resolve) {
@@ -48,23 +52,181 @@ let firebasePromise = new Promise(function(resolve) {
     });
 
 let connection = null;
+let userId = null;
+
+var geocoder;
+let userEmail = null;
+let idToken = null;
+
 
 /** Waits until all promises are fullfilled before opening the websocket and
  * setting up the map and chat
  */
-Promise.all([mapPromise, domPromise, firebasePromise]).then((values) => {
-      let user = values[2];
-      if (!user) {
+Promise.all([mapPromise, domPromise, firebasePromise])
+       .then((values) => {
+         let currUser = firebase.auth().currentUser;
+         userId = currUser.uid;
+         userEmail = currUser.email;
+
+         firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
+             .then(token => {
+               idToken = token;
+               fetchStr = `?idToken=${idToken}&idRoom=${currRoomId}`;
+
+               validateUser(values);
+               initChatroom();
+             });
+       });
+
+/**
+ * Sends the user back to the home page if they do not have access to this
+ * chatroom
+ */
+function validateUser(values) {
+  let user = values[2];
+  fetch("/authentication"+fetchStr)
+    .then((response) => response.text())
+    .then((allowed) => {
+      if (!user || allowed == "false") {
         location.href = "/";
       }
-
-      getServerUrl().then(result => {
-        connection = new WebSocket(result);
-        initWebsocket();
-        myMap = new ChapMap();
-        initChat();
-      });
     });
+}
+
+var fetchStr;
+
+/** Opens the websocket and initalizes all the chatroom components */
+function initChatroom() {
+  getServerUrl()
+      .then(result => {
+        connection = new WebSocket(result);
+        
+        initMaterial();
+        geocoder = new google.maps.Geocoder();
+        initWebsocket();
+        initMarkerMenu();
+        initThreads();
+        initMap();
+        initChat();
+        initSharing();
+      });
+}
+
+/**
+ * Builds the content of the fetch call with a method, headers, and body
+ * @param {String} type the fetch method
+ * @param {Object} params the parameters that need to be sent
+ */
+function buildFetchContent(type, params) {
+  return {
+    method: type,
+    headers: { 'Content-Type': 'text/html' },
+    body: JSON.stringify(params)
+  };
+}
+
+/**
+ * Adds the user id token and room id to fetch parameters
+ * @param {Object} params the existing customized parameters
+ */
+function buildFetchParams(params) {
+  params.id = idToken;
+  params.roomId = currRoomId;
+  return params;
+}
+
+const DEFAULT_LAT = -34.397;
+const DEFAULT_LNG =  150.644;
+
+/** Initalizes the map */
+function initMap() {
+  getCoords().then(coords => {
+    myMap = new ChapMap(coords);
+  }).catch(() => {
+    myMap = new ChapMap([DEFAULT_LAT, DEFAULT_LNG]);
+  })
+}
+
+/**
+ * Sets up chat listeners
+ */
+function initChat() {
+  loadChatHistory();
+
+  textInput = new MDCTextField(document.getElementById("comment-container-material"));
+  textInput.listen('keydown', (keyEvent) => {
+    if (keyEvent.key === 'Enter') {
+      addChatComment();
+    }
+  });
+}
+
+var textFields;
+var ripples;
+
+function initMaterial() {
+  ripples = [].map.call(document.querySelectorAll('.mdc-button'), function(el) {
+    return new MDCRipple(el);
+  });
+
+  textFields = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+}
+
+/**
+ * Returns the user's coordinates, if possible
+ * @returns{!Promise<Array<Number>>} Promise for a tuple representing
+ * the user's latitude and longitude.
+ */
+function getCoords(){
+
+  return new Promise(function(resolve, reject){
+
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(position){
+        if(position.coords.latitude && position.coords.longitude){
+          resolve([position.coords.latitude, position.coords.longitude]);
+        } else {
+          reject();
+        }
+      }, reject);
+    } else {
+      reject();
+    }
+  });
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HELPER FUNCIONS
+
+/**
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
+ */
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
+}
+
+/**
+ * Sets a click-trigger event to the DOM element with the given id and
+ * sets the callback function to the one given
+ * @param {String} id the id of the element to be added
+ * @param {*} fn the anonymous function to be called on click
+ */
+function addClickEvent(id, fn) {
+  let btn = document.getElementById(id);
+  btn.addEventListener('click', fn);
+}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // WEBSOCKET
@@ -122,22 +284,23 @@ async function getServerUrl() {
         protoSpec = 'ws:';
     }
 
-    let idToken = await firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true);
-
-    return protoSpec + "//" + location.host + "/chat/" + roomId + "?idToken=" + idToken;
+    return protoSpec + "//" + location.host + "/chat/" + currRoomId + "?idToken=" + idToken;
 }
 
 /**
- * Sets up chat listeners
+ * Converts and returns the address represented by the given coordinates
+ * @param {google.maps.Geocoder} geocoder Instance of the Google Maps Geocoding service
+ * @param {google.maps.LatLng} coords Pair of coordinates that is being geocoded
  */
-function initChat() {
-  loadChatHistory();
+async function geocodeLatLng(coords) {
 
-  var input = document.getElementById("comment-container");
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
-    }
-  });
+  return new Promise(function(resolve) {
+    geocoder.geocode({ location: coords }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          resolve (results[0].formatted_address);
+        } 
+      }
+    });
+  })
 }

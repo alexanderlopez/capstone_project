@@ -50,6 +50,10 @@ public class UserServlet extends HttpServlet {
 
         String uid = CapstoneAuth.getUserId(tokenId);
 
+        if (DatastoreManager.getInstance().getUserName(uid) != null) {
+            DatastoreManager.getInstance().refreshNameCache();
+        }
+
         DatastoreManager.getInstance().createUser(uid, userName);
 
         response.setContentType("text/html");

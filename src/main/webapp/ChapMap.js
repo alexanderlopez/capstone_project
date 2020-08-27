@@ -30,20 +30,24 @@ class ChapMap {
   /** object containing all permanent markers visible on the map */
   permMarkers_;
 
-  /** Id Token of the current user*/
-  idToken_;
+  /** Suggested marker from the search box */
+  suggestedMarker_;
 
   static SELECTED_CLASS = "selected";
 
-  constructor() {
+  constructor(coords) {
+    var lat = coords[0];
+    var lng = coords[1];
+
     this.googleMap_ = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8
-      });
+      center: { lat: lat, lng: lng },
+      zoom: 8
+    });
+
+    this.initSearchBox_();
 
     this.addBtnListeners_();
     this.addMapClickListener_();
-    this.setMapShareEvents_();
 
     PermMarker.permInfoWindow = new PermInfoWindow();
     this.tempMarker_ = new TempMarker();
@@ -53,6 +57,7 @@ class ChapMap {
     this.permMarkers_ = {};
     this.loadMarkers_();
   }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LISTENERS
 
@@ -62,8 +67,9 @@ class ChapMap {
    */
   addMapClickListener_() {
     this.googleMap_.addListener('click', (e) => {
+      closeMarkerMenu();
       if (this.addingMarkers_) {
-        this.editedPermMarker_ = null;
+        this.restoreEditedMarker_();
         this.setTempMarker(e.latLng);
         this.closePermInfoWindow();
       }
@@ -76,11 +82,10 @@ class ChapMap {
    * A client can only add markers when the "adding markers" mode is on
    */
   addBtnListeners_() {
-    this.addClickEvent_("addMarkerBtnWrapper",
+    addClickEvent("addMarkerBtnWrapper",
                       () => this.enableAddingMarkers_());
-    this.addClickEvent_("backBtnWrapper", () => window.location='/');
-    this.addClickEvent_("viewBtnWrapper", () => this.disableAddingMarkers_());
-    this.addClickEvent_("chatBtnWrapper", () => toggleChat());
+    addClickEvent("backBtnWrapper", () => window.location='/');
+    addClickEvent("viewBtnWrapper", () => this.disableAddingMarkers_());
   }
 
   /**
@@ -116,7 +121,6 @@ class ChapMap {
     let disableBtn = enable? viewBtn: addMarkerBtn;
 
     this.addingMarkers_ = !this.addingMarkers_;
-    this.removeTempMarker();
 
     enableBtn.classList.add(ChapMap.SELECTED_CLASS);
     disableBtn.classList.remove(ChapMap.SELECTED_CLASS);
@@ -131,13 +135,12 @@ class ChapMap {
    * @param {PermMarker} permMarker permanent marker to be edited
    */
   editPermMarker(permMarker) {
-    this.closePermInfoWindow();
+    this.setTempMarker(permMarker.getPosition());
     permMarker.hide();
 
     this.editedPermMarker_ = permMarker;
     this.disableAddingMarkers_();
-
-    this.setTempMarker(permMarker.getPosition());
+    this.tempMarker_.setColor(permMarker.getColorName());
     this.tempMarker_.openInfoWindow();
   }
 
@@ -154,9 +157,15 @@ class ChapMap {
    * @param {google.maps.LatLng} coords coordinates where to show the marker
    */
   setTempMarker(coords) {
+    this.restoreEditedMarker_();
     this.closePermInfoWindow();
+
+    this.tempMarker_.closeInfoWindow();
+    this.tempMarker_.setColor(ColorPicker.DEFAULT_COLOR);
     this.tempMarker_.setPosition(coords);
     this.googleMap_.panTo(coords);
+
+    this.clearSuggestedMarker_();
   }
 
   /** Removes the  temporary marker from the map */
@@ -193,6 +202,33 @@ class ChapMap {
     this.googleMap_.panTo(coords);
   }
 
+  /**
+   * Pans the map to the given marker and opens its information window
+   * @param {PermMarker} marker the marker that should be centered
+   */
+  highlightMarker(marker) {
+    this.panTo(marker.getPosition());
+    marker.openInfoWindow();
+  }
+
+  /**
+   * @Private
+   * Makes the edited permanent marker visible again
+   */
+  restoreEditedMarker_() {
+    if (!this.editedPermMarker_) return;
+    this.editedPermMarker_.getGoogleMarker().setMap(this.googleMap_);
+    this.editedPermMarker_ = null;
+  }
+
+  /**
+   * Returns the permanent marker with the given id
+   * @param {String} id the id the marker wanted
+   */
+  getPermMarker(id) {
+    return this.permMarkers_[id];
+  }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RECEIVE MARKERS FROM THE SERVER
 
@@ -201,20 +237,8 @@ class ChapMap {
    * Fetches all the map's markers from the server and loads them to the map
    */
   loadMarkers_() {
-    firebase.auth().currentUser.getIdToken(/* forceRefresh= */ true)
-        .then(idToken => myMap.getMarkers(idToken))
-        .catch(error => {
-          throw "Problem getting markers";
-        });
-  }
-
-  /**
-   * Retrieves markers from the server and adds them to the map
-   * @param {firebase.idToken} idToken the current user's getIdToken
-   */
-  getMarkers(userIdToken) {
-    this.idToken = userIdToken;
-    fetch(`/map-server?idToken=${userIdToken}&idRoom=${roomId}`)
+    // fetchStr initialized in main.js
+    fetch("/map-server"+fetchStr)
       .then(response => response.json())
       .then(markers => myMap.handleMarkers_(markers));
   }
@@ -236,45 +260,44 @@ class ChapMap {
   */
   handleMarker(markerJson) {
     let markerId = markerJson.id;
-    let title    = markerJson.title;
-    let body     = markerJson.body;
-    let lat      = markerJson.lat;
-    let lng      = markerJson.lng;
-
-    let coords = new google.maps.LatLng(lat, lng);
 
     let permMarker = this.permMarkers_[markerId];
 
     if (!permMarker) {
-      this.makeNewPermMarker_(markerId, title, body, coords)
+      this.makeNewPermMarker_(markerId, markerJson)
     } else {
-      this.updatePermMarker_(permMarker, coords, title, body);
+      removeMarkerFromMenu(permMarker);
+      this.updatePermMarker_(permMarker, markerJson);
     }
   }
 
   /**
    * @Private
    * Creates a new PermMarker with the given details and stores it
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
    * @param {String} id the id of the marker
-   * @param {google.maps.LatLng} coords the coordinates of the marker
+   * @param {Object} markerJson json containing marker details
    */
-  makeNewPermMarker_(id, title, body, coords) {
+  makeNewPermMarker_(id, markerJson) {
     let permMarker = new PermMarker(id);
     this.permMarkers_[id] = permMarker;
-    this.updatePermMarker_(permMarker, coords, title, body);
+    this.updatePermMarker_(permMarker, markerJson);
   }
 
   /**
    * @Private
    * Updates an existing perm marker's details with the info from the server
    * @param {PermMarker} permMarker marker that needs to be modified
-   * @param {String} title the title of the marker
-   * @param {String} body the body of the marker description
-   * @param {google.maps.LatLng} coords the coordinates of the marker
+   * @param {Object} markerJson json containing marker details
    */
-  updatePermMarker_(permMarker, coords, title, body) {
+  updatePermMarker_(permMarker, markerJson) {
+    let title    = markerJson.title;
+    let body     = markerJson.body;
+    let color    = markerJson.color;
+    let lat      = markerJson.lat;
+    let lng      = markerJson.lng;
+
+    let coords = new google.maps.LatLng(lat, lng);
+
     if (coords) {
       permMarker.setPosition(coords);
     }
@@ -284,7 +307,11 @@ class ChapMap {
     if (body) {
       permMarker.setBody(body);
     }
+    if (color) {
+      permMarker.setColor(color);
+    }
 
+    addToMarkerMenu(permMarker);
     if (permMarker === this.editedPermMarker_) {
       permMarker.openInfoWindow();
       this.editedPermMarker_ = null;
@@ -302,6 +329,7 @@ class ChapMap {
     if (permMarker) {
       permMarker.hide();
       delete this.permMarkers_[id];
+      removeMarkerFromMenu(permMarker);
     }
   }
 
@@ -315,16 +343,17 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} title the title of the marker
    * @param {String} body the body of the marker description
+   * @param {String} color the color of the marker
    */
-  sendPermMarkerInfo(coords, title, body) {
+  sendPermMarkerInfo(coords, title, body, color) {
     this.removeTempMarker();
     let editedPermMarker = this.editedPermMarker_;
 
     if (!editedPermMarker) {
-      connection.send(this.makeJson_(coords, title, body));
+      connection.send(this.makeJson_(coords, title, body, color));
     } else {
       let id = editedPermMarker.getId();
-      connection.send(this.makeJson_(coords, title, body, id));
+      connection.send(this.makeJson_(coords, title, body, color, id));
     }
   }
 
@@ -334,13 +363,15 @@ class ChapMap {
    * @param {google.maps.LatLng} coords where to place the marker
    * @param {String} markerTitle the title of the marker
    * @param {String} markerBody the body of the marker description
-   * @param {String} markerId the datastore id of this marker
+   * @param {String} color the color of the marker
+   * @param {?String} markerId the datastore id of this marker
    */
-  makeJson_(coords, markerTitle, markerBody, markerId) {
+  makeJson_(coords, markerTitle, markerBody, markerColor, markerId) {
     var jsonObject = {
         type : ChapMap.typeValue,
         title : markerTitle,
         body : markerBody,
+        color: markerColor,
         lat : coords.lat(),
         lng : coords.lng()
     };
@@ -364,137 +395,86 @@ class ChapMap {
 
     connection.send(JSON.stringify(jsonObject));
   }
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// MAP SHARING
+// SEARCH BAR
 
   /**
    * @Private
-   * Sets the events related to sharing the map with another user
+   * Initialize and setup the search box
    */
-  setMapShareEvents_() {
-    this.addClickEvent_("shareBtnWrapper", () => this.openSharePopup_());
-    this.addClickEvent_("addEmail", () => this.addEmail_());
-    this.addClickEvent_("share", () => this.submitSharing_());
-    this.addClickEvent_("close", () => this.closeSharePopup_());
-  }
+  initSearchBox_() {
+    const input = document.getElementById("search");
+    const searchBox = new google.maps.places.SearchBox(input);
+    const map = this.googleMap_;
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-
-  /**
-   * Sets a click-trigger event to the DOM element with the given id and
-   * sets the callback function to the one given
-   * @param {String} id the id of the element to be added
-   * @param {} fn the anonymous function to be called on click
-   */
-  addClickEvent_(id, fn) {
-    let btn = document.getElementById(id);
-    btn.addEventListener('click', fn);
-  }
-
-  /**
-   * @Private
-   * Opens the sharing popup and prevents the client from clicking on the map
-   */
-  openSharePopup_() {
-    let overlay = document.getElementById("share-popup");
-    overlay.classList.add("cover");
-  }
-
-  /**
-   * @Private
-   * Closes the pop and allows clients to click on the map again
-   */
-  closeSharePopup_() {
-    let overlay = document.getElementById("share-popup");
-    overlay.classList.remove("cover");
-    this.clearPopupInput_();
-  }
-
-  /**
-   * @Private
-   * Adds the given email to the email bank
-   */
-  addEmail_() {
-    let input = document.getElementById("email");
-    let emailDiv = this.createEmailDiv_(input.value);
-    input.value="";
-    let emailBank = document.getElementById("email-bank");
-    emailBank.appendChild(emailDiv);
-  }
-
-  /**
-   * @Private
-   * Creates a DOM element with the email and a delete button and adds it
-   * to the email bank
-   */
-  createEmailDiv_(email) {
-    let emailWrapper = document.createElement("div");
-    emailWrapper.classList.add("emailWrapper");
-    emailWrapper.setAttribute("data-email", email);
-
-    let emailText = document.createElement("p");
-    emailText.innerHTML = email;
-
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "x";
-    deleteBtn.addEventListener('click', () => emailWrapper.remove());
-
-    emailWrapper.appendChild(emailText);
-    emailWrapper.appendChild(deleteBtn);
-
-    return(emailWrapper);
-  }
-
-  /**
-   * @Private
-   * Clears the email input and email bank in the sharing popup
-   */
-  clearPopupInput_() {
-    let emailInput = document.getElementById("email");
-    emailInput.value = "";
-
-    let emailBank = document.getElementById("email-bank");
-    emailBank.innerHTML = "";
-  }
-
-  /**
-   * @Private
-   * Shares the map with all the emails in the email bank
-   */
-  submitSharing_() {
-    let shareEmails = this.getEmailsFromBank_();
-    let currRoomId = roomId;
-    let params = {
-      emails: shareEmails,
-      roomId: currRoomId,
-      id: this.idToken
-    };
-
-    fetch("/share-server", {
-      method:'POST',
-      headers: { 'Content-Type': 'text/html' },
-      body: JSON.stringify(params)
-    }).then((response) => response.text())
-      .then((worked) => {
-       if (worked == 'true') {
-         myMap.clearPopupInput_();
-       }
-       else {
-         alert("Submit failed, please try again");
-       }
-     });
-  }
-
-  /**
-   * @Private
-   * Retrieves all the emails the email bank in the sharing popup
-   */
-  getEmailsFromBank_() {
-    let emailBank = document.getElementById("email-bank");
-    var emailWrappers = emailBank.childNodes;
-    let emails = [];
-    emailWrappers.forEach(function(node) {
-      emails.push(node.getAttribute("data-email"));
+    // suggest results from current viewport
+    map.addListener("bounds_changed", () => {
+      searchBox.setBounds(map.getBounds());
     });
-    return emails;
+
+    searchBox.addListener("places_changed", () => {
+      const places = searchBox.getPlaces();
+      if (places.length == 0) return;
+
+      this.clearSuggestedMarker_();
+      const bounds = new google.maps.LatLngBounds();
+
+      places.forEach(place => {
+        this.addSuggestedMarker_(place);
+        this.adjustMapBounds_(place, bounds);
+      });
+      map.fitBounds(bounds);
+    });
+  }
+
+  /**
+   * @Private
+   * Removes suggested Markers and empties the suggest markers list
+   */
+  clearSuggestedMarker_() {
+    let marker = this.suggestedMarker_;
+    if (marker) {
+      marker.setMap(null);
+      marker = null;
+    }
+  }
+
+  /**
+   * @Private
+   * Adds a marker at the location given
+   * @param {google.maps.Place} place location to create a suggested marker
+   */
+  addSuggestedMarker_(place) {
+    let icon = ColorPicker.getPermMarkerIcon(ColorPicker.DEFAULT_COLOR);
+    let newMarker = new google.maps.Marker({
+      map: this.googleMap_,
+      title: place.name,
+      position: place.geometry.location
+    });
+    newMarker.setIcon(icon);
+
+    newMarker.addListener('click', () => {
+      let coords = newMarker.getPosition()
+      this.setTempMarker(coords);
+      this.tempMarker_.openInfoWindow();
+    });
+
+    this.suggestedMarker_ = newMarker;
+  }
+
+  /**
+   * @Private
+   * Adjusts the zoom and bounds of the map to center a location
+   * @param {google.maps.Place} place where to center the map
+   * @param {google.maps.LatLngBounds} bounds object to apply new bounds to
+   */
+  adjustMapBounds_(place, bounds) {
+    if (place.geometry.viewport) {
+      bounds.union(place.geometry.viewport);
+    } else {
+      bounds.extend(place.geometry.location);
+    }
   }
 }
