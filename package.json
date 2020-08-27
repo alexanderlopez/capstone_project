@@ -4,7 +4,7 @@
   "description": "appengine-flexible-archetype ============================",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive ./src/main/webapp/test"
+    "test": "mocha --recursive ./src/main/webapp/threadHandler_test.js"
   },
   "repository": {
     "type": "git",
