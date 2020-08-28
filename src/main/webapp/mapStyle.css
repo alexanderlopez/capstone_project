@@ -1,35 +1,69 @@
 body, html {
   height: 100%;
   margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+#mapOverlay {
+  height: 100%;
+  width: calc(100% - 400px);
+  transition: width 0.5s;
+  position: relative;
+}
+
+#mapOverlay.expanded {
+  width: 100%;
 }
 
 #map {
   height: 100%;
-  width: calc(100% - 400px);
-  transition: width 2s;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  right: 0;
 }
 
-#map.expanded {
-  width: 100%
-}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* INFO WINDOWS */
 
-.contentWrapper {
+#contentWrapper {
   width: 20em;
+  max-height: 15em;
+  overflow-y: scroll;
 }
 
-.leftColumn {
+#contentWrapper.wide {
+  width: 25em;
+}
+
+#leftColumn {
+  float: left;
+}
+
+#middleColumn {
   float: left;
   width: 2em;
-  margin-right: 1em;
+  margin: 0 .5em;
 }
 
-.rightColumn {
+#middleColumn.wide {
+  margin-top: 1.25em;
+}
+
+#rightColumn {
   float: left;
   width: calc(100% - 4em);
+  max-width: 17em;
+  float: right;
 }
 
-#markerDelete, #markerEdit {
-  height: 1.5em;
+#rightColumn.wide {
+  width: calc(100% - 9em);
+}
+
+#markerDelete, #markerEdit, #markerColor {
+  height: 2.5em;
   width: 2em;
   background-position: center;
   background-repeat: no-repeat;
@@ -37,28 +71,25 @@ body, html {
   border: 0;
   padding: 0;
   background-color: white;
+  cursor: pointer;
 }
 
 #markerDelete {
-  background-image: url("icons/delete.png");
+  background-image: url("icons/delete.svg");
   margin: 1.5em 0 .5em 0 !important;
 }
 
 #markerEdit {
-  background-image: url("icons/edit.png");
+  background-image: url("icons/edit.svg");
   margin: .5em 0 1.5em 0 !important;
 }
 
-#markerDelete:hover, #markerEdit:hover {
-  cursor: pointer;
-}
-
-#markerDelete:focus, #markerEdit:focus {
+#markerDelete:focus, #markerEdit:focus, #markerColor {
   outline: 0;
 }
 
 .markerTitle {
-  font-size: 3em;
+  font-size: 2.5em;
   font-weight: bold;
   margin: 0;
 }
@@ -76,6 +107,31 @@ body, html {
   width: 100%;
 }
 
+#colorPicker {
+  width: 5em;
+  height: 100%;
+  float: left;
+  display: grid;
+  grid-template-columns: 2em 2em;
+  display: grid;
+}
+
+.colorBtn, .colorBtn:focus {
+  height: 1.5em;
+  width: 1.5em;
+  margin: .5em;
+  border-radius: 50%;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.colorBtn.picked {
+  border: 2px solid black;
+}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* MAP BUTTONS */
+
 .btnWrapper {
   position: absolute;
   right: 10px;
@@ -85,17 +141,38 @@ body, html {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   cursor: pointer;
   border-radius: 2px;
+  z-index: 2;
 }
 
 #viewBtnWrapper {
-  bottom: 270px;
+  bottom: 260px;
+}
+
+#viewBtn {
+  background-image: url("icons/pointer.png");
 }
 
 #addMarkerBtnWrapper {
   bottom: 210px;
 }
 
-.btnIcon {
+#addMarkerBtn {
+  background-image: url("icons/addMarker.svg");
+}
+
+#markerMenuToggle {
+  left: 220px;
+}
+
+#markerMenuClose.rotate {
+  opacity: 1;
+}
+
+#markerMenuClose {
+  background-image: url("icons/up.svg");
+}
+
+.btnIcon, .btnIcon:focus {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -107,10 +184,12 @@ body, html {
   left: 5px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
+  outline: 0;
+  opacity: .6;
 }
 
-.btnIcon:focus, .btnIcon:hover {
-  outline: 0;
+.btnIcon:hover {
+  opacity: 1;
 }
 
 .selected .btnIcon {
@@ -118,44 +197,50 @@ body, html {
   left: 2px;
   height: 36px;
   width: 36px;
+  opacity: 1;
 }
 
 .selected {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 7px 7px -1px;
 }
 
-#addMarkerBtn {
-  background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png);
-}
-
-#viewBtn {
-  background-image: url(icons/pointer.png);
-}
-
-.textBtn, .textBtn:focus {
-  background-color: rgb(255, 255, 255);
-  color: #423f3f;
-  padding: 5px;
-  font-size: 18px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  height: 100%;
-  width: 100%;
-  outline: 0;
-}
-
-.textBtnWrapper {
+.topBtn {
   top: 10px;
-  width: 80px;
-  height: 40px;
-  border-radius: 2px;
 }
 
 #chatBtnWrapper {
-  right: 100px;
+  right: 70px;
+}
+
+#chatButton {
+  background-image: url("icons/chat.svg");
 }
 
 #backBtnWrapper {
-  right: 210px;
+  right: 130px;
+}
+
+#backButton {
+  background-image: url("icons/home.svg");
+}
+
+#shareBtnWrapper {
+  right: 190px;
+  top: 10px;
+}
+
+#shareBtn {
+  background-image: url("icons/share.svg");
+}
+
+#search {
+  left: 280px !important;
+  height: 40px;
+  outline: 0;
+  border: 0;
+  border-radius: 2px;
+  padding-left: 1em;
+  max-width: calc(100% - 530px);
+  width: 40em;
+  top: 10px !important;
 }

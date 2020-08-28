@@ -1,6 +1,7 @@
 package com.google.sps;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -115,6 +116,8 @@ public class DatastoreManager {
                         markerData.getDouble(ChatWebSocket.JSON_LATITUDE))
                   .set(ChatWebSocket.JSON_LONGITUDE,
                         markerData.getDouble(ChatWebSocket.JSON_LONGITUDE))
+                  .set(ChatWebSocket.JSON_COLOR,
+                        markerData.getString(ChatWebSocket.JSON_COLOR))
                   .build();
 
         datastore.put(markerEntity);
@@ -151,6 +154,8 @@ public class DatastoreManager {
                         messageData.getString(ChatWebSocket.JSON_USER_ID))
                   .set(ChatWebSocket.JSON_MESSAGE,
                         messageData.getString(ChatWebSocket.JSON_MESSAGE))
+                  .set(ChatWebSocket.JSON_THREAD,
+                        messageData.getString(ChatWebSocket.JSON_THREAD))
                   .set(ChatWebSocket.JSON_TIMESTAMP,
                         TimestampValue.of(Timestamp.now()))
                   .build();
@@ -189,7 +194,9 @@ public class DatastoreManager {
                             markerEntity.getDouble(ChatWebSocket.JSON_LATITUDE))
                         .put(ChatWebSocket.JSON_LONGITUDE,
                             markerEntity.getDouble(
-                                ChatWebSocket.JSON_LONGITUDE));
+                                ChatWebSocket.JSON_LONGITUDE))
+                        .put(ChatWebSocket.JSON_COLOR,
+                            markerEntity.getString(ChatWebSocket.JSON_COLOR));
 
             markersJson.put(markerObject);
         }
@@ -223,6 +230,9 @@ public class DatastoreManager {
                          .put(ChatWebSocket.JSON_USER_ID,
                                 messageEntity.getString(
                                     ChatWebSocket.JSON_USER_ID))
+                         .put(ChatWebSocket.JSON_THREAD,
+                                messageEntity.getString(
+                                ChatWebSocket.JSON_THREAD))
                          .put(ChatWebSocket.JSON_MESSAGE,
                            messageEntity.getString(ChatWebSocket.JSON_MESSAGE));
 
@@ -268,12 +278,44 @@ public class DatastoreManager {
         Entity childChatRoom =
             Entity.newBuilder(childChatRoomKey)
                   .set(ROOM_ATTRIBUTE_NAME, roomName)
+                  .set(CHILD_ROOM_ATTRIBUTE_ID, chatRoomKey.getId())
                   .build();
 
         datastore.put(newChatRoom);
         datastore.put(childChatRoom);
 
         return chatRoomKey.getId();
+    }
+
+    public void deleteChatRoom(long roomId) {
+        //Delete room entity
+        datastore.delete(roomFactory.newKey(roomId));
+
+        //Delete chat and marker entities
+        Query<Key> markerChatQuery =
+            Query.newKeyQueryBuilder()
+                 .setFilter(PropertyFilter.hasAncestor(
+                    roomFactory.newKey(roomId)))
+                 .build();
+
+        QueryResults<Key> markerChatResults = datastore.run(markerChatQuery);
+
+        while (markerChatResults.hasNext()) {
+            datastore.delete(markerChatResults.next());
+        }
+
+        //Delete childroom entities
+        Query<Key> childRoomQuery =
+            Query.newKeyQueryBuilder()
+                 .setKind(KIND_CHATROOM)
+                 .setFilter(PropertyFilter.eq(CHILD_ROOM_ATTRIBUTE_ID, roomId))
+                 .build();
+
+        QueryResults<Key> childRoomResults = datastore.run(childRoomQuery);
+
+        while (childRoomResults.hasNext()) {
+            datastore.delete(childRoomResults.next());
+        }
     }
 
     public void addUserToChatRoom(long roomId, String email) {
@@ -303,10 +345,64 @@ public class DatastoreManager {
                                             .newKey(roomId);
             Entity childChatRoom = Entity.newBuilder(childChatRoomKey)
                                          .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                         .set(CHILD_ROOM_ATTRIBUTE_ID,
+                                            roomId)
                                          .build();
 
             datastore.put(childChatRoom);
         }
+    }
+
+    public void removeUserFromChatRoom(long roomId, String email) {
+        Query<Key> userQuery =
+            Query.newKeyQueryBuilder()
+                 .setKind(KIND_USERS)
+                 .setFilter(PropertyFilter.eq(USER_ATTRIBUTE_EMAIL, email))
+                 .build();
+
+        QueryResults<Key> userResult = datastore.run(userQuery);
+
+        while (userResult.hasNext()) {
+            Key userKey = userResult.next();
+            Key childRoomKey = datastore.newKeyFactory()
+                                        .setKind(KIND_CHATROOM)
+                                        .addAncestor(PathElement.of(KIND_USERS,
+                                            userKey.getName()))
+                                        .newKey(roomId);
+
+            datastore.delete(childRoomKey);
+        }
+    }
+
+    public String getAllowedUsers(long roomId) {
+        JSONArray allowedUsers = new JSONArray();
+
+        Query<Key> childRoomKeyQuery = Query.newKeyQueryBuilder()
+                                            .setKind(KIND_CHATROOM)
+                                            .setFilter(PropertyFilter.eq(
+                                                CHILD_ROOM_ATTRIBUTE_ID,
+                                                roomId))
+                                            .build();
+
+        QueryResults<Key> childRoomKeys = datastore.run(childRoomKeyQuery);
+
+        while (childRoomKeys.hasNext()) {
+            Key currentKey = childRoomKeys.next();
+            List<PathElement> ancestors = currentKey.getAncestors();
+
+            if (ancestors.size() <= 0) {
+                continue;
+            }
+            PathElement userAncestor = ancestors.get(0);
+
+            String userMail =
+                datastore.get(userFactory.newKey(userAncestor.getName()))
+                         .getString(USER_ATTRIBUTE_EMAIL);
+
+            allowedUsers.put(userMail);
+        }
+
+        return allowedUsers.toString();
     }
 
     public void createUser(String uid, String preferredName) {

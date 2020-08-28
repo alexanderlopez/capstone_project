@@ -20,15 +20,16 @@ class TempInfoWindow extends InfoWindowTemplate {
   static SUBMIT_BTN = "mySubmitBtn";
   static DEFAULT_TITLE = "Title";
   static DEFAULT_BODY = "Body";
+  static WIDE = "wide";
 
-  /**
-   * @param {TempMarker} tempmarker temp marker linked to this TempInfoWindow
-   */
   constructor(tempMarker) {
     super();
     this.myMarker_ = tempMarker;
     this.googleInfoWindow_.addListener('domready', () => {
+        ColorPicker.setColorChangeEvent((color) => this.setColor_(color));
+        this.setSelectedColor_((color) => this.setColor_(color));
         this.setSubmitEvent_();
+        this.adjustWindow_();
       });
   }
 
@@ -44,88 +45,93 @@ class TempInfoWindow extends InfoWindowTemplate {
       });
   }
 
+  /** Changes the marker color to the given color */
+  setColor_(newColor) {
+    this.myMarker_.setColor(newColor);
+  }
+
+  /** Sets the selected color picker color to the current marker's color */
+  setSelectedColor_(colorChangeFn) {
+     let color = this.myMarker_.getColorName();
+     ColorPicker.setSelectedColor(color, colorChangeFn);
+  }
+
   /** Sends form input to the temporary marker */
   sendFormInfo() {
-    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT);
-    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT);
+    let inputTitle = document.getElementById(TempInfoWindow.TITLE_INPUT).value;
+    let inputBody = document.getElementById(TempInfoWindow.BODY_INPUT).value;
+    let color = ColorPicker.getSelectedColorName();
 
-    this.myMarker_.setPermMarkerInfo(inputTitle.value, inputBody.value);
+    this.setColor_(ColorPicker.DEFAULT_COLOR);
 
-    inputTitle.value = "";
-    inputBody.value = "";
+    this.myMarker_.setPermMarkerInfo(inputTitle, inputBody, color);
   }
 
   /**
    * @Private
-   * Returns the HTML of the right section of the information window
+   * Returns the HTML of the right section of the info window
+   * @returns {Promise} Promise object that represents right column of info window
    */
   makeRightColumn_() {
-    let rightCol = document.createElement("div");
-    rightCol.classList.add(InfoWindowTemplate.RIGHT_COLUMN);
-    rightCol.appendChild(this.makeContentForm_());
-    return rightCol;
+    return new Promise((resolve) => {
+      let rightCol = makeEl("div", /* class= */ null, InfoWindowTemplate.RIGHT_COLUMN);
+
+      let editedMarker = myMap.editingPermMarker();
+      let titleText = editedMarker? editedMarker.getTitle(): null;
+      let bodyText = editedMarker? editedMarker.getBody(): null;
+  
+      let titleInput = this.makeForm_(TempInfoWindow.TITLE_INPUT,
+          TempInfoWindow.DEFAULT_TITLE, titleText);
+      rightCol.appendChild(titleInput);
+  
+      let bodyInput = this.makeForm_(TempInfoWindow.BODY_INPUT,
+          TempInfoWindow.DEFAULT_BODY, bodyText);
+      rightCol.appendChild(bodyInput);
+  
+      let submitBtn = makeEl("button", /* class= */ null,
+          TempInfoWindow.SUBMIT_BTN);
+      submitBtn.innerHTML = "Enter";
+      rightCol.appendChild(submitBtn);
+
+      resolve (rightCol);
+    });
+  }
+
+  
+
+  /**
+   * Returns a textarea DOM element with given ID, placeholder, and value
+   * @param {String} elId the id of the element
+   * @param {String} elPlaceholder the placeholder text of the input
+   * @param {String} elInnerHTML the innerHTML text of the textarea
+   */
+  makeForm_(elId, elPlaceholder, elInnerHTML) {
+    let el = makeEl("textarea", /* class= */ null, elId);
+    el.placeholder = elPlaceholder;
+    el.innerHTML = elInnerHTML? elInnerHTML: "";
+    return el;
   }
 
   /**
    * @Private
-   * Returns the HTML for the input form for the marker description
+   * Builds the color picker for the marker
    */
-  makeContentForm_() {
-    let form = document.createElement("div");
+   makeLeftColumn_() {
+     let leftCol = makeEl("div", /* class= */ null, InfoWindowTemplate.LEFT_COLUMN);
+     let pickerWrapper = ColorPicker.buildPicker(this.myMarker_.getColorName());
+     leftCol.appendChild(pickerWrapper);
+     return leftCol;
+   }
 
-    //get the marker that is currently being edited to populate the form
-    let editedMarker = myMap.editingPermMarker();
+   /**
+    * @Private
+    * Changes the dimensions and alignment of the info window components
+    */
+   adjustWindow_() {
+     let components = [InfoWindowTemplate.CONTENT_WRAPPER, InfoWindowTemplate.MIDDLE_COLUMN,  InfoWindowTemplate.RIGHT_COLUMN];
 
-    form.appendChild(this.makeTitleInput_(editedMarker));
-    form.appendChild(this.makeBodyInput_(editedMarker));
-    form.appendChild(this.makeSubmitBtn_());
-    return form;
-  }
-
-  /**
-   * @Private
-   * Builds the HTML for the textarea to input the title for the marker
-   * @param {PermMarker} editedMarker perm marker that is being edited
-   */
-  makeTitleInput_(editedMarker) {
-    let titleInput = document.createElement("textarea");
-    titleInput.id = TempInfoWindow.TITLE_INPUT;
-    titleInput.placeholder = TempInfoWindow.DEFAULT_TITLE;
-
-    if (editedMarker) {
-      let title = editedMarker.getTitle();
-      titleInput.innerHTML = title? title: "";
-    }
-
-    return titleInput;
-  }
-
-  /**
-   * @Private
-   * Returns the HTML for the body input textarea for the marker
-   * @param {PermMarker} editedMarker perm marker that is being edited
-   */
-  makeBodyInput_(editedMarker) {
-    let bodyInput = document.createElement("textarea");
-    bodyInput.id = TempInfoWindow.BODY_INPUT;
-    bodyInput.placeholder = TempInfoWindow.DEFAULT_BODY;
-
-    if (editedMarker) {
-      let body = editedMarker.getBody();
-      bodyInput.innerHTML = body? body: "";
-    }
-
-    return bodyInput;
-  }
-
-  /**
-   * @Private
-   * Returns the HTML for the submit button for the form for the markers
-   */
-  makeSubmitBtn_() {
-    let submitBtn = document.createElement("button");
-    submitBtn.id = TempInfoWindow.SUBMIT_BTN;
-    submitBtn.innerHTML = "Enter";
-    return submitBtn;
-  }
+     for (const id of components) {
+       document.getElementById(id).classList.add(TempInfoWindow.WIDE);
+     }
+   }
 }

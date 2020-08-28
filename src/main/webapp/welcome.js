@@ -1,3 +1,29 @@
+const MDCTab = mdc.tab.MDCTab;
+const MDCTextField = mdc.textField.MDCTextField;
+const MDCRipple = mdc.ripple.MDCRipple;
+const MDCList = mdc.list.MDCList;
+
+var tabRegions;
+var textRegions;
+var buttonRipple;
+var mapList;
+var mapListItems = [];
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  tabRegions = [].map.call(document.querySelectorAll('.mdc-tab'), function(el) {
+    return new MDCTab(el);
+  });
+
+  textRegions = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
+    return new MDCTextField(el);
+  });
+  textRegions[0].disabled = true;
+  textRegions[1].disabled = true;
+
+  buttonRipple = new MDCRipple(document.querySelector('.mdc-button'));
+
+  mapList = new MDCList(document.querySelector('.mdc-list'));
+});
 
 var firebaseConfig = {
     apiKey: "AIzaSyDhchLLErkJukOoDeEbXfvtvYfntXh-z7I",
@@ -36,8 +62,11 @@ var uiConfig = {
     signInSuccessUrl: '/'
 };
 
+var email;
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+      email = firebase.auth().currentUser.email;
       firebase.auth().currentUser
         .getIdToken(/* forceRefresh= */ true)
         .then(idToken => getUserInfo_(user, idToken))
@@ -52,6 +81,17 @@ firebase.auth().onAuthStateChanged(function(user) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var idToken;
+
+
+const LOGIN_EL = 'firebaseui-auth-container';
+const LOADING_EL ='loading';
+const WELCOME_EL ='welcome-message';
+const DETAILS_EL = 'user-details';
+const MAPS_WRAPPER = 'maps-wrapper';
+const USERNAME_FORM = 'username-form';
+const PANEL = "panel";
+const HEADER = "header";
+const LOGGED_IN = "logged-in";
 
 /**
  * @Private
@@ -74,22 +114,23 @@ function getUserInfo_(user, userIdToken) {
  * @param {String} email the current user's email
  */
 function displayUserInfo_(userJson, email) {
-  hideLoading_();
+  // no information is given if this is a new user
   let isNewUser = Object.keys(userJson).length === 0;
+
+  hideEl_(document.getElementById(LOADING_EL));
+  showEl_(document.getElementById('sign-out'));
+  document.getElementById(HEADER).classList.add(LOGGED_IN);
+
+  loadUserDetails_(email, userJson.name);
 
   if (isNewUser) {
     setWelcomeMessage_();
-    showUserMaps_({});
-    showEl_(getUsernameForm_());
+    disableMapCreating_();
+    enableUsernameForm();
   } else {
     setWelcomeMessage_(userJson.name);
-    showUserMaps_(userJson.rooms);
-    showEl_(getNewMapForm_());
+    loadUserMaps_(userJson.rooms);
   }
-
-  showUserDetails_(email, userJson.name);
-
-  showEl_(getSignOutBtn_());
 }
 
 
@@ -98,8 +139,9 @@ function displayUserInfo_(userJson, email) {
  * Displays a welcome message with the client's username when applicable
  */
 function setWelcomeMessage_(userName) {
-  let messageDiv = document.getElementById('welcome-message');
+  let messageDiv = document.getElementById(WELCOME_EL);
   showEl_(messageDiv);
+
   let message = "";
 
   if (userName) {
@@ -115,32 +157,52 @@ function setWelcomeMessage_(userName) {
 // CREATE MAP OR USER
 
 /**
+ * @Private
+ * Displays the form where users can enter their username and hides the
+ * new map form if it is visible
+ */
+function enableUsernameForm() {
+  textRegions[1].disabled = false;
+
+  hideEl_(document.getElementById('edit-details'));
+  showEl_(document.getElementById('save-details'));
+}
+
+/**
+ * @Private
+ * Displays the form where users can create a new map and hides the
+ * username form if it is visible
+ */
+function showMapForm() {
+  document.getElementById("submit-map-form").style.display = 'flex';
+  hideEl_(document.getElementById('add-map'));
+  showEl_(document.getElementById('submit-map'));
+}
+
+/**
  * Sends the submitted map name to the server
  */
 function submitMap() {
-  let input = document.getElementById("map-name");
-  submitNewItem_("room-server", input);
+  let input = textRegions[2];
+  submitNewItem("room-server", input);
 }
 
 /**
  * Sends the submitted username to the server
  */
 function submitUsername() {
-  let input = document.getElementById("input-username");
-  submitNewItem_("user-server", input);
+  let input = textRegions[1];
+  submitNewItem("user-server", input);
 }
 
 /**
- * @Private
  * Retrieves input value, sends to the given server, and handles server response
  */
- function submitNewItem_(server, input) {
+ function submitNewItem(server, input) {
    var params = {
        name: input.value,
        id: idToken
    };
-
-   console.log(JSON.stringify(params));
 
    fetch(`/${server}`, {
          method:'POST',
@@ -164,46 +226,59 @@ function submitUsername() {
  * @Private
  * Displays the logged-in user's customized details
  * @param {String} email the user's email address
- * @param {String} username the user's chosen username
+ * @param {?String} username the user's chosen username
  */
-function showUserDetails_(email, username) {
-  var emailBlock = makeDetailsGroup_("email", email);
+function loadUserDetails_(email, username) {
+  showEl_(document.getElementById(PANEL));
+  let displayDiv = document.getElementById(DETAILS_EL);
 
-  if (username) {
-    var usernameBlock = makeDetailsGroup_("username", username);
-  } else {
-    var usernameBlock = makeDetailsGroup_("username", "");
+  textRegions[0].value = email;
+
+  if (username != null) {
+    textRegions[1].value = username;
   }
 
-  let displayDiv = document.getElementById('user-details');
-  displayDiv.appendChild(emailBlock);
-  displayDiv.appendChild(usernameBlock);
   showEl_(displayDiv);
 }
 
 /**
  * @Private
- * Returns div containing a piece of user information determined by
- * the group name and value
- * @param {String} name the name of this group of information
- * @param {String} val the value of the group of information
+ * Changes which tab is visible in the main panel
+ * @param {String} showDivId id of the content to be shown
+ * @param {String} hideDivId id of the content to be hidden
  */
-function makeDetailsGroup_(name, val) {
-  let wrapper = document.createElement("div");
-  wrapper.id = name;
-  wrapper.classList.add("detailsGroup");
+function togglePanel_(showDivId, hideDivId) {
+  showEl_(document.getElementById(showDivId));
+  hideEl_(document.getElementById(hideDivId));
+}
 
-  let label = document.createElement("h4");
-  label.classList.add("groupLabel");
-  label.innerHTML = name;
+function getCurrentActiveTab() {
+  if (tabRegions[0].active) {
+    return tabRegions[0]
+  }
+  else if (tabRegions[1].active) {
+    return tabRegions[1];
+  }
+}
 
-  let content = document.createElement("p");
-  content.classList.add("groupContent");
-  content.innerHTML = val;
+/**
+ * Hides the user's maps tab and shows the profile tab instead
+ */
+function showUserDetails() {
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].activate(currentActive);
+  tabRegions[1].deactivate();
+  togglePanel_(/* showDivId= */ DETAILS_EL, /* hideDivId= */ MAPS_WRAPPER);
+}
 
-  wrapper.appendChild(label);
-  wrapper.appendChild(content);
-  return wrapper;
+/**
+ * Hides the user's profile tab and shows the map tab instead
+ */
+function showUserMaps() {
+  let currentActive = getCurrentActiveTab().computeIndicatorClientRect();
+  tabRegions[0].deactivate();
+  tabRegions[1].activate(currentActive);
+  togglePanel_(/* showDivId= */ MAPS_WRAPPER, /* hideDivId= */ DETAILS_EL);
 }
 
 /**
@@ -211,9 +286,8 @@ function makeDetailsGroup_(name, val) {
  * Creates buttons to navigate the user to the given maps
  * @param {JSON} mapsJson json array containing map ids and names
  */
-function showUserMaps_(mapsJson) {
-  let rooms = document.getElementById('user-maps');
-  showEl_(getMapsWrapper_());
+function loadUserMaps_(mapsJson) {
+  let rooms = document.querySelector('.mdc-list');
 
   for (const i in mapsJson) {
     let room = mapsJson[i];
@@ -230,30 +304,83 @@ function showUserMaps_(mapsJson) {
  * @param {String} name the given name of the map
  */
 function makeRoomButton_(id, name) {
-  let roomBtn = document.createElement("button");
-  roomBtn.innerHTML = name;
-  roomBtn.addEventListener('click', () => {
-     location.href=`/chatroom.html?roomId=${id}`;
+  let roomBtn = makeEl("li", "mdc-list-item");
+  roomBtn.appendChild(makeEl("span", "mdc-list-item__ripple"));
+
+  let graphicElement = makeEl("span", "mdc-list-item__graphic");
+  let iconElement = makeEl("span", "material-icons");
+  iconElement.innerText = "map";
+
+  graphicElement.appendChild(iconElement);
+
+  roomBtn.appendChild(graphicElement);
+
+  let roomText = makeEl("span", "mdc-list-item__text");
+  roomText.innerText = name;
+  roomBtn.appendChild(roomText);
+
+  roomBtn.addEventListener('click', (clickEvent) => {
+    location.href=`/chatroom.html?roomId=${id}`;
   });
-  roomBtn.classList.add("roomBtn");
+
+  mapListItems.push(new MDCRipple(roomBtn));
   return roomBtn;
+}
+
+/**
+ * Removes a room from a user's welcome page. If this is the only user of the
+ * chatroom, the chatroom is deleted
+ * @param {String} id the id of the room to be removed
+ */
+function removeRoom(id) {
+  fetch(`/share-server?idToken=${idToken}&idRoom=${id}`)
+      .then((response) => response.json())
+      .then((emails) => {
+          let server = "/room-server";
+          let params = {
+            id: idToken,
+            roomId: id
+          }
+
+          if (emails.length !== 1) {
+            params.email = email;
+            server = "/share-server";
+          }
+
+          fetch(server, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'text/html' },
+                body: JSON.stringify(params)}
+          ).then(() => window.location.href = '/');
+        });
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LOGIN/LOGOUT
 
 /**
+ * Prevents the user from creating a new map
+ */
+function disableMapCreating_() {
+  let btn = document.getElementById("add-map");
+  btn.onclick = "";
+}
+
+/**
  * @Private
  * Hides all page content and initializes firebase login buttons
  */
 function displayLoginInfo_() {
-  hideLoading_();
-  hideEl_(getMapsWrapper_());
-  hideEl_(getUserDetails_());
-  hideEl_(getNewMapForm_());
-  hideEl_(getUsernameForm_());
-  showEl_(getLoginDiv_());
-  ui.start('#firebaseui-auth-container', uiConfig);
+  let toHide = [LOADING_EL, PANEL, WELCOME_EL];
+  toHide.forEach((id) => hideEl_(document.getElementById(id)));
+
+  // change header styling to default
+  let header = document.getElementById(HEADER)
+  header.classList.remove(LOGGED_IN);
+
+  showEl_(document.getElementById(LOGIN_EL));
+
+  ui.start('#'+LOGIN_EL, uiConfig);
 }
 
 /**
@@ -268,11 +395,11 @@ function logOut() {
 
 /**
  * @Private
- * Hides the loading element
+ * Changes the display style of the DOM element to block
+ * @param {Element} el DOM element of object to be modified
  */
-function hideLoading_() {
-  el = document.getElementById("loading");
-  setDisplay_(el, 'none');
+function showEl_(el) {
+  el.style.display = 'block';
 }
 
 /**
@@ -281,72 +408,22 @@ function hideLoading_() {
  * @param {Element} el DOM element of object to be modified
  */
 function hideEl_(el) {
-  setDisplay_(el, 'none');
+  el.style.display = 'none';
 }
 
 /**
- * @Private
- * Changes the display style of the DOM element to block
- * @param {Element} el DOM element of object to be modified
+ * Returns a DOM element of the given type with a certain id and class
+ * @param {String} type the type of DOM element to be created
+ * @param {?String} elClass the classname to be given to the element
+ * @param {?String} elId the id the element should be given
  */
-function showEl_(el) {
-  setDisplay_(el, 'block');
-}
-
-/**
- * @Private
- * Changes the display style of the DOM element
- * @param {Element} el DOM element of object to be modified
- * @param {String} type what value the display type should be
- */
-function setDisplay_(el, type) {
-  el.style.display = type;
-}
-
-/**
- * @Private
- * Retrieves the login DOM element from the page
- */
-function getLoginDiv_() {
-  return document.getElementById('firebaseui-auth-container');
-}
-
-/**
- * @Private
- * Retrieves the sign out DOM element from the page
- */
-function getSignOutBtn_() {
-  return document.getElementById('sign-out');
-}
-
-/**
- * @Private
- * Retrieves the username form DOM element from the page
- */
-function getUsernameForm_() {
-  return document.getElementById('username-form');
-}
-
-/**
- * @Private
- * Retrieves the new map form DOM element from the page
- */
-function getNewMapForm_() {
-  return document.getElementById('new-map-form');
-}
-
-/**
- * @Private
- * Retrieves the map display panel DOM element from the page
- */
-function getMapsWrapper_() {
-  return document.getElementById('maps-wrapper');
-}
-
-/**
- * @Private
- * Retrieves the details wrapper DOM element from the page
- */
-function getUserDetails_() {
-  return document.getElementById('user-details');
+function makeEl(type, elClass, elId) {
+  let el = document.createElement(type);
+  if (elId) {
+    el.id = elId;
+  }
+  if (elClass) {
+    el.classList.add(elClass);
+  }
+  return el;
 }
