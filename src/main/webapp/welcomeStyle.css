@@ -101,6 +101,29 @@ body {
   height: 2em;
 }
 
+.roomWrapper {
+  display: flex;
+}
+
+.map-item {
+  width: calc(100% - 3em);
+}
+
+.cancel-btn, #cancel-btn:focus {
+  background-image: url(icons/clear.svg);
+  height: 48px;
+  width: 2em;
+  margin-left: 1em;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
 .form {
   display: block;
   width: 100%;

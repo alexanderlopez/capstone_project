@@ -91,7 +91,7 @@
                 <li class="mdc-list-item" id="submit-map-form" tabindex="0" style="height:70px; display: none;">
                   <span class="mdc-list-item__ripple"></span>
                   <label class="mdc-text-field mdc-text-field--outlined">
-                    <input type="text" class="mdc-text-field__input" aria-labelledby="my-label-id">
+                    <input type="text" class="mdc-text-field__input map-item" aria-labelledby="my-label-id" id="map-input">
                     <span class="mdc-notched-outline">
                       <span class="mdc-notched-outline__leading"></span>
                       <span class="mdc-notched-outline__notch" style="font-size: 1rem;">
@@ -100,6 +100,7 @@
                       <span class="mdc-notched-outline__trailing"></span>
                     </span>
                   </label>
+                  <button onclick="hideMapForm()" id="cancel-map" class="cancel-btn" type="submit"></button>
                 </li>
               </ul>
             </div>
