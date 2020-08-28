@@ -7,8 +7,12 @@ html {
   --mdc-theme-primary: #306890;
 }
 
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: rgba(48, 104, 144, .87) !important;
+}
+
 body {
-  background-image: url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1951&q=80);
+  background-image: url("welcome.jpeg");
   background-size: cover;
   background-position-y: 62%;
   background-repeat: no-repeat;
@@ -95,6 +99,29 @@ body {
   display: none;
   border-width: 2px;
   height: 2em;
+}
+
+.roomWrapper {
+  display: flex;
+}
+
+.map-item {
+  width: calc(100% - 3em);
+}
+
+.cancel-btn, #cancel-btn:focus {
+  background-image: url(icons/clear.svg);
+  height: 48px;
+  width: 2em;
+  margin-left: 1em;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  padding: 0;
 }
 
 .form {

@@ -7,7 +7,6 @@
         <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
         <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
-        <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
 
         <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
@@ -92,7 +91,7 @@
                 <li class="mdc-list-item" id="submit-map-form" tabindex="0" style="height:70px; display: none;">
                   <span class="mdc-list-item__ripple"></span>
                   <label class="mdc-text-field mdc-text-field--outlined">
-                    <input type="text" class="mdc-text-field__input" aria-labelledby="my-label-id">
+                    <input type="text" class="mdc-text-field__input map-item" aria-labelledby="my-label-id" id="map-input">
                     <span class="mdc-notched-outline">
                       <span class="mdc-notched-outline__leading"></span>
                       <span class="mdc-notched-outline__notch" style="font-size: 1rem;">
@@ -101,6 +100,7 @@
                       <span class="mdc-notched-outline__trailing"></span>
                     </span>
                   </label>
+                  <button onclick="hideMapForm()" id="cancel-map" class="cancel-btn" type="submit"></button>
                 </li>
               </ul>
             </div>
@@ -115,8 +115,6 @@
         <div id="loading">Loading...</div>
         <div id="firebaseui-auth-container"></div>
 
-        <!--<button id="sign-out" onclick="logOut()">Sign Out
-      </button>-->
       <button id="sign-out" onclick="logOut()" class="mdc-button">
         <div class="mdc-button__ripple"></div>
         <span class="mdc-button__label">Sign Out</span>

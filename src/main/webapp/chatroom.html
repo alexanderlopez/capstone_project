@@ -119,9 +119,13 @@
             <h1>Threads</h1>
             <div id="menu-items">
               <div id="thread-form">
-                <textarea id="thread-input" placeholder="..."></textarea>
-                <button id="cancel-thread" class="thread-btn"
-                    onclick="hideTempThread()"></button>
+                <label id="thread-input-wrapper" class="mdc-text-field mdc-text-field--filled">
+                  <span class="mdc-text-field__ripple"></span>
+                  <input id="thread-input" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+                  <span class="mdc-floating-label" id="my-label-id">Thread Name</span>
+                  <span class="mdc-line-ripple"></span>
+                </label>
+                <button onclick="hideTempThread()" id="cancel-thread" type="submit" class="thread-btn"></button>
               </div>
             </div>
           </div>

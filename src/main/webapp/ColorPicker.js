@@ -16,7 +16,7 @@ class ColorPicker {
   static DEFAULT_COLOR = "red";
 
   /** the prefix of the url to access marker icons */
-  static markerIconUrl = "http://maps.google.com/mapfiles/ms/micons/";
+  static markerIconUrl = "markers/";
 
   /** IDs and classnames for color picker DOM elements */
   static COLOR_PICKER = "colorPicker";
@@ -28,8 +28,7 @@ class ColorPicker {
    * @param {String} color the color that marker icon should be
    */
   static getPermMarkerIcon(color) {
-    let urlColor = color == "lightblue"? "ltblue": color;
-    return ColorPicker.markerIconUrl+urlColor+"-dot.png";
+    return ColorPicker.markerIconUrl+color+"-dot.png";
   }
 
   /**
