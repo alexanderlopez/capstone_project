@@ -53,6 +53,8 @@ public class DatastoreManagerTest {
     private static final String TEST_UID = "testuser";
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_ROOM_NAME = "Test Room";
+    public static final String TEST_THREAD = "testing";
+    public static final String TEST_COLOR = "red";
 
     @BeforeClass
     public static void setupDatastore() throws IOException,
@@ -85,7 +87,8 @@ public class DatastoreManagerTest {
 
     @Test
     public void checkLoadChatHistory_returnsStringWithAllContent() {
-        String[] copyItems = {JSON_USER_ID, JSON_MESSAGE, JSON_USER_NAME};
+        String[] copyItems = {JSON_USER_ID, JSON_MESSAGE, JSON_USER_NAME,
+                              JSON_THREAD};
 
         datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
         datastore.put(createUserEntity(TEST_UID, TEST_NAME, TEST_EMAIL));
@@ -117,7 +120,7 @@ public class DatastoreManagerTest {
     @Test
     public void checkLoadMarkerData_returnsStringWithAllContent() {
         String[] copyItems = {JSON_TITLE, JSON_BODY, JSON_LONGITUDE,
-                JSON_LATITUDE};
+                JSON_LATITUDE, JSON_COLOR};
 
         datastore.put(createRoomEntity(TEST_ROOM_NAME, 1));
 
@@ -312,12 +315,14 @@ public class DatastoreManagerTest {
         return (new JSONObject()).put(JSON_TITLE, "Title")
                                  .put(JSON_BODY, "Body")
                                  .put(JSON_LATITUDE, 1.5)
-                                 .put(JSON_LONGITUDE, -0.3);
+                                 .put(JSON_LONGITUDE, -0.3)
+                                 .put(JSON_COLOR, TEST_COLOR);
     }
 
     private static JSONObject getStandardChatNew() {
         return (new JSONObject()).put(JSON_USER_ID, TEST_UID)
-                                 .put(JSON_MESSAGE, "Test");
+                                 .put(JSON_MESSAGE, "Test")
+                                 .put(JSON_THREAD, TEST_THREAD);
     }
 
     private Entity createMessageEntity(JSONObject messageData,
@@ -326,6 +331,7 @@ public class DatastoreManagerTest {
                      .set(JSON_USER_ID, messageData.getString(JSON_USER_ID))
                      .set(JSON_MESSAGE, messageData.getString(JSON_MESSAGE))
                      .set(JSON_TIMESTAMP, timeStamp)
+                     .set(JSON_THREAD, TEST_THREAD)
                      .build();
     }
 
@@ -356,6 +362,7 @@ public class DatastoreManagerTest {
                                         markerData.getDouble(JSON_LATITUDE))
                                     .set(JSON_LONGITUDE,
                                         markerData.getDouble(JSON_LONGITUDE))
+                                    .set(JSON_COLOR, TEST_COLOR)
                                     .build();
 
         return markerEntity;
@@ -378,6 +385,7 @@ public class DatastoreManagerTest {
 
         Entity returnEntity = Entity.newBuilder(childRoomKey)
                                     .set(ROOM_ATTRIBUTE_NAME, roomName)
+                                    .set(CHILD_ROOM_ATTRIBUTE_ID, roomId)
                                     .build();
 
         return returnEntity;

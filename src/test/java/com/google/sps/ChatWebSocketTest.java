@@ -43,6 +43,8 @@ public class ChatWebSocketTest {
     public static final String TEST_MESSAGE = "Hello World!";
     public static final String TEST_TITLE = "TESTTITLE";
     public static final String TEST_BODY = "Test Body";
+    public static final String TEST_THREAD = "testing";
+    public static final String TEST_COLOR = "red";
 
     private DatastoreManager mockManager;
     private Session testSession;
@@ -103,6 +105,7 @@ public class ChatWebSocketTest {
         JSONObject jsonData = new JSONObject();
         jsonData.put(JSON_TYPE, MESSAGE_SEND);
         jsonData.put(JSON_MESSAGE, TEST_MESSAGE);
+        jsonData.put(JSON_THREAD, TEST_THREAD);
 
         // Act
         ChatWebSocket instance = new ChatWebSocket(1, true, TEST_UID);
@@ -114,6 +117,7 @@ public class ChatWebSocketTest {
         expectedBroadcast.put(JSON_MESSAGE, TEST_MESSAGE);
         expectedBroadcast.put(JSON_USER_ID, TEST_UID);
         expectedBroadcast.put(JSON_USER_NAME, TEST_USER_NAME);
+        expectedBroadcast.put(JSON_THREAD, TEST_THREAD);
 
         ArgumentCaptor<String> stringArgument =
             ArgumentCaptor.forClass(String.class);
@@ -153,6 +157,7 @@ public class ChatWebSocketTest {
         jsonData.put(JSON_BODY, TEST_BODY);
         jsonData.put(JSON_LATITUDE, 1.5);
         jsonData.put(JSON_LONGITUDE, -2.5);
+        jsonData.put(JSON_COLOR, TEST_COLOR);
 
         // Act
         ChatWebSocket instance = new ChatWebSocket(1, true, TEST_UID);
@@ -166,6 +171,7 @@ public class ChatWebSocketTest {
         expectedBroadcast.put(JSON_BODY, TEST_BODY);
         expectedBroadcast.put(JSON_LATITUDE, 1.5);
         expectedBroadcast.put(JSON_LONGITUDE, -2.5);
+        expectedBroadcast.put(JSON_COLOR, TEST_COLOR);
 
         ArgumentCaptor<String> stringArgument =
             ArgumentCaptor.forClass(String.class);
