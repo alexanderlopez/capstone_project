@@ -179,13 +179,14 @@ body {font-family: 'Roboto', sans-serif;}
 
 #cancel-thread {
   background-image: url("icons/clear.svg");
+  height: 2em;
+  width: 2em;
+  margin: .5em 0 0 .5em;
+  position: inherit;
 }
 
-#cancel-thread {
-  height: 1.5em;
-  width: 1.5em;
-  margin-top: .5em;
-  position: inherit;
+#thread-input-wrapper {
+  width: calc(100% - 2.5em);
 }
 
 .thread-wrapper {
