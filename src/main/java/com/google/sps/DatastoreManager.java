@@ -45,7 +45,21 @@ public class DatastoreManager {
     private HashMap<String, String> idToName;
 
     private DatastoreManager() {
-        datastore = DatastoreOptions.getDefaultInstance().getService();
+        this(false);
+    }
+
+    private DatastoreManager(boolean testing) {
+        if (testing) {
+            datastore = DatastoreOptions.newBuilder()
+                                        .setProjectId("chap-2020-capstone")
+                                        .setHost("localhost:8081")
+                                        .build()
+                                        .getService();
+        }
+        else {
+            datastore = DatastoreOptions.getDefaultInstance().getService();
+        }
+
         roomFactory = datastore.newKeyFactory().setKind(KIND_CHATROOM);
         userFactory = datastore.newKeyFactory().setKind(KIND_USERS);
 
@@ -126,15 +140,16 @@ public class DatastoreManager {
     /**
      * Adds a message with the given @param roomId to the datastore.
      */
-    public void addMessage(long roomId, JSONObject messageData) {
+    public Key addMessage(long roomId, JSONObject messageData) {
         KeyFactory chatHistoryFactory =
             datastore.newKeyFactory()
                      .setKind(KIND_CHATROOM_HISTORY)
                      .addAncestor(PathElement.of(KIND_CHATROOM, roomId));
 
+        Key messageKey = datastore.allocateId(chatHistoryFactory.newKey());
+
         Entity messageEntity =
-            Entity.newBuilder(datastore.allocateId(
-                     chatHistoryFactory.newKey()))
+            Entity.newBuilder(messageKey)
                   .set(ChatWebSocket.JSON_USER_ID,
                         messageData.getString(ChatWebSocket.JSON_USER_ID))
                   .set(ChatWebSocket.JSON_MESSAGE,
@@ -146,6 +161,8 @@ public class DatastoreManager {
                   .build();
 
         datastore.put(messageEntity);
+
+        return messageKey;
     }
 
     /**
@@ -397,8 +414,11 @@ public class DatastoreManager {
         datastore.put(userEntity);
     }
 
+    /**
+     * Gets the user name, the email and the chatrooms that the
+     * user is logged in to.
+     */
     public String getUserData(String uid, boolean getDetails) {
-        // Gets the user name, the and the chatrooms that the user is logged in to.
         JSONObject userData = new JSONObject();
 
         Key userKey = userFactory.newKey(uid);
@@ -460,6 +480,12 @@ public class DatastoreManager {
         if (currentInstance == null) {
             currentInstance = new DatastoreManager();
         }
+
+        return currentInstance;
+    }
+
+    public static DatastoreManager getInstance(boolean testing) {
+        currentInstance = new DatastoreManager(testing);
 
         return currentInstance;
     }

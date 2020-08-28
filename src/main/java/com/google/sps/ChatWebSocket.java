@@ -61,6 +61,16 @@ public class ChatWebSocket {
      * Verifies if the user is authenticated, if this is not the case the
      * connection is closed.
      */
+
+    public ChatWebSocket() {}
+
+    public ChatWebSocket(long chatRoomId, boolean isAuthenticated,
+        String uid) {
+        this.chatRoomId = chatRoomId;
+        this.isAuthenticated = isAuthenticated;
+        this.uid = uid;
+    }
+
     @OnOpen
     public void onOpen(Session session) throws IOException {
         // Get session and check if the user is authenticated with Firebase
@@ -97,6 +107,18 @@ public class ChatWebSocket {
 
         // If the user is authenticated then add the session to the chatroom.
         WebSocketHandler.getInstance().addSession(this.chatRoomId, session);
+    }
+
+    public boolean getAuthenticated() {
+        return isAuthenticated;
+    }
+
+    public String getUID() {
+        return uid;
+    }
+
+    public long getRoomId() {
+        return chatRoomId;
     }
 
     /**
