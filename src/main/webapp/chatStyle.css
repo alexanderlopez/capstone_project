@@ -216,7 +216,4 @@ body {font-family: 'Roboto', sans-serif;}
 
 #thread-input, #thread-input:focus {
   float: left;
-  width: calc(100% - 3em);
-  margin-right: 1em;
-  resize: none;
 }
