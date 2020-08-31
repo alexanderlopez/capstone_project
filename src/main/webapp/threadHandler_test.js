@@ -1,3 +1,4 @@
+// TODO(alicevlasov) figure out how to run tests without copying function
 function hasValidCharacters(name) {
   var regex = /^[a-zA-Z0-9-_]+$/;
   return regex.test(name);
@@ -11,8 +12,6 @@ describe('#hasValidCharacters()', function() {
   const upperCase = lowerCase.toUpperCase();
   const numbers = "1234567890";
   const dashUnderscore = "-_";
-  const validCharacters = lowerCase+upperCase+numbers+dashUnderscore;
-  const invalidCharacters = "~!@#$%^&*?/()+=[]{}<>,.;\"\'\`\\\/\t\n\b\f\r";
 
   describe('should return false when all characters are valid', function() {
     it('should test lowercase letters are valid', function() {
@@ -33,54 +32,51 @@ describe('#hasValidCharacters()', function() {
     });
   });
 
-  describe('should return true when all characters are invalid', function() {
+  describe('should return true if there are invalid characters', function() {
     it('should test blank string is invalid', function() {
       let input = "";
       let actualOutput = hasValidCharacters(input);
       assert.notEqual(expectedOutput, actualOutput);
     });
-
-    [...invalidCharacters].forEach(function(c) {
-      it(`should test ${c} is invalid`, function() {
-        let actualOutput = hasValidCharacters(c);
-        assert.notEqual(expectedOutput, actualOutput);
-      });
+    it ('should test spaces are invalid', function() {
+      let input = "a b";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
     });
-  });
-
-  describe('should check mixed strings correctly', function() {
-    let charTypes = [validCharacters, invalidCharacters];
-    const INVALID = 1;
-    // Test 10 times
-    for (var i = 0; i < 11; i++) {
-      // choose string length between 2 and 4
-      let strLength = Math.floor(2+Math.random()*3);
-
-      let testStr = "";
-      let hasInvalidChar = false;
-      for (var c = 0; c < strLength; c++) {
-        // choose to add a valid or invalid character
-        let charType = Math.round(Math.random());
-
-        // determine if this string contains any invalid chars
-        hasInvalidChar = hasInvalidChar || charType == INVALID;
-
-        // pick a random character of the chosen type
-        let charOptions = charTypes[charType];
-        let randomCharIndex = Math.floor(Math.random()*charOptions.length);
-        testStr += charOptions.charAt(randomCharIndex);
-      }
-
-      // test resulting string
-      if (hasInvalidChar) {
-        it (`should test ${testStr} is invalid`, function() {
-          assert.notEqual(expectedOutput, hasValidCharacters(testStr));
-        });
-      } else {
-        it (`should test ${testStr} is valid`, function() {
-          assert.equal(expectedOutput, hasValidCharacters(testStr));
-        });
-      }
-    }
+    it ('should test \\n are invalid', function() {
+      let input = "a\na";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test \\t are invalid', function() {
+      let input = "12\t";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test \\b are invalid', function() {
+      let input = "P_\bq";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test \\f are invalid', function() {
+      let input = "\fpq";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test \\r are invalid', function() {
+      let input = "P1-\r";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test non-alphanumeric characters are invalid', function() {
+      let input = "~!@#$%^&*?/(+=[{<,.;";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
+    it ('should test escaped characters are invalid', function() {
+      let input = "\"\'\`\\\/";
+      let actualOutput = hasValidCharacters(input);
+      assert.notEqual(expectedOutput, actualOutput);
+    });
   });
 });
