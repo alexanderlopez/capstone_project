@@ -14,6 +14,7 @@ import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -60,7 +61,7 @@ public class WebSocketHandlerTest {
 
     WebSocketHandler result = (WebSocketHandler)instance.get(null);
     assertEquals(newInstance, result);
-    assertNotEquals(result, null);
+    assertNotNull(result);
   }
 
   @Test
