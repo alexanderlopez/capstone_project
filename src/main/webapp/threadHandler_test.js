@@ -13,7 +13,7 @@ describe('#hasValidCharacters()', function() {
   const numbers = "1234567890";
   const dashUnderscore = "-_";
 
-  describe('should return false when all characters are valid', function() {
+  describe('should return true when all characters are valid', function() {
     it('should test lowercase letters are valid', function() {
       let actualOutput = hasValidCharacters(lowerCase);
       assert.equal(expectedOutput, actualOutput);
@@ -32,7 +32,7 @@ describe('#hasValidCharacters()', function() {
     });
   });
 
-  describe('should return true if there are invalid characters', function() {
+  describe('should return false if there are invalid characters', function() {
     it('should test blank string is invalid', function() {
       let input = "";
       let actualOutput = hasValidCharacters(input);
