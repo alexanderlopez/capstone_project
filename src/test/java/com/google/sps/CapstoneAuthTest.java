@@ -66,13 +66,18 @@ public class CapstoneAuthTest {
     }
 
     @Test
+    public void testGetInstance_returnsValidInstance() throws IOException {
+        assertEquals(obj.getInstance(), obj);
+    }
+
+    @Test
     public void testGetUserId_returnsValidId() throws IOException {
         assertEquals(obj.getUserEmail(TEST_UID), TEST_EMAIL);
     }
 
 
     @Test(expected = NullPointerException.class)
-    public void testGetUserId_returnsNullForFalseID() throws IOException {
+    public void testGetUserId_throwsNullPointerForFalseID() throws IOException {
         obj.getUserEmail(TEST_FALSE_UID);
     } 
 
@@ -82,7 +87,7 @@ public class CapstoneAuthTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testIsUserAuth_returnsFalse() throws IOException {
+    public void testIsUserAuth_throwsNullPointerForFalseID() throws IOException {
        obj.isUserAuthenticated(TEST_FALSE_UID);
     }
 
@@ -92,7 +97,7 @@ public class CapstoneAuthTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetUserID_throwsExceptionFalseID() throws IOException {
+    public void testGetUserID_throwsNullPointerForFalseID() throws IOException {
         obj.getUserId(TEST_FALSE_UID);
     }
 }
