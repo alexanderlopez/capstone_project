@@ -57,6 +57,10 @@ body {font-family: 'Roboto', sans-serif;}
   background-size: contain;
 }
 
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: rgba(48, 104, 144, .87) !important;
+}
+
 .message {
   min-height: 3em;
   font-size: 1.25em;
