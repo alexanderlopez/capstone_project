@@ -20,7 +20,7 @@ import com.google.cloud.datastore.Value;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
-public final class CapstoneAuth {
+public class CapstoneAuth {
 
     public static final long TEST_ROOM_ID = 1;
     private static final String ALLOWED_USERS = "allowed_users";
@@ -29,6 +29,14 @@ public final class CapstoneAuth {
 
     private final Datastore datastore;
     private final KeyFactory keyFactory;
+
+    public static CapstoneAuth getInstance(){
+        if (currentInstance == null) {
+            currentInstance = new CapstoneAuth();
+        }
+
+        return currentInstance;
+    }
 
     private CapstoneAuth() {
         try {
@@ -52,9 +60,8 @@ public final class CapstoneAuth {
     }
 
     public static synchronized String getUserEmail(String uid) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+
+        getInstance();
 
         try {
             return FirebaseAuth.getInstance().getUser(uid).getEmail();
@@ -66,9 +73,8 @@ public final class CapstoneAuth {
     }
 
     public static synchronized String getUserId(String idToken) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+        
+        getInstance();
 
         try {
             FirebaseToken decodedToken =
@@ -83,9 +89,8 @@ public final class CapstoneAuth {
     }
 
     public static synchronized boolean isUserAuthenticated(String idToken) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+        
+        getInstance();
 
         try {
             FirebaseToken decodedToken =
