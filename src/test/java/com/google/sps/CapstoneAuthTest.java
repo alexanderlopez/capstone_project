@@ -35,7 +35,7 @@ public class CapstoneAuthTest {
     public static final String TEST_FALSE_UID = "testfalseuid";
     public static final String TEST_EMAIL = "test@email.com";
 
-    private CapstoneAuth obj;
+    private CapstoneAuth capstoneAuth;
 
     private FirebaseToken mockToken;
     private FirebaseAuth mockFirebase;
@@ -50,54 +50,85 @@ public class CapstoneAuthTest {
         mockUser = mock(UserRecord.class);
         PowerMockito.mockStatic(UserRecord.class);
 
-        mockToken = mock(FirebaseToken.class);
-        PowerMockito.mockStatic(FirebaseToken.class);
-
         when(FirebaseAuth.getInstance()).thenReturn(mockFirebase);
 
         when(mockFirebase.getUser(TEST_UID)).thenReturn(mockUser);
-        when(mockUser.getEmail()).thenReturn(TEST_EMAIL);
 
+        mockToken = mock(FirebaseToken.class);
+        PowerMockito.mockStatic(FirebaseToken.class);
+     
         when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
         when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
 
-        obj = (CapstoneAuth) CapstoneAuth.getInstance();
+        capstoneAuth = (CapstoneAuth) CapstoneAuth.getInstance();
 
     }
 
     @Test
     public void testGetInstance_returnsValidInstance() throws IOException {
-        assertEquals(obj.getInstance(), obj);
+        assertSame(capstoneAuth.getInstance(), capstoneAuth);
     }
 
     @Test
-    public void testGetUserId_returnsValidId() throws IOException {
-        assertEquals(obj.getUserEmail(TEST_UID), TEST_EMAIL);
+    public void testGetUserEmail_returnsValidEmail() throws IOException {
+        when(mockUser.getEmail()).thenReturn(TEST_EMAIL);
+
+        assertEquals(capstoneAuth.getUserEmail(TEST_UID), TEST_EMAIL);
     }
 
 
     @Test(expected = NullPointerException.class)
-    public void testGetUserId_throwsNullPointerForFalseID() throws IOException {
-        obj.getUserEmail(TEST_FALSE_UID);
+    public void testGetUserEmail_throwsNullPointerForFalseID() throws IOException {
+        when(mockUser.getEmail()).thenReturn(TEST_EMAIL);
+
+        capstoneAuth.getUserEmail(TEST_FALSE_UID);
     } 
 
     @Test
-    public void testIsUserAuth_returnsTrue() throws IOException {
-       assertTrue(obj.isUserAuthenticated(TEST_UID));
+    public void testIsUserAuth_returnsTrue() throws IOException, FirebaseAuthException {
+
+       mockToken = mock(FirebaseToken.class);
+       PowerMockito.mockStatic(FirebaseToken.class);
+    
+       when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
+       when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
+
+       assertTrue(capstoneAuth.isUserAuthenticated(TEST_UID));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testIsUserAuth_throwsNullPointerForFalseID() throws IOException {
-       obj.isUserAuthenticated(TEST_FALSE_UID);
+    public void testIsUserAuth_throwsNullPointerForFalseID() throws IOException, FirebaseAuthException {
+
+        mockToken = mock(FirebaseToken.class);
+        PowerMockito.mockStatic(FirebaseToken.class);
+     
+        when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
+        when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
+
+        capstoneAuth.isUserAuthenticated(TEST_FALSE_UID);
     }
 
     @Test
-    public void testGetUserID_returnsUserID() throws IOException {
-        assertEquals(obj.getUserId(TEST_UID), TEST_ID_TOKEN);
+    public void testGetUserID_returnsUserID() throws IOException, FirebaseAuthException {
+
+        mockToken = mock(FirebaseToken.class);
+        PowerMockito.mockStatic(FirebaseToken.class);
+     
+        when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
+        when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
+
+        assertEquals(capstoneAuth.getUserId(TEST_UID), TEST_ID_TOKEN);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetUserID_throwsNullPointerForFalseID() throws IOException {
-        obj.getUserId(TEST_FALSE_UID);
+    public void testGetUserID_throwsNullPointerForFalseID() throws IOException, FirebaseAuthException {
+
+        mockToken = mock(FirebaseToken.class);
+        PowerMockito.mockStatic(FirebaseToken.class);
+     
+        when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
+        when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
+
+        capstoneAuth.getUserId(TEST_FALSE_UID);
     }
 }
