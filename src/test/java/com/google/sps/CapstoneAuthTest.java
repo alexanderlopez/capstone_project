@@ -86,10 +86,8 @@ public class CapstoneAuthTest {
 
     @Test
     public void testIsUserAuth_returnsTrue() throws IOException, FirebaseAuthException {
-
        mockToken = mock(FirebaseToken.class);
        PowerMockito.mockStatic(FirebaseToken.class);
-    
        when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
        when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
 
@@ -98,10 +96,8 @@ public class CapstoneAuthTest {
 
     @Test(expected = NullPointerException.class)
     public void testIsUserAuth_throwsNullPointerForFalseID() throws IOException, FirebaseAuthException {
-
         mockToken = mock(FirebaseToken.class);
         PowerMockito.mockStatic(FirebaseToken.class);
-     
         when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
         when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
 
@@ -110,10 +106,8 @@ public class CapstoneAuthTest {
 
     @Test
     public void testGetUserID_returnsUserID() throws IOException, FirebaseAuthException {
-
         mockToken = mock(FirebaseToken.class);
         PowerMockito.mockStatic(FirebaseToken.class);
-     
         when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
         when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
 
@@ -122,10 +116,8 @@ public class CapstoneAuthTest {
 
     @Test(expected = NullPointerException.class)
     public void testGetUserID_throwsNullPointerForFalseID() throws IOException, FirebaseAuthException {
-
         mockToken = mock(FirebaseToken.class);
         PowerMockito.mockStatic(FirebaseToken.class);
-     
         when(mockFirebase.verifyIdToken(TEST_UID)).thenReturn(mockToken);
         when(mockToken.getUid()).thenReturn(TEST_ID_TOKEN);
 
