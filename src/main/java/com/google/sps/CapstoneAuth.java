@@ -30,6 +30,14 @@ public class CapstoneAuth {
     private final Datastore datastore;
     private final KeyFactory keyFactory;
 
+    public static CapstoneAuth getInstance(){
+        if (currentInstance == null) {
+            currentInstance = new CapstoneAuth();
+        }
+
+        return currentInstance;
+    }
+
     private CapstoneAuth() {
         try {
             InputStream credentialInputStream = getClass().getResourceAsStream(
@@ -52,9 +60,8 @@ public class CapstoneAuth {
     }
 
     public static synchronized String getUserEmail(String uid) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+
+        getInstance();
 
         try {
             return FirebaseAuth.getInstance().getUser(uid).getEmail();
@@ -66,9 +73,8 @@ public class CapstoneAuth {
     }
 
     public static synchronized String getUserId(String idToken) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+        
+        getInstance();
 
         try {
             FirebaseToken decodedToken =
@@ -83,9 +89,8 @@ public class CapstoneAuth {
     }
 
     public static synchronized boolean isUserAuthenticated(String idToken) {
-        if (currentInstance == null) {
-            currentInstance = new CapstoneAuth();
-        }
+        
+        getInstance();
 
         try {
             FirebaseToken decodedToken =
