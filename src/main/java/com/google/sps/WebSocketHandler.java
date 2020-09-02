@@ -18,6 +18,14 @@ public class WebSocketHandler {
         chatRoomMap = new HashMap<Long, List<Session>>();
     }
 
+    /**
+     * Resets the unique instance of the class.
+     * Visible for testing
+     */
+    public static void resetInstance() {
+      instance = null;
+    }
+
     public static WebSocketHandler getInstance() {
         if (instance == null) {
             instance = new WebSocketHandler();
